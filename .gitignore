@@ -1,0 +1,8 @@
+venv/* 
+.idea/*
+tornado*.log
+server*.log
+.python-version
+config.ini
+**/__pycache__/*
+database.dia~

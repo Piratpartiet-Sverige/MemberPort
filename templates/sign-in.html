@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Crew DB | Sign in</title>
+    <link rel="stylesheet" href="{{ static_url('css/bulma.min.css') }}" />
+</head>
+
+<body>
+    <section class="hero is-dark is-fullheight">
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                <div class="column is-4 is-offset-4">
+                    <h3 class="title has-text-white">Crew DB</h3>
+                    <p class="subtitle has-text-grey">Member management</p>
+                    <div class="box">
+                        <figure class="avatar">
+                            <img src="{{ static_url('img/logo.svg') }}" >
+                        </figure>
+                        <form action="/sign-in" method="post">
+                            {% module xsrf_form_html() %}
+                            <div class="field">
+                                <div class="control">
+                                    <input name="email" class="input is-large" type="email" placeholder="E-mail" autofocus="">
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <div class="control">
+                                    <input name="password" class="input is-large" type="password" placeholder="Password">
+                                </div>
+                            </div>
+                            <button type="submit" class="button is-block is-info is-large is-fullwidth">
+                                Sign in
+                            </button>
+                        </form>
+                    </div>
+                    {% if error is not "" %}
+                    <div class="notification is-danger">
+                        <button class="delete"></button>
+                        {{ error }}
+                    </div>
+                    {% end %}
+                    <p class="has-text-grey">
+                        <a href="/sign-up">Sign up</a> &nbsp;·&nbsp;
+                        <a href="/forgot-password">Forgot password</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        /*function getCookie(name) {
+            var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+            return r ? r[1] : undefined;
+        }
+
+        var _xsrf = getCookie("_xsrf");
+
+        function postData(url = '', data = {}) {
+          // Default options are marked with *
+            return fetch(url, {
+                method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                mode: 'cors', // no-cors, cors, *same-origin
+                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: 'same-origin', // include, *same-origin, omit
+                headers: {
+                    'X-XSRFToken': _xsrf
+                },
+                redirect: 'follow', // manual, *follow, error
+                referrer: 'no-referrer', // no-referrer, *client
+                body: data, // body data type must match "Content-Type" header
+            })
+            .then(response => response.json()); // parses JSON response into native Javascript objects
+        }
+
+        var email = "sinclair.jakob@mailbox.org";
+        var password = "1234";
+        var formBody = new FormData();
+
+        formBody.set("email", email);
+        formBody.set("password", password);
+
+        postData('/sign-in', formBody);*/
+    </script>
+</body>
+
+</html>
