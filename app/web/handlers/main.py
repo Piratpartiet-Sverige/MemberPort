@@ -10,4 +10,4 @@ class MainHandler(BaseHandler):
     async def get(self):
         logger.debug("Entered main handler...")
 
-        await self.render("main.html", user=self.current_user.user)
+        await self.render("main.html", title="Test")

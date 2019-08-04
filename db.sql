@@ -16,6 +16,7 @@ CREATE TABLE users
 CREATE TABLE members
 (
     "user"      UUID REFERENCES users(id),
+    number      INTEGER UNIQUE NOT NULL,
     given_name  TEXT NOT NULL,
     last_name   TEXT NOT NULL,
     birth       DATE NOT NULL,

@@ -11,7 +11,7 @@ from asyncpg.exceptions import UniqueViolationError
 from bcrypt import checkpw, hashpw, gensalt
 
 from app.database.dao.emails import EmailDao
-from app.models import User, Session, PasswordCheckResult
+from app.models import User, Member, Session, PasswordCheckResult
 from app.email import send_email
 
 
@@ -180,29 +180,33 @@ class UsersDao:
         async with self.pool.acquire() as con:  # type: Connection
             await con.execute(sql, user_id)
 
-    async def get_users(self, search: str, order_column: str, order_dir: str) -> [dict]:
+    async def get_members(self, search: str, order_column: str, order_dir_asc: bool) -> list:
         """
-        Get a list containing user data, used for DataTables
+        Get a list containing member data
         :return: A list filled dicts
         """
 
-        if order_dir == "asc":
+        order_dir = "DESC"
+
+        if order_dir_asc is True:
             order_dir = "ASC"
-        else:
-            order_dir = "DESC"
 
         if order_column != "name" and order_column != "email" and order_column != "created":
             order_column = "name"
 
         if search == "":
-            sql = """ SELECT id, email, name, created FROM users
+            sql = """ SELECT u.id, u.email, u.name, u.created,
+                      m.number, m.given_name, m.last_name, m.birth, m.postal_code, m.city, m.address, m.country
+                      FROM members m, users u
                       ORDER BY """ + order_column + " " + order_dir + ";"
 
             async with self.pool.acquire() as con:  # type: Connection
                 rows = await con.fetch(sql)
         else:
             search = "%"+search+"%"
-            sql = """ SELECT id, email, name, created FROM users
+            sql = """ SELECT u.id, u.email, u.name, u.created,
+                      m.number, m.given_name, m.last_name, m.birth, m.postal_code, m.city, m.address, m.country
+                      FROM members m, users u
                       WHERE name LIKE $1
                       OR email LIKE $1
                       OR to_char(created, 'YYYY-MM-DD HH24:MI:SS.US') LIKE $1
@@ -211,20 +215,79 @@ class UsersDao:
             async with self.pool.acquire() as con:  # type: Connection
                 rows = await con.fetch(sql, search)
 
+        members = []
+        for row in rows:
+            user = User()
+            user.id = row["id"]
+            user.email = row["email"]
+            user.name = row["name"]
+            user.created = row["created"]
+
+            member = Member()
+            member.user = user
+            member.number = row["number"]
+            member.given_name = row["given_name"]
+            member.last_name = row["last_name"]
+            member.birth = row["birth"]
+            member.postal_code = row["postal_code"]
+            member.city = row["city"]
+            member.address = row["address"]
+            member.country = row["country"]
+
+            members.append(member)
+
+        return members
+
+    async def get_only_users(self, search: str, order_column: str, order_dir_asc: bool) -> list:
+        """
+        Get a list only containing account data
+        :return: A list filled dicts
+        """
+        order_dir = "DESC"
+
+        if order_dir_asc is True:
+            order_dir = "ASC"
+
+        if order_column != "name" and order_column != "email" and order_column != "created":
+            order_column = "name"
+
+        if search == "":
+            sql = """ SELECT u.id, u.email, u.name, u.created
+                      FROM users u
+                      LEFT JOIN members m
+                      ON u.id = m."user"
+                      WHERE m."user" IS NULL
+                      ORDER BY """ + order_column + " " + order_dir + ";"
+
+            async with self.pool.acquire() as con:  # type: Connection
+                rows = await con.fetch(sql)
+        else:
+            search = "%"+search+"%"
+            sql = """ SELECT u.id, u.email, u.name, u.created
+                      FROM users u
+                      WHERE u.name LIKE $1
+                      OR u.email LIKE $1
+                      OR to_char(u.created, 'YYYY-MM-DD HH24:MI:SS.US') LIKE $1
+                      LEFT JOIN members m
+                      ON u.id = m."user"
+                      WHERE m."user" IS NULL
+                      ORDER BY """ + order_column + " " + order_dir + ";"
+
+            async with self.pool.acquire() as con:  # type: Connection
+                rows = await con.fetch(sql, search)
+
         users = []
         for row in rows:
-            verified_email = await self.is_email_verified(row["email"])
+            user = User()
+            user.id = row["id"]
+            user.email = row["email"]
+            user.name = row["name"]
+            user.created = row["created"]
 
-            user = {
-                "id": row["id"].__str__(),
-                "name": row["name"],
-                "email": row["email"],
-                "created": row["created"].isoformat(' '),
-                "verified_email": verified_email
-            }
             users.append(user)
 
         return users
+
 
     async def get_user_by_id(self, user_id: UUID) -> User:
         return await self._get_user(user_id=user_id)

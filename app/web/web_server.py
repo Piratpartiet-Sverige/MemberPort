@@ -5,12 +5,14 @@ import ssl
 import tornado.ioloop
 import tornado.web
 
+from plugins.plugin import get_available_plugins, load_plugins
 from configparser import ConfigParser
 from tornado.platform.asyncio import AnyThreadEventLoopPolicy
 from app.config import Config
 from app.logger import logger
 from app.web.handlers.authentication import SignInHandler, SignOutHandler, SignUpHandler
 from app.web.handlers.main import MainHandler
+from app.web.handlers.error import Error404Handler
 
 
 class WebAppOptions:
@@ -48,20 +50,31 @@ def start():
     configure_application(options)
 
     asyncio.set_event_loop_policy(AnyThreadEventLoopPolicy())
+    logger.info("Server was successfully started")
+
     ioloop.start()
 
 
 def configure_application(options: WebAppOptions):
     ioloop = tornado.ioloop.IOLoop.current()
 
+    available_plugins = get_available_plugins()
+    plugins = load_plugins(available_plugins)
+
+    handlers = [
+        (r"/", MainHandler),
+        (r"/sign-in", SignInHandler),
+        (r"/sign-out", SignOutHandler),
+        (r"/sign-up", SignUpHandler),
+        (r"/login", tornado.web.RedirectHandler, dict(url=r"/sign-in")),
+    ]
+
+    for plugin in plugins:
+        handlers.append(plugin.get_handler())
+
     webapp = tornado.web.Application(
-        [
-            (r"/", MainHandler),
-            (r"/sign-in", SignInHandler),
-            (r"/sign-out", SignOutHandler),
-            (r"/sign-up", SignUpHandler),
-            (r"/login", tornado.web.RedirectHandler, dict(url=r"/sign-in")),
-        ],
+        handlers,
+        default_handler_class=Error404Handler,
         cookie_secret=options.cookie_secret,
         template_path=os.path.join(os.path.dirname(__file__), "..", "..", "templates"),
         static_path=os.path.join(os.path.dirname(__file__), "..", "..", "static"),
