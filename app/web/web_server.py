@@ -5,11 +5,11 @@ import ssl
 import tornado.ioloop
 import tornado.web
 
-from plugins.plugin import get_available_plugins, load_plugins
 from configparser import ConfigParser
 from tornado.platform.asyncio import AnyThreadEventLoopPolicy
 from app.config import Config
 from app.logger import logger
+from app.plugins.plugin import get_available_plugins, load_plugins
 from app.web.handlers.authentication import SignInHandler, SignOutHandler, SignUpHandler
 from app.web.handlers.main import MainHandler
 from app.web.handlers.error import Error404Handler

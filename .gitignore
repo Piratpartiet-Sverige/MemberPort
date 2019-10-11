@@ -6,5 +6,6 @@ server*.log
 config.ini
 **/__pycache__/*
 database.dia~
-plugins/*
-!plugins/__init__.py
+app/plugins/*
+!app/plugins/plugin.py
+!app/plugins/__init__.py
