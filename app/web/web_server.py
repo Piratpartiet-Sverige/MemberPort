@@ -84,6 +84,15 @@ def configure_application(options: WebAppOptions):
         debug=options.debug
     )
 
+    db = init_db(options)
+    if db is not None:
+        logger.debug("Database connection initialized...")
+        webapp.db = asyncio.get_event_loop().run_until_complete(db)
+    else:
+        logger.error("Database connection failed")
+        logger.warning("Running without a database")
+        webapp.db = None
+
     if options.https is True:
         cert_file = os.path.abspath(options.cert_file)
         private_file = os.path.abspath(options.private_file)
@@ -101,20 +110,9 @@ def configure_application(options: WebAppOptions):
         http_server = tornado.httpserver.HTTPServer(webapp, ssl_options=ssl_ctx)
         http_server.listen(options.port)
 
-        db = init_db(options)
-        if db is not None:
-            webapp.db = asyncio.get_event_loop().run_until_complete(db)
-        else:
-            webapp.db = None
-
         return http_server
     else:
         webapp.listen(options.port)
-        db = init_db(options)
-        if db is not None:
-            webapp.db = asyncio.get_event_loop().run_until_complete(db)
-        else:
-            webapp.db = None
 
         return webapp
 
