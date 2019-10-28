@@ -12,6 +12,7 @@ from app.logger import logger
 from app.plugins.plugin import get_available_plugins, load_plugins
 from app.web.handlers.authentication import SignInHandler, SignOutHandler, SignUpHandler
 from app.web.handlers.main import MainHandler
+from app.web.handlers.members import MembersHandler
 from app.web.handlers.error import Error404Handler
 
 
@@ -63,6 +64,7 @@ def configure_application(options: WebAppOptions):
 
     handlers = [
         (r"/", MainHandler),
+        (r"/members", MembersHandler),
         (r"/sign-in", SignInHandler),
         (r"/sign-out", SignOutHandler),
         (r"/sign-up", SignUpHandler),

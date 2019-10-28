@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block head %}
+<script src="{{ static_url('js/ag-grid-community.min.noStyle.js') }}"></script>
+<link rel="stylesheet" href="{{ static_url('css/ag-grid.css') }}">
+<link rel="stylesheet" href="{{ static_url('css/ag-theme-balham.css') }}">
+{% end %}
+{% block content %}
+<h1 class="title">Members</h1>
+<div id="myGrid" style="height: 600px;width:500px;" class="ag-theme-balham"></div>
+
+<script type="text/javascript" charset="utf-8">
+    // specify the columns
+    var columnDefs = [
+        { headerName: "Name", field: "name" },
+        { headerName: "E-mail", field: "email" },
+        { headerName: "Year", field: "year" }
+    ];
+
+    // specify the data
+    var rowData = [
+        {% for member in members %}
+        { name: "{{ member.name }}", email: "{{ member.email }}", year: "{{ member.created }}" },
+        {% end %}
+    ];
+
+    // let the grid know which columns and what data to use
+    var gridOptions = {
+        columnDefs: columnDefs,
+        rowData: rowData
+    };
+
+    // lookup the container we want the Grid to use
+    var eGridDiv = document.querySelector('#myGrid');
+
+    // create the grid passing in the div to use together with the columns & data we want to use
+    new agGrid.Grid(eGridDiv, gridOptions);
+
+</script>
+{% end %}
