@@ -238,7 +238,7 @@ class UsersDao:
 
         return members
 
-    async def get_only_users(self, search: str, order_column: str, order_dir_asc: bool) -> list:
+    async def get_users(self, search: str, order_column: str, order_dir_asc: bool) -> list:
         """
         Get a list only containing account data
         :return: A list filled dicts
