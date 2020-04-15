@@ -1,0 +1,80 @@
+dsn: sqlite:///home/ory/sqlite/db.sqlite?_fk=true
+
+identity:
+  traits:
+    default_schema_url: file:///etc/pirate-config/identity.traits.schema.json
+
+selfservice:
+  logout:
+    redirect_to: http://127.0.0.1:4455/auth/login
+
+  strategies:
+    password:
+      enabled: true
+    oidc:
+      enabled: false
+
+  verify:
+    return_to: http://127.0.0.1:4455/
+
+  login:
+    request_lifespan: 10m
+    after:
+      password:
+        -
+          job: session
+        -
+          job: redirect
+          config:
+            default_redirect_url: http://127.0.0.1:4455/
+            allow_user_defined_redirect: true
+
+  registration:
+    request_lifespan: 10m
+    after:
+      password:
+        -
+          job: verify
+        -
+          job: session
+        -
+          job: redirect
+          config:
+            default_redirect_url: http://127.0.0.1:4455/
+            allow_user_defined_redirect: true
+
+log:
+  level: debug
+
+secrets:
+  session:
+    - PLEASE-CHANGE-ME-I-AM-VERY-INSECURE
+
+urls:
+  login_ui: http://127.0.0.1:4455/auth/login
+  registration_ui: http://127.0.0.1:4455/auth/registration
+  error_ui: http://127.0.0.1:4455/error
+  profile_ui: http://127.0.0.1:4455/profile
+  verify_ui: http://127.0.0.1:4455/verify
+
+  # These are undefined because not available in this demo
+  mfa_ui: http://crew-db:8888/
+
+  self:
+    public: http://127.0.0.1:4455/.ory/kratos/public/
+    admin: http://pirate-kratos:4434
+  default_return_to: http://127.0.0.1:4455/
+  whitelisted_return_to_domains:
+    - http://127.0.0.1:4455
+
+hashers:
+  argon2:
+    parallelism: 1
+    memory: 131072
+    iterations: 2
+    salt_length: 16
+    key_length: 16
+
+courier:
+  smtp:
+    connection_uri: smtps://test:test@mailslurper:1025/?skip_ssl_verify=true

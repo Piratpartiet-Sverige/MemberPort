@@ -22,7 +22,7 @@ class Config:
             Config.__instance = self
 
         base_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..")
-        self._config_file = os.path.join(base_dir, "config.ini")
+        self._config_file = os.path.join(base_dir, "config/config.ini")
 
         if os.path.isfile(self._config_file):
             # Load values from file if it exists

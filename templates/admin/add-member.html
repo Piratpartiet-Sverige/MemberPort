@@ -1,0 +1,80 @@
+{% extends "../base.html" %}
+{% block head %}
+<script src="{{ static_url('js/ag-grid-community.min.noStyle.js') }}"></script>
+<link rel="stylesheet" href="{{ static_url('css/ag-grid.css') }}">
+<link rel="stylesheet" href="{{ static_url('css/ag-theme-balham.css') }}">
+{% end %}
+{% block content %}
+<h1 class="title">Add member</h1>
+{% module xsrf_form_html() %}
+<div class="field">
+    <div class="label">Name</div>
+    <div class="control">
+        <input class="input" name="name" type="text" placeholder="Name">
+    </div>
+</div>
+<div class="field">
+    <div class="label">E-mail</div>
+    <div class="control">
+        <input class="input" name="email" type="email" placeholder="E-mail">
+    </div>
+</div>
+<div class="field">
+    <div class="label">Password</div>
+    <div class="control">
+        <input class="input" name="password" type="password" placeholder="Secret">
+    </div>
+</div>
+<div class="field">
+    <div class="label">Phone</div>
+    <div class="control">
+        <input class="input" name="phone" type="tel" placeholder="Phone">
+    </div>
+</div>
+{% for organization in organizations %}
+<div class="field">
+    <label class="checkbox">
+    <input type="checkbox">
+    {{ organization.name }}
+    </label>
+</div>
+{% end %}
+<div class="field">
+    <div class="control">
+        <button type="submit" onclick="submit()" class="button is-link">Submit</button>
+    </div>
+</div>
+<script>
+async function postData(url = '', data = {}) {
+    const response = await fetch(url, {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        mode: 'cors', // no-cors, *cors, same-origin
+        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: 'same-origin', // include, *same-origin, omit
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        redirect: 'follow',
+        referrerPolicy: 'no-referrer',
+        body: data
+    });
+  return await response.json(); // parses JSON response into native JavaScript objects
+}
+
+function submit() {
+    var details = {
+        '_xsrf': document.getElementsByName("_xsrf")[0].value,
+        'name': document.getElementsByName("name")[0].value,
+        'email': document.getElementsByName("email")[0].value,
+        'password': document.getElementsByName("password")[0].value,
+        'phone': document.getElementsByName("phone")[0].value,
+    }
+
+    const formBody = Object.keys(details).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(details[key])).join('&');
+
+    postData('/api/member', formBody).then((data) => {
+        console.log(data); // JSON data parsed by `response.json()` call
+    });
+}
+</script>
+{% end %}

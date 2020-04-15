@@ -18,7 +18,7 @@
                         <figure class="avatar">
                             <img src="{{ static_url('img/logo.svg') }}" >
                         </figure>
-                        <form action="/.ory/kratos/public/self-service/browser/flows/login/strategies/password?request={{ request }}" method="post">
+                        <form action="/.ory/kratos/public/self-service/browser/flows/registration/strategies/password?request={{ request }}" method="post">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                             <div class="field">
                                 <div class="control">
@@ -31,7 +31,7 @@
                                 </div>
                             </div>
                             <button type="submit" class="button is-block is-info is-large is-fullwidth">
-                                Sign in
+                                Sign up
                             </button>
                         </form>
                     </div>

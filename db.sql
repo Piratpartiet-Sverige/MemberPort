@@ -1,4 +1,4 @@
--- Database structure for Tornado Shelter
+-- Database structure for Crew DB
 -- SQL is written with PostgreSQL syntax
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -38,8 +38,10 @@ CREATE TABLE organizations
 CREATE TABLE memberships
 (
     "organization" UUID REFERENCES organizations(id),
-    "user"         UUID REFERENCES users(id),
-    PRIMARY KEY ("organization", "user")
+    "member"       UUID REFERENCES members("user"),
+    created        TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    renewal        TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    PRIMARY KEY ("organization", "member")
 );
 
 CREATE TABLE roles

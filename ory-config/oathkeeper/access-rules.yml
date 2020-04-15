@@ -1,0 +1,65 @@
+-
+  id: "ory:kratos:public"
+  upstream:
+    preserve_host: true
+    url: "http://pirate-kratos:4433"
+    strip_path: /.ory/kratos/public
+  match:
+    url: "http://127.0.0.1:4455/.ory/kratos/public/<.*>"
+    methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - PATCH
+  authenticators:
+    -
+      handler: noop
+  authorizer:
+    handler: allow
+  mutators:
+    - handler: noop
+
+-
+  id: "piratpartiet:pirateweb:anonymous"
+  upstream:
+    preserve_host: true
+    url: "http://crew-db:8888"
+  match:
+    url: "http://127.0.0.1:4455/<(admin/members|error|verify|auth/login|auth/registration|(.+\\.css))(|/)>"
+    methods:
+      - GET
+      - POST
+  authenticators:
+    -
+      handler: anonymous
+  authorizer:
+    handler: allow
+  mutators:
+    -
+      handler: noop
+
+-
+  id: "piratpartiet:pirateweb:protected"
+  upstream:
+    preserve_host: true
+    url: "http://crew-db:8888/"
+  match:
+    url: "http://127.0.0.1:4455<(/debug|/|/dashboard|/profile|)(|/)>"
+    methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - PATCH
+  authenticators:
+    -
+      handler: cookie_session
+  authorizer:
+    handler: allow
+  mutators:
+    - handler: id_token
+  errors:
+    - handler: redirect
+      config:
+        to: http://127.0.0.1:4455/auth/login

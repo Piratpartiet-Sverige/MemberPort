@@ -49,6 +49,13 @@ def member_to_json(member: Member) -> dict:
     }
 
 
+class Organization:
+    id: UUID
+    name: str
+    description: str
+    created: datetime
+
+
 class Session:
     id: UUID
     user: User

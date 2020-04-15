@@ -1,34 +1,72 @@
+import ory_kratos_client
+
+from ory_kratos_client.rest import ApiException
+from ory_kratos_client.configuration import Configuration
 from app.database.dao.users import UsersDao
 from app.web.handlers.base import BaseHandler
 from app.config import Config
+from tornado import httpclient
+from app.logger import logger
 
 
 class SignInHandler(BaseHandler):
     def get(self):
-        self.render("sign-in.html", error="")
+        request = self.get_argument("request", default="")
 
-    async def post(self):
-        email = self.get_argument("email")
-        password = self.get_argument("password")
+        if (request == ""):
+            return self.redirect("http://127.0.0.1:4455/.ory/kratos/public/self-service/browser/flows/login")
 
-        if email is None or password is None:
-            self.render("sign-in.html", error="E-mail och/eller lösenord var tomt")
-            return
+        configuration = Configuration()
+        configuration.host = "http://pirate-kratos:4434"
 
-        dao = UsersDao(self.db)
-        result = await dao.check_user_password(email, password)
-        if result.valid:
-            ip = self.request.remote_ip
-            session = await dao.new_session(result.user.id, ip)
-            self.set_session_cookie(session.hash)
-            self.redirect("/")
-        else:
-            self.render("sign-in.html", error="E-mail och/eller lösenord var felaktigt")
+        csrf_token = ""
+        error = ""
+
+        with ory_kratos_client.ApiClient(configuration) as api_client:
+            api_instance = ory_kratos_client.PublicApi(api_client)
+            try:
+                # Get the request context of browser-based registration user flows
+                api_response = api_instance.get_self_service_browser_login_request(request)
+                csrf_token = api_response.methods['password'].config.fields[-1].value
+                if api_response.methods['password'].config.errors != None:
+                    error = api_response.methods['password'].config.errors[0].message
+            except ApiException as e:
+                logger.error("Exception when calling PublicApi->get_self_service_browser_login_request: %s\n" % e)
+
+        logger.debug("csrf_token: " + csrf_token)
+
+        self.render("sign-in.html", request=request, csrf_token=csrf_token, error=error)
 
 
 class SignUpHandler(BaseHandler):
     def get(self):
-        self.render("sign-up.html", error="")
+        request = self.get_argument("request", default="")
+
+        if (request == ""):
+            return self.redirect("http://127.0.0.1:4455/.ory/kratos/public/self-service/browser/flows/registration")
+
+        configuration = Configuration()
+        configuration.host = "http://pirate-kratos:4434"
+
+        csrf_token = ""
+        error = ""
+
+        with ory_kratos_client.ApiClient(configuration) as api_client:
+            api_instance = ory_kratos_client.PublicApi(api_client)
+            try:
+                api_response = api_instance.get_self_service_browser_registration_request(request)
+                logger.debug(api_response)
+                csrf_token = api_response.methods['password'].config.fields[-1].value
+                if api_response.methods['password'].config.errors != None:
+                    error = api_response.methods['password'].config.errors[0].message
+            except ApiException as e:
+                logger.error("Exception when calling PublicApi->get_self_service_browser_registration_request: %s\n" % e)
+            except ValueError as e:
+                logger.error("Exception when calling PublicApi->get_self_service_browser_registration_request: %s\n" % e)
+
+        logger.debug("csrf_token: " + csrf_token)
+
+        self.render("sign-up.html", request=request, csrf_token=csrf_token, error=error)
 
     async def post(self):
         email = self.get_argument("email")

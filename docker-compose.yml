@@ -1,0 +1,128 @@
+version: '3.7'
+
+services:
+  pirate-kratos-migrate:
+    image: oryd/kratos:latest-sqlite
+    environment:
+      - DSN=sqlite:///home/ory/sqlite/db.sqlite?_fk=true
+      - SQA_OPT_OUT=true
+    volumes:
+      -
+        type: volume
+        source: kratos-sqlite
+        target: /home/ory/sqlite
+        read_only: false
+      -
+        type: bind
+        source: ./ory-config/kratos
+        target: /etc/pirate-config
+    command:
+      -c /etc/pirate-config/kratos.yml migrate sql -e --yes
+    restart: on-failure
+    networks:
+      - intranet
+
+  postgres-db:
+    image: postgres
+    environment:
+      POSTGRES_DB: crewdb
+      POSTGRES_USER: super
+      POSTGRES_PASSWORD: super
+      PGDATA: /data/postgres
+    volumes:
+       - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    restart: on-failure
+    networks:
+      - intranet
+
+  crew-db:
+    image: crew-db:latest
+    depends_on:
+      - postgres-db
+    ports:
+      - "8888:8888"
+    volumes:
+      -
+        type: bind
+        source: ./config
+        target: /app/config
+      -
+        type: bind
+        source: ./app
+        target: /app/app
+      -
+        type: bind
+        source: ./templates
+        target: /app/templates
+      -
+        type: bind
+        source: ./static
+        target: /app/static
+    restart: on-failure
+    networks:
+      - intranet
+
+  pirate-oathkeeper:
+    image: oryd/oathkeeper:latest
+    depends_on:
+      - pirate-kratos
+    ports:
+      - "4455:4455"
+      - "4456:4456"
+    command:
+      serve proxy -c "/etc/pirate-config/oathkeeper.yml"
+    environment:
+      - LOG_LEVEL=debug
+      - SQA_OPT_OUT=true
+    restart: on-failure
+    networks:
+      - intranet
+    volumes:
+      -
+        type: bind
+        source: ./ory-config/oathkeeper
+        target: /etc/pirate-config
+
+  pirate-kratos:
+    depends_on:
+      - crew-db
+      - pirate-kratos-migrate
+    image: oryd/kratos:latest-sqlite
+    ports:
+      - "4433:4433" # public
+      - "4434:4434" # admin
+    restart: unless-stopped
+    environment:
+      - DSN=sqlite:///home/ory/sqlite/db.sqlite?_fk=true
+      - SQA_OPT_OUT=true
+    command:
+      serve -c /etc/pirate-config/kratos.yml --dev
+    volumes:
+      -
+        type: volume
+        source: kratos-sqlite
+        target: /home/ory/sqlite
+        read_only: false
+      -
+        type: bind
+        source: ./ory-config/kratos
+        target: /etc/pirate-config
+    networks:
+      - intranet
+
+  mailslurper:
+    image: oryd/mailslurper:latest-smtps
+    ports:
+      - "4436:4436"
+      - "4437:4437"
+    networks:
+      - intranet
+
+networks:
+  intranet:
+
+volumes:
+  kratos-sqlite:
+  postgres:

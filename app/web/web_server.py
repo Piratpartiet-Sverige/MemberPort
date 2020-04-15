@@ -10,9 +10,11 @@ from tornado.platform.asyncio import AnyThreadEventLoopPolicy
 from app.config import Config
 from app.logger import logger
 from app.plugins.plugin import get_available_plugins, load_plugins
+from app.web.handlers.admin.add_member import AddMemberHandler
+from app.web.handlers.admin.members import MembersHandler
+from app.web.handlers.api.member import APIMemberHandler
 from app.web.handlers.authentication import SignInHandler, SignOutHandler, SignUpHandler
 from app.web.handlers.main import MainHandler
-from app.web.handlers.members import MembersHandler
 from app.web.handlers.error import Error404Handler
 
 
@@ -64,10 +66,12 @@ def configure_application(options: WebAppOptions):
 
     handlers = [
         (r"/", MainHandler),
-        (r"/members", MembersHandler),
-        (r"/sign-in", SignInHandler),
+        (r"/admin/add-member", AddMemberHandler),
+        (r"/admin/members", MembersHandler),
+        (r"/api/member", APIMemberHandler),
+        (r"/auth/login", SignInHandler),
         (r"/sign-out", SignOutHandler),
-        (r"/sign-up", SignUpHandler),
+        (r"/auth/registration", SignUpHandler),
         (r"/login", tornado.web.RedirectHandler, dict(url=r"/sign-in")),
     ]
 
@@ -120,7 +124,7 @@ def configure_application(options: WebAppOptions):
 
 
 def init_db(options: WebAppOptions):
-    if options.db_hostname is "" and options.dbname is "":
+    if options.db_hostname == "" and options.dbname == "":
         return None
 
     dsn = "postgres://{username}:{password}@{hostname}/{database}".format(

@@ -2,3 +2,4 @@ asyncpg
 bcrypt
 tornado
 pytz
+ory-kratos-client
