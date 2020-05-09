@@ -26,7 +26,7 @@
     preserve_host: true
     url: "http://crew-db:8888"
   match:
-    url: "http://127.0.0.1:4455/<(admin/members|error|verify|auth/login|auth/registration|(.+\\.css))(|/)>"
+    url: "http://127.0.0.1:4455/<(admin/members|error|verify|auth/login|auth/registration|(.+\\.css)|(.+\\.js))(|/)>"
     methods:
       - GET
       - POST

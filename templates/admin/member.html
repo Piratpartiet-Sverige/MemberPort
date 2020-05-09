@@ -19,7 +19,7 @@
     // specify the data
     var rowData = [
         {% for member in members %}
-        { name: "{{ member.name }}", email: "{{ member.email }}", year: "{{ member.created }}" },
+        { name: "{{ member.id }}", email: "{{ member.traits['email'] }}", year: "{{ member.traits_schema_id }}" },
         {% end %}
     ];
 
