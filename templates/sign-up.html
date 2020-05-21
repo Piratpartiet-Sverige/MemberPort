@@ -22,12 +22,22 @@
                             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                             <div class="field">
                                 <div class="control">
-                                    <input name="identifier" class="input is-large" type="email" placeholder="E-mail" autofocus="">
+                                    <input name="traits.name.first" class="input is-large" type="text" placeholder="First name" />
                                 </div>
                             </div>
                             <div class="field">
                                 <div class="control">
-                                    <input name="password" class="input is-large" type="password" placeholder="Password">
+                                    <input name="traits.name.last" class="input is-large" type="text" placeholder="Last name" />
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="control">
+                                    <input name="traits.email" class="input is-large" type="email" placeholder="E-Mail" />
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="control">
+                                    <input name="password" class="input is-large" type="password" placeholder="Password" />
                                 </div>
                             </div>
                             <button type="submit" class="button is-block is-info is-large is-fullwidth">

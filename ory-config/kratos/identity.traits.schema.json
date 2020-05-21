@@ -4,11 +4,44 @@
   "title": "Member",
   "type": "object",
   "properties": {
+    "name": {
+      "type": "object",
+      "properties": {
+        "first": {
+          "type": "string"
+        },
+        "last": {
+          "type": "string"
+        }
+      }
+    },
+    "street": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "postal_code": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string",
+      "format": "phone",
+      "title": "Phone number",
+      "minLength": 6,
+      "ory.sh/kratos": {
+        "credentials": {
+          "password": {
+            "identifier": true
+          }
+        }
+      }
+    },
     "email": {
       "type": "string",
       "format": "email",
       "title": "E-Mail",
-      "minLength": 3,
+      "minLength": 5,
       "ory.sh/kratos": {
         "credentials": {
           "password": {
@@ -22,7 +55,8 @@
     }
   },
   "required": [
-    "email"
+    "email",
+    "name"
   ],
   "additionalProperties": false
 }

@@ -28,7 +28,13 @@ class MembersHandler(BaseHandler):
                         id=uuid4().__str__(),
                         traits_schema_id="default",
                         traits={
-                            "email": "admin@piratpartiet.se"
+                            "email": "admin@piratpartiet.se",
+                            "name": {
+                                "first": "Kalle",
+                                "last": "Pirat"
+                            },
+                            "phone": "0000000000",
+                            "city": "Lund"
                         }
                     )
                     api_response = api_instance.create_identity(body)

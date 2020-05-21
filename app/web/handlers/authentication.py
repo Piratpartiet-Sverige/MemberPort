@@ -52,21 +52,22 @@ class SignUpHandler(BaseHandler):
         error = ""
 
         with ory_kratos_client.ApiClient(configuration) as api_client:
-            api_instance = ory_kratos_client.PublicApi(api_client)
+            api_instance = ory_kratos_client.AdminApi(api_client)
             try:
                 api_response = api_instance.get_self_service_browser_registration_request(request)
                 logger.debug(api_response)
-                csrf_token = api_response.methods['password'].config.fields[-1].value
+                csrf_token = api_response.methods['password'].config.fields[0].value
+                inputs = api_response.methods['password'].config.fields
                 if api_response.methods['password'].config.errors != None:
                     error = api_response.methods['password'].config.errors[0].message
             except ApiException as e:
-                logger.error("Exception when calling PublicApi->get_self_service_browser_registration_request: %s\n" % e)
+                logger.error("Exception when calling AdminApi->get_self_service_browser_registration_request: %s\n" % e)
             except ValueError as e:
                 logger.error("Exception when calling PublicApi->get_self_service_browser_registration_request: %s\n" % e)
 
         logger.debug("csrf_token: " + csrf_token)
 
-        self.render("sign-up.html", request=request, csrf_token=csrf_token, error=error)
+        self.render("sign-up.html", request=request, csrf_token=csrf_token, error=error, inputs=inputs)
 
     async def post(self):
         email = self.get_argument("email")
