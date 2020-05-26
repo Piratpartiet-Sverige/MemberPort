@@ -1,3 +1,7 @@
+import ory_kratos_client
+
+from ory_kratos_client.rest import ApiException
+from ory_kratos_client.configuration import Configuration
 from datetime import datetime, timedelta
 from typing import Union
 from uuid import UUID
@@ -24,7 +28,7 @@ class BaseHandler(RequestHandler):
         """
         Do not call manually. This runs on every request before get/post/etc.
         """
-        self._current_user = await self.get_current_user()
+        self._current_user = self.get_current_user()
 
     def is_authenticated(self) -> bool:
         """
@@ -32,36 +36,33 @@ class BaseHandler(RequestHandler):
 
         :returns: a boolean
         """
-        return self._current_user is not None
+        return self.session_hash != None
 
-    async def get_current_user(self) -> Union[Session, None]:
+    def get_current_user(self) -> Union[Session, None]:
         """
         Do not use this method to get the current user session, use the property `self.current_user` instead.
         """
         session_hash = self.session_hash
-        ip = self.request.remote_ip
+        logger.debug(session_hash)
 
         if session_hash is None:
             return None
 
-        dao = UsersDao(self.db)
-        session = await dao.get_session_by_hash(session_hash)
+        configuration = Configuration()
+        configuration.host = "http://pirate-kratos:4433"
 
-        if session is None:
-            # Session hash is not in the database
-            self.clear_session_cookie()
-            return None
+        api_response = None
 
-        max_idle_days = Config.get_config().getint("Session", "max_idle_days")
+        with ory_kratos_client.ApiClient(configuration, cookie="ory_kratos_session=" + session_hash + ";") as api_client:
+            api_instance = ory_kratos_client.PublicApi(api_client)
+            try:
+                api_response = api_instance.whoami()
+            except ApiException as e:
+                logger.error("Exception when calling PublicApi->whoami: %s\n" % e)
 
-        # Check if session is older than max configured idle days, if it is; sign out
-        if session.last_used < datetime.now() - timedelta(days=max_idle_days):
-            await dao.remove_session(session_hash)
-            self.clear_session_cookie()
-            return None
+        logger.debug(api_response)
 
-        new_session = await dao.update_session(session_hash, ip)
-        return new_session
+        return api_response
 
     @property
     def current_user(self) -> Union[Session, None]:
@@ -73,15 +74,11 @@ class BaseHandler(RequestHandler):
 
     @property
     def session_hash(self) -> Union[str, None]:
-        session_hash = self.get_secure_cookie("session")
-        return session_hash.decode("utf8") if session_hash is not None else None
-
-    def set_session_cookie(self, value=None):
-        if value is not None and value != "":
-            self.set_secure_cookie("session", value)
+        session_hash = self.get_cookie("ory_kratos_session")
+        return session_hash
 
     def clear_session_cookie(self):
-        self.clear_cookie("session")
+        self.clear_cookie("ory_kratos_session")
 
     @staticmethod
     def check_uuid(uuid: Union[UUID, str]) -> Union[UUID, None]:

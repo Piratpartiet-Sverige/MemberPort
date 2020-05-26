@@ -6,7 +6,7 @@ identity:
 
 selfservice:
   logout:
-    redirect_to: http://127.0.0.1:4455/auth/login
+    redirect_to: http://127.0.0.1:8888/auth/login
 
   strategies:
     password:
@@ -21,18 +21,18 @@ selfservice:
   login:
     request_lifespan: 10m
     after:
-      default_return_to: http://127.0.0.1:4455/
+      default_return_to: http://127.0.0.1:8888/
       password:
-        default_return_to: http://127.0.0.1:4455/
+        default_return_to: http://127.0.0.1:8888/
         hooks:
           - hook: revoke_active_sessions
 
   registration:
     request_lifespan: 10m
     after:
-      default_return_to: http://127.0.0.1:4455/
+      default_return_to: http://127.0.0.1:8888/
       password:
-        default_return_to: http://127.0.0.1:4455/
+        default_return_to: http://127.0.0.1:8888/
         hooks:
           - hook: session
           - hook: verify
@@ -46,20 +46,20 @@ secrets:
     - PLEASE-CHANGE-ME-I-AM-VERY-INSECURE
 
 urls:
-  login_ui: http://127.0.0.1:4455/auth/login
-  registration_ui: http://127.0.0.1:4455/auth/registration
-  error_ui: http://127.0.0.1:4455/error
-  verify_ui: http://127.0.0.1:4455/verify
+  login_ui: http://127.0.0.1:8888/auth/login
+  registration_ui: http://127.0.0.1:8888/auth/registration
+  error_ui: http://127.0.0.1:8888/error
+  verify_ui: http://127.0.0.1:8888/verify
 
   # These are undefined because not available in this demo
   mfa_ui: http://crew-db:8888/
 
   self:
-    public: http://127.0.0.1:4455/.ory/kratos/public/
+    public: http://pirate-kratos:4433
     admin: http://pirate-kratos:4434
-  default_return_to: http://127.0.0.1:4455/
+  default_return_to: http://127.0.0.1:8888/
   whitelisted_return_to_urls:
-    - http://127.0.0.1:4455
+    - http://127.0.0.1:8888
 
 hashers:
   argon2:

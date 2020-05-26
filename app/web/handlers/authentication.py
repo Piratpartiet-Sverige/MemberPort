@@ -14,7 +14,7 @@ class SignInHandler(BaseHandler):
         request = self.get_argument("request", default="")
 
         if (request == ""):
-            return self.redirect("http://127.0.0.1:4455/.ory/kratos/public/self-service/browser/flows/login")
+            return self.redirect("http://127.0.0.1:8888/.ory/kratos/public/self-service/browser/flows/login")
 
         configuration = Configuration()
         configuration.host = "http://pirate-kratos:4434"
@@ -43,7 +43,7 @@ class SignUpHandler(BaseHandler):
         request = self.get_argument("request", default="")
 
         if (request == ""):
-            return self.redirect("http://127.0.0.1:4455/.ory/kratos/public/self-service/browser/flows/registration")
+            return self.redirect("http://127.0.0.1:8888/.ory/kratos/public/self-service/browser/flows/registration")
 
         configuration = Configuration()
         configuration.host = "http://pirate-kratos:4434"

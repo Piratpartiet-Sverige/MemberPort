@@ -64,27 +64,6 @@ services:
     networks:
       - intranet
 
-  pirate-oathkeeper:
-    image: oryd/oathkeeper:latest
-    depends_on:
-      - pirate-kratos
-    ports:
-      - "4455:4455"
-      - "4456:4456"
-    command:
-      serve proxy -c "/etc/pirate-config/oathkeeper.yml"
-    environment:
-      - LOG_LEVEL=debug
-      - SQA_OPT_OUT=true
-    restart: on-failure
-    networks:
-      - intranet
-    volumes:
-      -
-        type: bind
-        source: ./ory-config/oathkeeper
-        target: /etc/pirate-config
-
   pirate-kratos:
     depends_on:
       - crew-db

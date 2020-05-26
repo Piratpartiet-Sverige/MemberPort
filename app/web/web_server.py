@@ -14,6 +14,7 @@ from app.web.handlers.admin.add_member import AddMemberHandler
 from app.web.handlers.admin.members import MembersHandler
 from app.web.handlers.api.member import APIMemberHandler
 from app.web.handlers.authentication import SignInHandler, SignOutHandler, SignUpHandler
+from app.web.handlers.kratos import KratosHandler
 from app.web.handlers.main import MainHandler
 from app.web.handlers.error import Error404Handler
 
@@ -66,13 +67,14 @@ def configure_application(options: WebAppOptions):
 
     handlers = [
         (r"/", MainHandler),
+        (r"/.ory/kratos/public/(.*)", KratosHandler),
         (r"/admin/add-member", AddMemberHandler),
         (r"/admin/members", MembersHandler),
         (r"/api/member", APIMemberHandler),
         (r"/auth/login", SignInHandler),
         (r"/sign-out", SignOutHandler),
         (r"/auth/registration", SignUpHandler),
-        (r"/login", tornado.web.RedirectHandler, dict(url=r"/sign-in")),
+        (r"/login", tornado.web.RedirectHandler, dict(url=r"/auth/login")),
     ]
 
     for plugin in plugins:
@@ -84,7 +86,7 @@ def configure_application(options: WebAppOptions):
         cookie_secret=options.cookie_secret,
         template_path=os.path.join(os.path.dirname(__file__), "..", "..", "templates"),
         static_path=os.path.join(os.path.dirname(__file__), "..", "..", "static"),
-        login_url="/sign-in",
+        login_url="/auth/login",
         xsrf_cookies=options.xsrf,
         ioloop=ioloop,
         debug=options.debug
