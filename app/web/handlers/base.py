@@ -12,7 +12,7 @@ from tornado.web import RequestHandler
 from app.config import Config
 from app.logger import logger
 from app.database.dao.users import UsersDao
-from app.models import Session
+from app.models import Session, User
 
 
 class BaseHandler(RequestHandler):
@@ -36,7 +36,7 @@ class BaseHandler(RequestHandler):
 
         :returns: a boolean
         """
-        return self.session_hash != None
+        return self.current_user != None
 
     def get_current_user(self) -> Union[Session, None]:
         """
@@ -52,17 +52,28 @@ class BaseHandler(RequestHandler):
         configuration.host = "http://pirate-kratos:4433"
 
         api_response = None
+        session = None
 
         with ory_kratos_client.ApiClient(configuration, cookie="ory_kratos_session=" + session_hash + ";") as api_client:
             api_instance = ory_kratos_client.PublicApi(api_client)
             try:
                 api_response = api_instance.whoami()
+                session = Session()
+                session.id = UUID(api_response.sid)
+                session.hash = session_hash
+                session.issued_at = api_response.issued_at
+                session.expires_at = api_response.expires_at
+                user = User()
+                user.id = UUID(api_response.identity.id)
+                user.name = api_response.identity.traits["name"]["first"] + " " + api_response.identity.traits["name"]["last"]
+                user.email = api_response.identity.traits["email"]
+                session.user = user
+                logger.debug("Session user: " + str(user.id))
+
             except ApiException as e:
                 logger.error("Exception when calling PublicApi->whoami: %s\n" % e)
 
-        logger.debug(api_response)
-
-        return api_response
+        return session
 
     @property
     def current_user(self) -> Union[Session, None]:

@@ -1,119 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-<nav class="navbar is-dark" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-        <a class="navbar-item" href="https://piratpartiet.se">
-            <img src="https://mediawiki.piratpartiet.se/images/thumb/a/a8/Vitt_segel.svg/800px-Vitt_segel.svg.png"
-                width="28" height="28">
-        </a>
-
-        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
-            data-target="navbarBasicExample">
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-        </a>
-    </div>
-
-    <div id="navbarBasicExample" class="navbar-menu">
-        <div class="navbar-start">
-            <a href="dashboard.html" class="navbar-item">
-                <span class="icon">
-                    <i class="fas fa-home" aria-hidden="true"></i>
-                </span>
-                <p> Hem</p>
-            </a>
-
-
-            <div class="navbar-item has-dropdown is-hoverable">
-                <a class="navbar-link">
-                    <span class="icon">
-                        <i class="fas fa-user-alt" aria-hidden="true"></i>
-                    </span>
-                    <p>Mitt medlemskap</p>
-                </a>
-
-                <div class="navbar-dropdown">
-                    <a href="profile.html#profil" class="navbar-item">
-                        Min profil
-                    </a>
-                    <a href="profile.html#prenumerationer" class="navbar-item">
-                        Prenumerationer
-                    </a>
-                    <a href="profile.html#medlemskap" class="navbar-item">
-                        Hantera medlemskap
-                    </a>
-                    <hr class="navbar-divider">
-                    <a href="profile.html#ledare" class="navbar-item">
-                        Mina ledare
-                    </a>
-                </div>
-            </div>
-
-            <div class="navbar-item has-dropdown is-hoverable">
-                <a class="navbar-link">
-                    <span class="icon"><i class="fas fa-comments" aria-hidden="true"></i></span>
-                    <p>Kommunikation</p>
-                </a>
-
-                <div class="navbar-dropdown">
-                    <a href="https://chat.piratpartiet.se" class="navbar-item">
-                        Partichatten
-                    </a>
-                    <a href="https://mail.piratpartiet.se" class="navbar-item">
-                        Min partimail
-                    </a>
-                    <hr class="navbar-divider">
-                    <a href="sendmail.html" class="navbar-item">
-                        Skicka mail till medlemmar
-                    </a>
-                    <a href="sendsms.html" class="navbar-item">
-                        Skicka sms till medlemmar
-                    </a>
-                </div>
-            </div>
-
-            <a href="https://bitwarden.piratpartiet.se" class="navbar-item">
-                <span class="icon"><i class="fas fa-key" aria-hidden="true"></i></span>
-                <p>Lösenord</p>
-            </a>
-
-            <a href="https://docs.piratpartiet.se" class="navbar-item">
-                <span class="icon"><i class="fas fa-file-alt" aria-hidden="true"></i></span>
-                <p>Dokument</p>
-            </a>
-
-            <a href="https://osticket.piratpartiet.se" class="navbar-item">
-                <span class="icon"><i class="fas fa-receipt" aria-hidden="true"></i></span>
-                <p>OsTicket</p>
-            </a>
-
-            <a href="https://mediawiki.piratpartiet.se" class="navbar-item">
-                <span class="icon"><i class="fas fa-file-word" aria-hidden="true"></i></span>
-                <p>Wiki</p>
-            </a>
-
-        </div>
-
-        <div class="navbar-end">
-            <div class="navbar-item">
-                <div class="buttons">
-                    <a href="/home/mattias/pwlogin.html" class="button is-light">
-                        Logga ut
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</nav>
-
 <section class="section">
 
     <div class="notification is-warning" id="onboardingNotification">
         <button class="delete" onclick="toggleNotification()"></button>
         <div class="content">
-            <h3 class="title">Välkommen!</h3>
+            <h3 class="title">Välkommen {{ name }}!</h3>
             <p>Som ny medlem i Piratpartiet rekommenderar vi att du går igenom den här onboardingen.</p>
         </div>
         <div class="buttons">

@@ -60,8 +60,8 @@ class Session:
     id: UUID
     user: User
     hash: str
-    created: datetime
-    last_used: datetime
+    issued_at: datetime
+    expires_at: datetime
     last_ip: str
 
 

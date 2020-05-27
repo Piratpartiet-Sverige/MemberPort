@@ -13,48 +13,113 @@
 </head>
 <body>
     {% block body %}
-    <div class="container is-fluid">
-        <div class="columns">
-            <div class="column is-one-quarter ">
-                <aside class="menu">
-                    <p class="menu-label">
-                        General
-                    </p>
-                    <ul class="menu-list">
-                        <li><a>Dashboard</a></li>
-                        <li><a>Events</a></li>
-                    </ul>
-                    <p class="menu-label">
-                        Administration
-                    </p>
-                    <ul class="menu-list">
-                        <li><a>Account settings</a></li>
-                        <li>
-                            <a>Manage Your Organizations</a>
-                            <ul>
-                                <li><a href="/admin/members">Members</a></li>
-                                <li><a>Plugins</a></li>
-                                <li><a href="/admin/add-member">Add a member</a></li>
-                            </ul>
-                        </li>
-                        <li><a>Crew DB Settings</a></li>
-                    </ul>
-                    <p class="menu-label">
-                        Transactions
-                    </p>
-                    <ul class="menu-list">
-                        <li><a>Payments</a></li>
-                        <li><a>Transfers</a></li>
-                        <li><a>Balance</a></li>
-                    </ul>
-                </aside>
+    <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="https://piratpartiet.se">
+                <img src="https://mediawiki.piratpartiet.se/images/thumb/a/a8/Vitt_segel.svg/800px-Vitt_segel.svg.png"
+                    width="28" height="28">
+            </a>
+    
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
+                data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+    
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-start">
+                <a href="/" class="navbar-item">
+                    <span class="icon">
+                        <i class="fas fa-home" aria-hidden="true"></i>
+                    </span>
+                    <p> Hem</p>
+                </a>
+
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        <span class="icon">
+                            <i class="fas fa-user-alt" aria-hidden="true"></i>
+                        </span>
+                        <p>Mitt medlemskap</p>
+                    </a>
+    
+                    <div class="navbar-dropdown">
+                        <a href="/profile" class="navbar-item">
+                            Min profil
+                        </a>
+                        <a href="/profile#subscriptions" class="navbar-item">
+                            Prenumerationer
+                        </a>
+                        <a href="/profile#memberships" class="navbar-item">
+                            Hantera medlemskap
+                        </a>
+                        <hr class="navbar-divider">
+                        <a href="/profile#leaders" class="navbar-item">
+                            Mina ledare
+                        </a>
+                    </div>
+                </div>
+    
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        <span class="icon"><i class="fas fa-comments" aria-hidden="true"></i></span>
+                        <p>Kommunikation</p>
+                    </a>
+    
+                    <div class="navbar-dropdown">
+                        <a href="https://chat.piratpartiet.se" class="navbar-item">
+                            Partichatten
+                        </a>
+                        <a href="https://mail.piratpartiet.se" class="navbar-item">
+                            Min partimail
+                        </a>
+                        <hr class="navbar-divider">
+                        <a href="sendmail.html" class="navbar-item">
+                            Skicka mail till medlemmar
+                        </a>
+                        <a href="sendsms.html" class="navbar-item">
+                            Skicka sms till medlemmar
+                        </a>
+                    </div>
+                </div>
+    
+                <a href="https://bitwarden.piratpartiet.se" class="navbar-item">
+                    <span class="icon"><i class="fas fa-key" aria-hidden="true"></i></span>
+                    <p>Lösenord</p>
+                </a>
+    
+                <a href="https://docs.piratpartiet.se" class="navbar-item">
+                    <span class="icon"><i class="fas fa-file-alt" aria-hidden="true"></i></span>
+                    <p>Dokument</p>
+                </a>
+    
+                <a href="https://osticket.piratpartiet.se" class="navbar-item">
+                    <span class="icon"><i class="fas fa-receipt" aria-hidden="true"></i></span>
+                    <p>OsTicket</p>
+                </a>
+    
+                <a href="https://mediawiki.piratpartiet.se" class="navbar-item">
+                    <span class="icon"><i class="fas fa-file-word" aria-hidden="true"></i></span>
+                    <p>Wiki</p>
+                </a>
+    
             </div>
-            <div class="column">
-                {% block content %}
-                {% end %}
+    
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a href="/.ory/kratos/public/self-service/browser/flows/logout" class="button is-light">
+                            Logga ut
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </nav>
+    {% block content %}
+    {% end %}
     {% end %}
     {% block scripts %}{% end %}
 </body>
