@@ -7,6 +7,10 @@ class User:
     id: UUID
     name: str
     email: str
+    city: str
+    street: str
+    postal_code: str
+    
     created: datetime
 
 

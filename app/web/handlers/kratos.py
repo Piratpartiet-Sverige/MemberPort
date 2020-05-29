@@ -20,7 +20,7 @@ class KratosHandler(RequestHandler):
 
         logger.debug("GET to Kratos: " + url)
 
-        req = tornado.httpclient.HTTPRequest(url, follow_redirects=False)
+        req = tornado.httpclient.HTTPRequest(url, follow_redirects=False, headers=self.request.headers)
         client = tornado.httpclient.AsyncHTTPClient()
         response = yield client.fetch(req, raise_error=False)
 
@@ -37,8 +37,8 @@ class KratosHandler(RequestHandler):
                         self.add_header(header, cookie)
                 elif header.lower() != 'transfer-encoding':
                     self.set_header(header, response.headers.get(header))
-        logger.debug(response.headers["Set-Cookie"])
-        
+                    logger.debug(header + ": " + response.headers.get(header))
+
         self.write(response.body)
         self.finish()
     

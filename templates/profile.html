@@ -1,0 +1,369 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section">
+
+    <div class="columns">
+        <div class="column is-one-fifth">
+            <aside class="menu sticky">
+                <p class="menu-label">
+                    Mitt medlemskap
+                </p>
+                <ul class="menu-list">
+                    <li><a href="#profil">Min profil</a></li>
+                    <li><a href="#prenumerationer">Mailprenumerationer</a></li>
+                    <li><a href="#medlemskap">Hantera medlemskap</a></li>
+                </ul>
+                <p class="menu-label">
+                    ------------
+                </p>
+                <ul class="menu-list">
+                    <li><a href="#ledare">Mina ledare</a></li>
+                </ul>
+            </aside>
+        </div>
+
+        <div class="column">
+            <div name="testmodal" id="testmodal" class="modal">
+                <div class="modal-background"></div>
+                <div class="modal-card">
+                    <header class="modal-card-head">
+                        <p class="modal-card-title">Modal title</p>
+                        <button class="delete" aria-label="close" onclick="toggleModal2()"></button>
+                    </header>
+                    <section class="modal-card-body">
+                        <!-- Content ... -->
+                    </section>
+                    <footer class="modal-card-foot">
+                        <button class="button is-success">Save changes</button>
+                        <button class="button">Cancel</button>
+                    </footer>
+                </div>
+            </div>
+
+            <div class="content">
+                <a id="profil"></a>
+                <h1>Min profil</h1>
+            </div>
+
+            <div class="box">
+
+                <script>function toggleInput(id) {
+                        if (document.getElementById(id).classList.contains('is-static')) { document.getElementById(id).classList.remove('is-static'); document.getElementById(id).removeAttribute('readonly'); }
+                        else { document.getElementById(id).classList.add('is-static'); document.getElementById(id).setAttribute('readonly'); }
+                    }
+                </script>
+
+                <script>function toggleHidden(id) {
+                        if (document.getElementById(id).classList.contains('is-hidden')) { document.getElementById(id).classList.remove('is-hidden'); }
+                        else { document.getElementById(id).classList.add('is-hidden'); }
+                    }
+                </script>
+
+                <script>
+                    function toggleButtonText2(y) {
+                        var x = document.getElementById(y);
+                        if (x.innerHTML === "Ändra") {
+                            x.innerHTML = "Spara";
+                        } else {
+                            x.innerHTML = "Ändra";
+                        }
+                    }
+                </script>
+
+                <div class="field">
+                    <label class="label">Namn</label>
+                    <div class="field is-grouped">
+                        <div class="control">
+                            <input class="input is-static" type="text" value="{{ user.name }}" id="inp1" readonly>
+                        </div>
+                        <div class="field is-grouped">
+                            <p class="control">
+                                <button class="button is-success"
+                                    onclick="toggleHidden('testbut');toggleButtonText2('inp2');toggleInput('inp1')"
+                                    id="inp2">Ändra</button></p>
+                            <p class="control">
+                                <button class="button is-danger is-hidden" id="testbut"
+                                    onclick="toggleHidden('testbut');toggleButtonText2('inp2');toggleInput('inp1')">Avbryt</button>
+                            </p>
+                        </div>
+                    </div>
+
+
+                    <label class="label">Mailadress</label>
+                    <div class="field is-grouped">
+                        <div class="control">
+                            <input class="input is-static" type="email" value="{{ user.email }}"
+                                id="inp11" readonly>
+                        </div>
+                        <div class="field is-grouped">
+                            <p class="control">
+                                <button class="button is-success"
+                                    onclick="toggleHidden('testbut2');toggleButtonText2('inp22');toggleInput('inp11')"
+                                    id="inp22">Ändra</button></p>
+                            <p class="control">
+                                <button class="button is-danger is-hidden" id="testbut2"
+                                    onclick="toggleHidden('testbut2');toggleButtonText2('inp22');toggleInput('inp11')">Avbryt</button>
+                            </p>
+                        </div>
+                    </div>
+
+
+                    <label class="label">Telefonnummer</label>
+                    <div class="field is-grouped">
+                        <div class="control">
+                            <input class="input is-static" type="tel" value="0000000" id="inp111" readonly>
+                        </div>
+                        <div class="field is-grouped">
+                            <p class="control">
+                                <button class="button is-success"
+                                    onclick="toggleHidden('testbut3');toggleButtonText2('inp222');toggleInput('inp111')"
+                                    id="inp222">Ändra</button></p>
+                            <p class="control">
+                                <button class="button is-danger is-hidden" id="testbut3"
+                                    onclick="toggleHidden('testbut3');toggleButtonText2('inp222');toggleInput('inp111')">Avbryt</button>
+                            </p>
+                        </div>
+                    </div>
+
+                    <label class="label">Adress</label>
+                    <div class="field is-grouped">
+                        <div class="control">
+                            <input class="input is-static" type="text" value="Gregervägen 12C" id="inp1111" readonly>
+                        </div>
+                        <div class="field is-grouped">
+                            <p class="control">
+                                <button class="button is-success"
+                                    onclick="toggleHidden('testbut4');toggleButtonText2('inp2222');toggleInput('inp1111')"
+                                    id="inp2222">Ändra</button></p>
+                            <p class="control">
+                                <button class="button is-danger is-hidden" id="testbut4"
+                                    onclick="toggleHidden('testbut4');toggleButtonText2('inp2222');toggleInput('inp1111')">Avbryt</button>
+                            </p>
+                        </div>
+                    </div>
+
+
+                    <label class="label">Postnummer</label>
+                    <div class="field is-grouped">
+                        <div class="control">
+                            <input class="input is-static" type="text" value="222 22" id="inp11111" readonly>
+                        </div>
+                        <div class="field is-grouped">
+                            <p class="control">
+                                <button class="button is-success"
+                                    onclick="toggleHidden('testbut5');toggleButtonText2('inp22222');toggleInput('inp11111')"
+                                    id="inp22222">Ändra</button></p>
+                            <p class="control">
+                                <button class="button is-danger is-hidden" id="testbut5"
+                                    onclick="toggleHidden('testbut5');toggleButtonText2('inp22222');toggleInput('inp11111')">Avbryt</button>
+                            </p>
+                        </div>
+                    </div>
+
+                    <label class="label">Postort</label>
+                    <div class="field is-grouped">
+                        <div class="control">
+                            <input class="input is-static" type="text" value="Gregerstad" id="inp111111" readonly>
+                        </div>
+                        <div class="field is-grouped">
+                            <p class="control">
+                                <button class="button is-success"
+                                    onclick="toggleHidden('testbut6');toggleButtonText2('inp222222');toggleInput('inp111111')"
+                                    id="inp222222">Ändra</button></p>
+                            <p class="control">
+                                <button class="button is-danger is-hidden" id="testbut6"
+                                    onclick="toggleHidden('testbut6');toggleButtonText2('inp222222');toggleInput('inp111111')">Avbryt</button>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="content">
+                <p><br></p>
+            </div>
+
+            <div class="content">
+                <a id="prenumerationer"></a>
+                <h1>Mail- och SMS-prenumerationer</h1>
+            </div>
+
+            <script>
+                function toggleButtonText(y) {
+                    var x = document.getElementById(y);
+                    if (x.innerHTML === "Ja") {
+                        x.innerHTML = "Nej";
+                    } else {
+                        x.innerHTML = "Ja";
+                    }
+                }
+            </script>
+
+            <table class="table is-striped is-hoverable">
+                <thead>
+                    <tr>
+                        <th>Orsak</th>
+                        <th>Mail</th>
+                        <th>SMS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Medlemskap på väg att löpa ut</td>
+                        <td><button class="button is-success is-light" id="but1"
+                                onclick="togglebutton('but1');toggleButtonText('but11')">
+                                <p id="but11">Ja</p>
+                            </button></td>
+                        <td><button class="button is-danger is-light" id="but2"
+                                onclick="togglebutton('but2');toggleButtonText('but22')">
+                                <p id="but22">Nej</p>
+                            </button></td>
+                    </tr>
+                    <tr>
+                        <td>Medlemsmail (varannan vecka)</td>
+                        <td><button class="button is-success is-light" id="but3"
+                                onclick="togglebutton('but3');toggleButtonText('but33')">
+                                <p id="but33">Ja</p>
+                            </button></td>
+                        <td><button class="button is-danger is-light" id="but8"
+                                onclick="togglebutton('but8');toggleButtonText('but88')">
+                                <p id="but88">Nej</p>
+                            </button></td>
+                    </tr>
+                    <tr>
+                        <td>Nationella utskick</td>
+                        <td><button class="button is-success is-light" id="but4"
+                                onclick="togglebutton('but4');toggleButtonText('but44')">
+                                <p id="but44">Ja</p>
+                            </button></td>
+                        <td><button class="button is-danger is-light" id="but5"
+                                onclick="togglebutton('but5');toggleButtonText('but55')">
+                                <p id="but55">Nej</p>
+                            </button></td>
+                    </tr>
+                    <tr>
+                        <td>Lokala utskick</td>
+                        <td><button class="button is-success is-light" id="but6"
+                                onclick="togglebutton('but6');toggleButtonText('but66')">
+                                <p id="but66">Ja</p>
+                            </button></td>
+                        <td><button class="button is-danger is-light" id="but7"
+                                onclick="togglebutton('but7');toggleButtonText('but77')">
+                                <p id="but77">Nej</p>
+                            </button></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="content">
+                <p><br></p>
+            </div>
+
+            <div class="content">
+                <a id="medlemskap"></a>
+                <h1>Hantera medlemskap</h1>
+            </div>
+
+            <table class="table is-striped is-hoverable">
+                <thead>
+                    <tr>
+                        <th>Förening</th>
+                        <th>Medlem sedan</th>
+                        <th>Medlemskap löper ut</th>
+                        <th>Förnya?</th>
+                        <th>Avsluta?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Piratpartiet</th>
+                        <td>2018-06-20</td>
+                        <td>2020-06-20</td>
+                        <td><button class="button is-success">Förnya</button></td>
+                        <td><button class="button is-danger">Avsluta</button></td>
+                    </tr>
+                    <tr>
+                        <th>Piratpartiet Lund</th>
+                        <td>2019-10-20</td>
+                        <td>2020-10-20</td>
+                        <td><button class="button is-success">Förnya</button></td>
+                        <td><button class="button is-danger">Avsluta</button></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="columns">
+                <div class="column is-one-quarter">
+                    <div class="select is-pulled-right">
+                        <select>
+                            <option selected="selected" disabled="disabled">Föreningar du kan gå med i</option>
+                            <option>Ung Pirat Skåne</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <button class="button is-success is-pulled-left">Gå med i vald förening</button>
+                </div>
+            </div>
+
+            <div class="content">
+                <p><br></p>
+            </div>
+
+            <div class="content">
+                <a id="ledare"></a>
+                <h1>Mina ledare</h1>
+
+                <h3>Partiledare</h3>
+                <div class="field is-grouped">
+                    <p class="control">
+                        <button class="button is-static is-outlined">Katarina Stensson</button></p>
+                    <p class="control">
+                        <button class="button is-info is-pulled-left">Kontakta via chatten</button></p>
+                    <p class="control">
+                        <button class="button is-info">Kontakta via mail</button></p>
+                </div>
+                <h3>Distriktsledare för södra distriktet</h3>
+                <div class="field is-grouped">
+                    <p class="control">
+                        <button class="button is-static is-outlined">Greger Gregersson</button></p>
+                    <p class="control">
+                        <button class="button is-info is-pulled-left">Kontakta via chatten</button></p>
+                    <p class="control">
+                        <button class="button is-info">Kontakta via mail</button></p>
+                </div>
+                <h3>Kommunledare för Lunds kommun</h3>
+                <div class="field is-grouped">
+                    <p class="control">
+                        <button class="button is-static is-outlined">Greger Persson</button></p>
+                    <p class="control">
+                        <button class="button is-info is-pulled-left">Kontakta via chatten</button></p>
+                    <p class="control">
+                        <button class="button is-info">Kontakta via mail</button></p>
+                </div>
+            </div>
+
+
+
+            <div class="content">
+                <p><br></p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<script>
+    function togglebutton(id) {
+        if (document.getElementById(id).classList.contains('is-success')) {
+            document.getElementById(id).classList.remove('is-success'); document.getElementById(id).classList.add('is-danger');
+        }
+        else {
+            document.getElementById(id).classList.remove('is-danger'); document.getElementById(id).classList.add('is-success')
+        }
+    }
+</script>
+{% end %}

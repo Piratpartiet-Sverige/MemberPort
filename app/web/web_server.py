@@ -17,6 +17,7 @@ from app.web.handlers.authentication import SignInHandler, SignOutHandler, SignU
 from app.web.handlers.kratos import KratosHandler
 from app.web.handlers.main import MainHandler
 from app.web.handlers.error import Error404Handler
+from app.web.handlers.profile import ProfileHandler
 
 
 class WebAppOptions:
@@ -75,6 +76,7 @@ def configure_application(options: WebAppOptions):
         (r"/sign-out", SignOutHandler),
         (r"/auth/registration", SignUpHandler),
         (r"/login", tornado.web.RedirectHandler, dict(url=r"/auth/login")),
+        (r"/profile", ProfileHandler),
     ]
 
     for plugin in plugins:
