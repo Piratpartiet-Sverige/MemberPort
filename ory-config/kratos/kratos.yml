@@ -26,6 +26,8 @@ selfservice:
   verify:
     request_lifespan: 1h
     link_lifespan: 24h
+    after:
+      default_return_to: http://127.0.0.1:8888/
 
   login:
     request_lifespan: 10m

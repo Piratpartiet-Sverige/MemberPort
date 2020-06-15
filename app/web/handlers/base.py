@@ -65,8 +65,13 @@ class BaseHandler(RequestHandler):
                 session.expires_at = api_response.expires_at
                 user = User()
                 user.id = UUID(api_response.identity.id)
-                user.name = api_response.identity.traits["name"]["first"] + " " + api_response.identity.traits["name"]["last"]
+                user.name.first = api_response.identity.traits["name"]["first"]
+                user.name.last = api_response.identity.traits["name"]["last"]
                 user.email = api_response.identity.traits["email"]
+                user.phone = "070 00 00 000" # api_response.identity.traits["phone"] ory does not yet support phone numbers
+                user.city = api_response.identity.traits["city"]
+                user.street = api_response.identity.traits["street"]
+                user.postal_code = api_response.identity.traits["postal_code"]
                 session.user = user
                 logger.debug("Session user: " + str(user.id))
 

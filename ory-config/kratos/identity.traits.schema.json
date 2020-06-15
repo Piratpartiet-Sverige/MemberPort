@@ -29,7 +29,7 @@
     },
     "phone": {
       "type": "string",
-      "format": "phone",
+      "format": "phone_number",
       "title": "Phone number",
       "minLength": 6,
       "ory.sh/kratos": {

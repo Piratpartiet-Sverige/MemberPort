@@ -37,7 +37,6 @@ class KratosHandler(RequestHandler):
                         self.add_header(header, cookie)
                 elif header.lower() != 'transfer-encoding':
                     self.set_header(header, response.headers.get(header))
-                    logger.debug(header + ": " + response.headers.get(header))
 
         self.write(response.body)
         self.finish()
@@ -49,13 +48,11 @@ class KratosHandler(RequestHandler):
         logger.debug("POST to Kratos: " + url)
 
         req = tornado.httpclient.HTTPRequest(url, method="POST", body=self.request.body, follow_redirects=False, headers=self.request.headers)
+        logger.debug(req.body)
         client = tornado.httpclient.AsyncHTTPClient()
         response = yield client.fetch(req, raise_error=False)
 
         self.set_status(response.code)
-
-        if (response.code == 302):
-            logger.debug(response.code)
 
         for header in response.headers:
             if header.lower() == 'content-length':
