@@ -2,11 +2,24 @@ from datetime import datetime
 from typing import NamedTuple, Union
 from uuid import UUID
 
+class Name:
+    first: str
+    last: str
+
 
 class User:
+    def __init__(self):
+        self.name = Name()
+    
     id: UUID
-    name: str
+    name: Name
     email: str
+    phone: str
+    city: str
+    street: str
+    postal_code: str
+    country: str
+    
     created: datetime
 
 
@@ -14,7 +27,7 @@ def user_to_json(user: User) -> dict:
     return {
         'user': {
             'id': user.id.__str__(),
-            'name': user.name,
+            'name': user.name.first,
             'email': user.email,
             'created': user.created.isoformat(' '),
         }

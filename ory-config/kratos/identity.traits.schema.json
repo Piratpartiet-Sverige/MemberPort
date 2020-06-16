@@ -24,9 +24,12 @@
     "postal_code": {
       "type": "string"
     },
+    "country": {
+      "type": "string"
+    },
     "phone": {
       "type": "string",
-      "format": "phone",
+      "format": "phone_number",
       "title": "Phone number",
       "minLength": 6,
       "ory.sh/kratos": {
@@ -56,7 +59,11 @@
   },
   "required": [
     "email",
-    "name"
+    "name",
+    "street",
+    "city",
+    "postal_code",
+    "country"
   ],
   "additionalProperties": false
 }

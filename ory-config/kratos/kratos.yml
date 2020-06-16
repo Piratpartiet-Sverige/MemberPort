@@ -5,6 +5,15 @@ identity:
     default_schema_url: file:///etc/pirate-config/identity.traits.schema.json
 
 selfservice:
+  settings:
+    after:
+      default_return_to: http://127.0.0.1:8888/profile
+      profile:
+        hooks:
+          - hook: verify
+    request_lifespan: 1h
+    privileged_session_max_age: 5m
+
   logout:
     redirect_to: http://127.0.0.1:8888/auth/login
 
@@ -17,6 +26,8 @@ selfservice:
   verify:
     request_lifespan: 1h
     link_lifespan: 24h
+    after:
+      default_return_to: http://127.0.0.1:8888/
 
   login:
     request_lifespan: 10m
@@ -49,10 +60,11 @@ urls:
   login_ui: http://127.0.0.1:8888/auth/login
   registration_ui: http://127.0.0.1:8888/auth/registration
   error_ui: http://127.0.0.1:8888/error
+  settings_ui: http://127.0.0.1:8888/profile
   verify_ui: http://127.0.0.1:8888/verify
 
   # These are undefined because not available in this demo
-  mfa_ui: http://crew-db:8888/
+  mfa_ui: http://127.0.0.1:8888/
 
   self:
     public: http://pirate-kratos:4433
