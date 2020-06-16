@@ -34,8 +34,6 @@ class ProfileHandler(BaseHandler):
                 
                 action = api_response.methods["profile"].config.action
                 csrf_token = api_response.methods["profile"].config.fields[0].value
-
-                action = action.replace("http://pirate-kratos:4433", "/.ory/kratos/public")
             except ApiException as e:
                 logger.error("Exception when calling PublicApi->get_self_service_browser_settings_request: %s\n" % e)
 

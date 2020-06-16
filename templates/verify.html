@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="box">
+    <form action="{{action}}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <input type="email" name="to_verify" class="input" required>
+        <button type="submit" class="button is-primary">Skicka om verifikations kod</button>
+    </form>
+    <br>
+    {% if error != "" %}
+    <div class="notification {{ 'is-success' if success else 'is-danger' }}">
+        <button class="delete"></button>
+        {{ error }}
+    </div>
+    {% end %}
+</div>
+{% end %}

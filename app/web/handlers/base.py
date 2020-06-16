@@ -43,7 +43,6 @@ class BaseHandler(RequestHandler):
         Do not use this method to get the current user session, use the property `self.current_user` instead.
         """
         session_hash = self.session_hash
-        logger.debug(session_hash)
 
         if session_hash is None:
             return None
