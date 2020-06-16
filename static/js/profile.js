@@ -8,6 +8,14 @@ function toggleInput(inputID) {
     }
 }
 
+function show(ID) {
+    document.getElementById(ID).classList.remove('is-hidden');
+}
+
+function hide(ID) {
+    document.getElementById(ID).classList.add('is-hidden');
+}
+
 function toggleHidden(buttonID) {
     if (document.getElementById(buttonID).classList.contains('is-hidden')) {
         document.getElementById(buttonID).classList.remove('is-hidden');
@@ -25,12 +33,20 @@ function toggleSaveButton(buttonID) {
         
         sendRequest()
             .then(response => {
-                console.log(response);
-                console.log(response.statusText);
                 if (response.ok) {
+                    hide("errorNotification");
                     var successElement = document.getElementById("successText");
                     successElement.innerHTML = "Ändringar sparade";
-                    document.getElementById("successNotification").style.display = "block";
+                    show("successNotification");
+                } else {
+                    response.json().then(response => {
+                        if (response.error.code >= 400) {
+                            hide("successNotification");
+                            var errorElement = document.getElementById("errorText");
+                            errorElement.innerHTML = response.error.message;
+                            show("errorNotification");
+                        }
+                    });
                 }
             });
     }

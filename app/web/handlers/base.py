@@ -72,6 +72,7 @@ class BaseHandler(RequestHandler):
                 user.city = api_response.identity.traits["city"]
                 user.street = api_response.identity.traits["street"]
                 user.postal_code = api_response.identity.traits["postal_code"]
+                user.country = api_response.identity.traits["country"]
                 session.user = user
                 logger.debug("Session user: " + str(user.id))
 

@@ -53,7 +53,8 @@
                         <label class="label">Förnamn</label>
                         <div class="field is-grouped">
                             <div class="control">
-                                <input class="input is-static" name="traits.name.first" type="text" value="{{ user.name.first }}" id="traits.name.first" readonly>
+                                <input class="input is-static" name="traits.name.first" type="text"
+                                    value="{{ user.name.first }}" id="traits.name.first" readonly>
                             </div>
                             <div class="field is-grouped">
                                 <p class="control">
@@ -69,7 +70,8 @@
                         <label class="label">Efternamn</label>
                         <div class="field is-grouped">
                             <div class="control">
-                                <input class="input is-static" name="traits.name.last" type="text" value="{{ user.name.last }}" id="traits.name.last" readonly>
+                                <input class="input is-static" name="traits.name.last" type="text"
+                                    value="{{ user.name.last }}" id="traits.name.last" readonly>
                             </div>
                             <div class="field is-grouped">
                                 <p class="control">
@@ -86,8 +88,8 @@
                         <label class="label">Mailadress</label>
                         <div class="field is-grouped">
                             <div class="control">
-                                <input class="input is-static" name="traits.email" type="email" value="{{ user.email }}" id="traits.email"
-                                    readonly>
+                                <input class="input is-static" name="traits.email" type="email" value="{{ user.email }}"
+                                    id="traits.email" readonly>
                             </div>
                             <div class="field is-grouped">
                                 <p class="control">
@@ -105,7 +107,8 @@
                         <label class="label">Telefonnummer</label>
                         <div class="field is-grouped">
                             <div class="control">
-                                <input class="input is-static" type="tel" value="{{ user.phone }}" id="traits.phone" readonly>
+                                <input class="input is-static" type="tel" value="{{ user.phone }}" id="traits.phone"
+                                    readonly>
                             </div>
                             <div class="field is-grouped">
                                 <p class="control">
@@ -122,8 +125,8 @@
                         <label class="label">Adress</label>
                         <div class="field is-grouped">
                             <div class="control">
-                                <input class="input is-static" name="traits.street" type="text" value="{{ user.street }}" id="traits.street"
-                                    readonly>
+                                <input class="input is-static" name="traits.street" type="text"
+                                    value="{{ user.street }}" id="traits.street" readonly>
                             </div>
                             <div class="field is-grouped">
                                 <p class="control">
@@ -141,7 +144,8 @@
                         <label class="label">Postnummer</label>
                         <div class="field is-grouped">
                             <div class="control">
-                                <input class="input is-static" name="traits.postal_code" type="text" value="{{ user.postal_code }}" id="traits.postal_code" readonly>
+                                <input class="input is-static" name="traits.postal_code" type="text"
+                                    value="{{ user.postal_code }}" id="traits.postal_code" readonly>
                             </div>
                             <div class="field is-grouped">
                                 <p class="control">
@@ -158,7 +162,8 @@
                         <label class="label">Postort</label>
                         <div class="field is-grouped">
                             <div class="control">
-                                <input class="input is-static" name="traits.city" type="text" value="{{ user.city }}" id="traits.city" readonly>
+                                <input class="input is-static" name="traits.city" type="text" value="{{ user.city }}"
+                                    id="traits.city" readonly>
                             </div>
                             <div class="field is-grouped">
                                 <p class="control">
@@ -171,11 +176,34 @@
                                 </p>
                             </div>
                         </div>
+
+                        <label class="label">Land</label>
+                        <div class="field is-grouped">
+                            <div class="control">
+                                <input class="input is-static" name="traits.country" type="text" value="{{ user.country }}"
+                                    id="traits.country" readonly>
+                            </div>
+                            <div class="field is-grouped">
+                                <p class="control">
+                                    <button type="button" class="button is-success"
+                                        onclick="toggleHidden('cancelButtonCountry');toggleSaveButton('saveButtonCountry');toggleInput('traits.country')"
+                                        id="saveButtonCountry">Ändra</button></p>
+                                <p class="control">
+                                    <button type="button" class="button is-danger is-hidden" id="cancelButtonCountry"
+                                        onclick="toggleHidden('cancelButtonCountry');toggleSaveButton('saveButtonCountry');toggleInput('traits.country')">Avbryt</button>
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </form>
-                <div id="successNotification" class="notification is-success" style="display: none;">
-                    <button type="button" class="delete" onclick="toggleHidden('successNotification');"></button>
+                <br>
+                <div id="successNotification" class="notification is-success is-hidden">
+                    <button type="button" class="delete" onclick="hide('successNotification');"></button>
                     <p id="successText"></p>
+                </div>
+                <div id="errorNotification" class="notification is-danger is-hidden">
+                    <button type="button" class="delete" onclick="hide('errorNotification');"></button>
+                    <p id="errorText"></p>
                 </div>
             </div>
 

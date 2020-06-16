@@ -18,6 +18,7 @@ class User:
     city: str
     street: str
     postal_code: str
+    country: str
     
     created: datetime
 
