@@ -85,7 +85,18 @@
                             </div>
                         </div>
 
-                        <label class="label">Mailadress</label>
+                        <label class="label">
+                            Mailadress
+                            {% if user.verified %}
+                            <span class="icon has-text-success">
+                                <i title="Verifierad" class="fas fa-check-square"></i>
+                            </span>
+                            {% else %}
+                            <span class="icon has-text-danger">
+                                <i title="Ej verifierad" class="fas fa-ban"></i>
+                            </span>
+                            {% end %}
+                        </label>
                         <div class="field is-grouped">
                             <div class="control">
                                 <input class="input is-static" name="traits.email" type="email" value="{{ user.email }}"
@@ -180,8 +191,8 @@
                         <label class="label">Land</label>
                         <div class="field is-grouped">
                             <div class="control">
-                                <input class="input is-static" name="traits.country" type="text" value="{{ user.country }}"
-                                    id="traits.country" readonly>
+                                <input class="input is-static" name="traits.country" type="text"
+                                    value="{{ user.country }}" id="traits.country" readonly>
                             </div>
                             <div class="field is-grouped">
                                 <p class="control">

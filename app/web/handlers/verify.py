@@ -29,7 +29,6 @@ class VerifyHandler(BaseHandler):
             api_instance = ory_kratos_client.CommonApi(api_client)
             try:
                 api_response = api_instance.get_self_service_verification_request(request)
-                logger.debug(api_response)
                 if api_response.form.errors != None:
                     error = api_response.form.errors[0]
                 

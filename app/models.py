@@ -19,6 +19,7 @@ class User:
     street: str
     postal_code: str
     country: str
+    verified: bool
     
     created: datetime
 
