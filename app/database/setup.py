@@ -11,6 +11,7 @@ async def db_setup(pool: Pool):
     sql = """SELECT s.version FROM settings s JOIN (
                 SELECT version, MAX(created) AS created
                 FROM settings se
+                GROUP BY version
             ) lastEntry ON s.version = lastEntry.version AND s.created = lastEntry.created;"""
     
     try:
@@ -19,25 +20,25 @@ async def db_setup(pool: Pool):
     
         if row["version"] is None:
             logger.info("No version info in database found, initializing new database")
-            initialize_db()
+            await initialize_db(pool)
         else:
             current_version = row["version"]
             if new_version > current_version:
                 logger.info("Upgrading database from version " + str(current_version) + " to version " + str(new_version))
-                upgrade_db(current_version, new_version)
+                await upgrade_db(pool, current_version, new_version)
             elif new_version < current_version:
                 logger.critical("Database numbers mismatch, the \"new\" version number is older than the current one. This could be because of a failed downgrade!")
                 raise RuntimeError("Database numbers mismatch, the \"new\" version number is older than the current one. This could be because of a failed downgrade!")
             else:
                 logger.info("No action required for database")
-    except UndefinedTableError as e:
+    except UndefinedTableError:
         logger.info("No version info in database found, initializing new database")
-        initialize_db()
+        await initialize_db(pool)
 
 def get_new_version_number():
     version = ""
     last_line = ""
-    with open('db.sql', 'r') as sql_file:
+    with open('app/database/sql/db.sql', 'r') as sql_file:
         last_line = sql_file.readlines()[-1]
 
     for char in last_line:
@@ -46,8 +47,27 @@ def get_new_version_number():
     
     return int(version)
 
-def initialize_db():
-    pass
+async def initialize_db(pool):
+    with open('app/database/sql/db.sql', 'r') as sql_file:
+        sql = sql_file.read()
+        try:
+            async with pool.acquire() as con:  # type: Connection
+                await con.execute(sql)
+            logger.info("Succesfully initialized new database!")
+        except Exception:
+            logger.critical("Could not initialize database due to SQL error!", exc_info=1)
 
-def upgrade_db(current_version, new_version):
-    pass
+async def upgrade_db(pool, current_version, new_version):
+    for version in range(current_version, new_version):
+        try:
+            with open('app/database/sql/upgrades/' + str(version) + '_to_' + str(version + 1) + '.sql', 'r') as sql_file:
+                sql = sql_file.read()
+                try:
+                    async with pool.acquire() as con:  # type: Connection
+                        await con.execute(sql)
+                    logger.info("Succesfully upgraded database from version " + str(version) + " to " + str(version + 1))
+                except Exception:
+                    logger.critical("Could not upgrade database from version " + str(version) + " to " + str(version + 1) + " due to SQL error!", exc_info=1)
+        except FileNotFoundError:
+            logger.critical("Could not upgrade database from version " + str(version) + " to " + str(version + 1) + " due to no upgrade script found!", exc_info=1)
+            break
