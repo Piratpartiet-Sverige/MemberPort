@@ -50,6 +50,10 @@ services:
         target: /app/config
       -
         type: bind
+        source: ./db.sql
+        target: /app/db.sql
+      -
+        type: bind
         source: ./app
         target: /app/app
       -
