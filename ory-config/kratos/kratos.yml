@@ -24,10 +24,9 @@ selfservice:
       enabled: false
 
   verify:
+    return_to: http://127.0.0.1:8888/
     request_lifespan: 1h
     link_lifespan: 24h
-    after:
-      default_return_to: http://127.0.0.1:8888/
 
   login:
     request_lifespan: 10m
@@ -54,7 +53,7 @@ log:
 
 secrets:
   session:
-    - PLEASE-CHANGE-ME-I-AM-VERY-INSECURE
+    - PLEASE-CHANGE-ME-I-AM-VERY-INSECURE-YES-PLEASE24234§13!%!"!VFFgg23R"#FS#45234
 
 urls:
   login_ui: http://127.0.0.1:8888/auth/login
@@ -67,7 +66,7 @@ urls:
   mfa_ui: http://127.0.0.1:8888/
 
   self:
-    public: http://pirate-kratos:4433
+    public: http://127.0.0.1:8888/.ory/kratos/public
     admin: http://pirate-kratos:4434
   default_return_to: http://127.0.0.1:8888/
   whitelisted_return_to_urls:

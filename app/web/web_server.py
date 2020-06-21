@@ -13,11 +13,12 @@ from app.plugins.plugin import get_available_plugins, load_plugins
 from app.web.handlers.admin.add_member import AddMemberHandler
 from app.web.handlers.admin.members import MembersHandler
 from app.web.handlers.api.member import APIMemberHandler
-from app.web.handlers.authentication import SignInHandler, SignOutHandler, SignUpHandler
+from app.web.handlers.authentication import SignInHandler, SignUpHandler
 from app.web.handlers.kratos import KratosHandler
 from app.web.handlers.main import MainHandler
 from app.web.handlers.error import Error404Handler
 from app.web.handlers.profile import ProfileHandler
+from app.web.handlers.verify import VerifyHandler
 
 
 class WebAppOptions:
@@ -73,10 +74,10 @@ def configure_application(options: WebAppOptions):
         (r"/admin/members", MembersHandler),
         (r"/api/member", APIMemberHandler),
         (r"/auth/login", SignInHandler),
-        (r"/sign-out", SignOutHandler),
         (r"/auth/registration", SignUpHandler),
         (r"/login", tornado.web.RedirectHandler, dict(url=r"/auth/login")),
         (r"/profile", ProfileHandler),
+        (r"/verify", VerifyHandler),
     ]
 
     for plugin in plugins:

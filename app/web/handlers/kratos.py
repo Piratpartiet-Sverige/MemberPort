@@ -31,9 +31,16 @@ class KratosHandler(RequestHandler):
                 self.set_header(header, str(max(len(response.body), int(response.headers.get(header)))))
             else:
                 if header.lower() == 'set-cookie':
-                    cookies = response.headers.get(header)
-                    cookies = cookies.replace("Domain=pirate-kratos;", "") #Domain=http://127.0.0.1:8888
-                    for cookie in cookies.split(","):
+                    cookie_strings = response.headers.get(header)
+                    cookie_strings = cookie_strings.replace("Domain=pirate-kratos;", "") #Domain=http://127.0.0.1:8888
+                    cookies = []
+                    for cookie in cookie_strings.split(","):
+                        if (cookie[0] == ' '):
+                            cookies[-1] = cookies[-1] + cookie
+                        else:
+                            cookies.append(cookie)
+                    logger.debug(cookies)
+                    for cookie in cookies:
                         self.add_header(header, cookie)
                 elif header.lower() != 'transfer-encoding':
                     self.set_header(header, response.headers.get(header))
@@ -59,12 +66,22 @@ class KratosHandler(RequestHandler):
                 self.set_header(header, str(max(len(response.body), int(response.headers.get(header)))))
             else:
                 if header.lower() == 'set-cookie':
-                    cookies = response.headers.get(header)
-                    cookies = cookies.replace("Domain=pirate-kratos;", "") #Domain=http://127.0.0.1:8888
-                    for cookie in cookies.split(","):
+                    cookie_strings = response.headers.get(header)
+                    cookie_strings = cookie_strings.replace("Domain=pirate-kratos;", "") #Domain=http://127.0.0.1:8888
+                    cookies = []
+                    for cookie in cookie_strings.split(","):
+                        if cookie[0] == ' ':
+                            cookies[-1] = cookies[-1] + cookie
+                        else:
+                            cookies.append(cookie)
+                    logger.debug(cookies)
+                    for cookie in cookies:
                         self.add_header(header, cookie)
                 elif header.lower() != 'transfer-encoding':
                     self.set_header(header, response.headers.get(header))
         
+        if url.endswith("/logout"):
+            self.clear_session_cookie()
+
         self.write(response.body)
         self.finish()
