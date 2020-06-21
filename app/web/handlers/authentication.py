@@ -27,7 +27,6 @@ class SignInHandler(BaseHandler):
             try:
                 # Get the request context of browser-based registration user flows
                 api_response = api_instance.get_self_service_browser_login_request(request)
-                logger.debug(api_response)
                 csrf_token = api_response.methods['password'].config.fields[-1].value
                 if api_response.methods['password'].config.errors != None:
                     error = api_response.methods['password'].config.errors[0].message
