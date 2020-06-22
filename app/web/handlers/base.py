@@ -29,6 +29,12 @@ class BaseHandler(RequestHandler):
         Do not call manually. This runs on every request before get/post/etc.
         """
         self._current_user = self.get_current_user()
+        if self._current_user != None:
+            dao = UsersDao(self.db)
+            registered_user = await dao.get_user_by_id(self._current_user.user.id)
+            if registered_user is None:
+                logger.debug("Adding ID to database for user: " + str(self._current_user.user.id))
+                await dao.create_user(self._current_user.user.id)
 
     def is_authenticated(self) -> bool:
         """

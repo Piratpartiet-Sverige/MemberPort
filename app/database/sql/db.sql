@@ -9,11 +9,6 @@ CREATE TABLE settings
     version INTEGER NOT NULL
 );
 
-CREATE TABLE users
-(
-    id UUID PRIMARY KEY
-);
-
 CREATE TABLE organizations
 (
     id          UUID PRIMARY KEY,
@@ -25,7 +20,7 @@ CREATE TABLE organizations
 CREATE TABLE memberships
 (
     "organization" UUID REFERENCES organizations(id),
-    "user"       UUID REFERENCES users(id),
+    "user"         UUID NOT NULL,
     created        TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     renewal        TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     PRIMARY KEY ("organization", "user")
@@ -47,7 +42,7 @@ CREATE TABLE permissions
 
 CREATE TABLE user_roles
 (
-    "user" UUID REFERENCES users(id),
+    "user" UUID,
     "role" UUID REFERENCES roles(id),
     PRIMARY KEY ("user", "role")
 );
@@ -68,4 +63,4 @@ INSERT INTO organizations (id, name, description, created)
 VALUES ('00000000-0000-0000-0000-000000000000', 'Ship#01', 'Default organization for Crew DB.', localtimestamp);
 
 INSERT INTO settings (created, version)
-VALUES (localtimestamp, 1);
+VALUES (localtimestamp, 2);

@@ -2,24 +2,47 @@
 {% block head %}
 <script src="{{ static_url('js/ag-grid-community.min.noStyle.js') }}"></script>
 <link rel="stylesheet" href="{{ static_url('css/ag-grid.css') }}">
-<link rel="stylesheet" href="{{ static_url('css/ag-theme-balham.css') }}">
+<link rel="stylesheet" href="{{ static_url('css/ag-theme-alpine.css') }}">
 {% end %}
 {% block content %}
-<h1 class="title">Members</h1>
-<div id="myGrid" style="height: 600px;width:500px;" class="ag-theme-balham"></div>
+<div class="container">
+    <h1 class="title">Medlemmar</h1>
+    <div class="select">
+        <select id="orgs">
+            {% for org in organizations %}
+            <option value="{{ org.id }}">{{ org.name }}</option>
+            {% end %}
+        </select>
+    </div>
+    <div id="myGrid" style="width: 100%; height: 80vh;" class="ag-theme-alpine"></div>
+</div>
+{% end %}
 
+{% block scripts %}
 <script type="text/javascript" charset="utf-8">
     // specify the columns
     var columnDefs = [
-        { headerName: "Name", field: "name" },
+        { headerName: "Namn", field: "name" },
         { headerName: "E-mail", field: "email" },
-        { headerName: "Year", field: "year" }
+        { headerName: "Telefon", field: "phone" },
+        { headerName: "Postkod", field: "postal_code" },
+        { headerName: "Stad", field: "city" },
+        { headerName: "Adress", field: "street" },
+        { headerName: "Land", field: "country" },
     ];
 
     // specify the data
     var rowData = [
         {% for member in members %}
-        { name: "{{ member.traits['name']['first'] + " " + member.traits['name']['last'] }}", email: "{{ member.traits['email'] }}", year: "{{ member.traits_schema_id }}" },
+        {
+            name: "{{ member.traits['name']['first'] + " " + member.traits['name']['last'] }}",
+            email: "{{ member.traits['email'] }}",
+            phone: "070000000",
+            postal_code: "{{ member.traits['postal_code'] }}",
+            city: "{{ member.traits['city'] }}",
+            street: "{{ member.traits['street'] }}",
+            country: "{{ member.traits['country'] }}"
+        },
         {% end %}
     ];
 
