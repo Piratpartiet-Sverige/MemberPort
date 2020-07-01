@@ -5,8 +5,9 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE settings
 (
-    created TIMESTAMP WITHOUT TIME ZONE NOT NULL PRIMARY KEY,
-    version INTEGER NOT NULL
+    created              TIMESTAMP WITHOUT TIME ZONE NOT NULL PRIMARY KEY,
+    default_organization UUID REFERENCES organizations(id),
+    version              INTEGER NOT NULL
 );
 
 CREATE TABLE organizations
@@ -62,5 +63,5 @@ VALUES ('00000000-0000-0000-0000-000000000000', 'Admin', 'Default role for admin
 INSERT INTO organizations (id, name, description, created)
 VALUES ('00000000-0000-0000-0000-000000000000', 'Ship#01', 'Default organization for Crew DB.', localtimestamp);
 
-INSERT INTO settings (created, version)
-VALUES (localtimestamp, 2);
+INSERT INTO settings (created, default_organization, version)
+VALUES (localtimestamp, '00000000-0000-0000-0000-000000000000', 2);
