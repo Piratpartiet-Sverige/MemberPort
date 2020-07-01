@@ -32,7 +32,6 @@ class KratosHandler(RequestHandler):
             else:
                 if header.lower() == 'set-cookie':
                     cookie_strings = response.headers.get(header)
-                    cookie_strings = cookie_strings.replace("Domain=pirate-kratos;", "") #Domain=http://127.0.0.1:8888
                     cookies = []
                     for cookie in cookie_strings.split(","):
                         if (cookie[0] == ' '):

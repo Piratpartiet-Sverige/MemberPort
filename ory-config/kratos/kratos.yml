@@ -66,7 +66,7 @@ urls:
   mfa_ui: http://127.0.0.1:8888/
 
   self:
-    public: http://127.0.0.1:8888/.ory/kratos/public
+    public: http://127.0.0.1:8888/kratos
     admin: http://pirate-kratos:4434
   default_return_to: http://127.0.0.1:8888/
   whitelisted_return_to_urls:

@@ -16,7 +16,7 @@ class ProfileHandler(BaseHandler):
         request = self.get_argument("request", default="")
 
         if (request == ""):
-            return self.redirect("http://127.0.0.1:8888/.ory/kratos/public/self-service/browser/flows/settings")
+            return self.redirect("http://127.0.0.1:8888/kratos/self-service/browser/flows/settings")
 
         configuration = Configuration()
         configuration.host = "http://pirate-kratos:4433"

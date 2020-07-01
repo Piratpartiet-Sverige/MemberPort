@@ -70,7 +70,7 @@ def configure_application(options: WebAppOptions):
 
     handlers = [
         (r"/", MainHandler),
-        (r"/.ory/kratos/public/(.*)", KratosHandler),
+        (r"/kratos/(.*)", KratosHandler),
         (r"/admin/add-member", AddMemberHandler),
         (r"/admin/members", MembersHandler),
         (r"/api/member", APIMemberHandler),
