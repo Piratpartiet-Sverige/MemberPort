@@ -11,7 +11,7 @@ from asyncpg.exceptions import UniqueViolationError
 from bcrypt import checkpw, hashpw, gensalt
 
 from app.database.dao.emails import EmailDao
-from app.models import User, Member, Session, PasswordCheckResult
+from app.models import User, Membership
 from app.email import send_email
 
 
@@ -125,10 +125,6 @@ class UsersDao:
         return user
 
     async def remove_user(self, user_id: UUID) -> None:
-        sql = 'DELETE FROM sessions WHERE "user" = $1;'
-        async with self.pool.acquire() as con:  # type: Connection
-            await con.execute(sql, user_id)
-
         user = await self.get_user_by_id(user_id)
         sql = 'DELETE FROM verified_emails WHERE "email" = $1;'
         async with self.pool.acquire() as con:  # type: Connection
@@ -263,59 +259,3 @@ class UsersDao:
         user.created = row["created"]
 
         return user
-
-    async def new_session(self, user_id: UUID, ip: str) -> Session:
-        session_id = uuid4()
-        user = await self._get_user(user_id=user_id)
-        created = datetime.utcnow()
-        sess_hash = sha256((u"%s %s %s" % (session_id, user.id, created)).encode("utf8")).hexdigest()
-
-        sql = "INSERT INTO sessions (id, \"user\", hash, created, last_used, last_ip) VALUES ($1, $2, $3, $4, $5, $6)"
-
-        async with self.pool.acquire() as con:  # type: Connection
-            await con.execute(sql, session_id, user_id, sess_hash, created, created, ip)
-
-        session = Session()
-        session.id = session_id
-        session.user = user
-        session.hash = sess_hash
-        session.created = created
-        session.last_used = created
-        session.last_ip = ip
-
-        return session
-
-    async def update_session(self, session_hash: str, ip: str) -> Union[Session, None]:
-        now = datetime.utcnow()
-
-        sql = "UPDATE sessions SET last_used = $1, last_ip = $2 WHERE hash = $3"
-
-        async with self.pool.acquire() as con:  # type: Connection
-            await con.execute(sql, now, ip, session_hash)
-
-        return await self.get_session_by_hash(session_hash)
-
-    async def remove_session(self, session_hash: str) -> None:
-        sql = "DELETE FROM sessions WHERE hash = $1"
-
-        async with self.pool.acquire() as con:  # type: Connection
-            await con.execute(sql, session_hash)
-
-    async def get_session_by_hash(self, session_hash: str) -> Union[Session, None]:
-        sql = "SELECT * FROM sessions WHERE hash = $1"
-
-        async with self.pool.acquire() as con:  # type: Connection
-            row = await con.fetchrow(sql, session_hash)
-
-        if row is None:
-            return None
-
-        session = Session()
-        session.id = row['id']
-        session.user = await self.get_user_by_id(user_id=row['user'])
-        session.hash = row['hash']
-        session.created = row['created']
-        session.last_used = row['last_used']
-        session.last_ip = row['last_ip']
-
-        return session

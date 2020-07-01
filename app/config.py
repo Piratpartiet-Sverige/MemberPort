@@ -59,9 +59,6 @@ class Config:
         add_section_attribute("PostgreSQL", "username", "")
         add_section_attribute("PostgreSQL", "password", "")
 
-        add_section("Session")
-        add_section_attribute("Session", "max_idle_days", "30")
-
         add_section("Email")
         add_section_attribute("Email", "username", "")
         add_section_attribute("Email", "password", "")
