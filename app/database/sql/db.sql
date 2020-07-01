@@ -3,13 +3,6 @@
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE settings
-(
-    created              TIMESTAMP WITHOUT TIME ZONE NOT NULL PRIMARY KEY,
-    default_organization UUID REFERENCES organizations(id),
-    version              INTEGER NOT NULL
-);
-
 CREATE TABLE organizations
 (
     id          UUID PRIMARY KEY,
@@ -53,6 +46,13 @@ CREATE TABLE role_permissions
     "role" UUID REFERENCES roles(id),
     "permission" UUID REFERENCES permissions(id),
     PRIMARY KEY ("role", "permission")
+);
+
+CREATE TABLE settings
+(
+    created              TIMESTAMP WITHOUT TIME ZONE NOT NULL PRIMARY KEY,
+    default_organization UUID REFERENCES organizations(id),
+    version              INTEGER NOT NULL
 );
 
 -- Create an administrator role
