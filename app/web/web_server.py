@@ -19,6 +19,7 @@ from app.web.handlers.main import MainHandler
 from app.web.handlers.error import Error404Handler
 from app.web.handlers.profile import ProfileHandler
 from app.web.handlers.verify import VerifyHandler
+from app.database.setup import db_setup
 
 
 class WebAppOptions:
@@ -99,6 +100,7 @@ def configure_application(options: WebAppOptions):
     if db is not None:
         logger.debug("Database connection initialized...")
         webapp.db = asyncio.get_event_loop().run_until_complete(db)
+        asyncio.get_event_loop().run_until_complete(db_setup(webapp.db))
     else:
         logger.error("Database connection failed")
         logger.warning("Running without a database")

@@ -19,6 +19,66 @@ class OrganizationsDao:
     def __init__(self, pool: Pool):
         self.pool = pool
 
+    async def get_default_organization(self) -> Union[Organization, None]:
+        sql = "SELECT default_organization FROM settings"
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                row = await con.fetchrow(sql)
+        except Exception:
+            logger.error("An error occured when trying to retrieve the default organization!", stack_info=True)
+            return None
+        
+        if row["default_organization"] is None:
+            logger.debug("No default organization found...")
+            return None
+
+        return await self.get_organization_by_id(row["default_organization"])
+
+    async def get_organization_by_id(self, id: UUID) -> Union[Organization, None]:
+        sql = "SELECT name, description, created FROM organizations WHERE id = $1"
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                row = await con.fetchrow(sql, id)
+        except Exception:
+            logger.error("An error occured when trying to retrieve an organization!", stack_info=True)
+            return None
+
+        if row is None:
+            logger.debug("No  organization found with ID: " + str(id))
+            return None
+
+        organization = Organization()
+        organization.id = id
+        organization.name = row["name"]
+        organization.description = row["description"]
+        organization.created = row["created"]
+
+        return organization
+
+    async def get_organization_by_name(self, name: str) -> Union[Organization, None]:
+        sql = "SELECT id, description, created FROM organizations WHERE name = $1"
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                row = await con.fetchrow(sql, name)
+        except Exception:
+            logger.error("An error occured when trying to retrieve an organization!", stack_info=True)
+            return None
+
+        if row is None:
+            logger.debug("No  organization found with name: " + name)
+            return None
+
+        organization = Organization()
+        organization.id = row["id"]
+        organization.name = name
+        organization.name = row["description"]
+        organization.name = row["created"]
+
+        return organization
+
     async def get_organizations(self, search: str, order_column: str, order_dir_asc: bool) -> list:
         """
         Get a list of all organizations

@@ -11,7 +11,7 @@ from asyncpg.exceptions import UniqueViolationError
 from bcrypt import checkpw, hashpw, gensalt
 
 from app.database.dao.emails import EmailDao
-from app.models import User, Member, Session, PasswordCheckResult
+from app.models import User, Membership
 from app.email import send_email
 
 
@@ -20,26 +20,6 @@ class UsersDao:
 
     def __init__(self, pool: Pool):
         self.pool = pool
-
-    async def check_user_password(self, email, password) -> PasswordCheckResult:
-        sql = "SELECT password FROM users WHERE email = $1"
-
-        async with self.pool.acquire() as con:  # type: Connection
-            row = await con.fetchrow(sql, email)
-
-        if row is None:
-            return PasswordCheckResult(False, None)
-
-        password = password.encode("utf8")
-        password2 = row['password'].encode("utf8")
-
-        try:
-            if checkpw(password, password2):
-                user = await self._get_user(email=email)
-                return PasswordCheckResult(True, user)
-        except ValueError:
-            return PasswordCheckResult(False, None)
-        return PasswordCheckResult(False, None)
 
     async def check_user_admin(self, user_id: UUID) -> bool:
         """
@@ -81,38 +61,20 @@ class UsersDao:
 
         return False
 
-    async def create_user(self, name, email, password) -> User:
-        sql = "INSERT INTO users (id, name, email, password, created) VALUES ($1, $2, $3, $4, $5);"
+    async def create_user(self, id: UUID) -> bool:
+        sql = "INSERT INTO users (id, created) VALUES ($1, $2);"
 
-        user_id = uuid4()
-        hashed = hashpw(password.encode("utf8"), gensalt()).decode("utf8")
         created = datetime.utcnow()
 
         try:
             async with self.pool.acquire() as con:  # type: Connection
-                await con.execute(sql, user_id, name, email, hashed, created)
+                await con.execute(sql, id, created)
         except UniqueViolationError as exc:
             logger.debug(exc.__str__())
-            logger.warning("Tried to create user: " + name + " but e-mail: " + email + " was already in use")
-            return None
+            logger.warning("Tried to create user: " + str(id) + " but user already existed")
+            return False
 
-        sql = 'INSERT INTO placements ("user", points, level) VALUES ($1, $2, $3);'
-
-        async with self.pool.acquire() as con:  # type: Connection
-            await con.execute(sql, user_id, 0, 1)
-
-        email_dao = EmailDao(self.pool)
-
-        link = await email_dao.create_email_verify_link(email)
-        await send_email(email, "Welcome to Crew DB", "Please confirm that this is your e-mail.", True, link)
-
-        user = User()
-        user.id = user_id
-        user.name = name
-        user.email = email
-        user.created = created
-
-        return user
+        return True
 
     async def update_user(self, user_id: UUID, name: str, email: str, password: str = None) -> Union[User, None]:
         user = await self.get_user_by_id(user_id)
@@ -163,10 +125,6 @@ class UsersDao:
         return user
 
     async def remove_user(self, user_id: UUID) -> None:
-        sql = 'DELETE FROM sessions WHERE "user" = $1;'
-        async with self.pool.acquire() as con:  # type: Connection
-            await con.execute(sql, user_id)
-
         user = await self.get_user_by_id(user_id)
         sql = 'DELETE FROM verified_emails WHERE "email" = $1;'
         async with self.pool.acquire() as con:  # type: Connection
@@ -234,9 +192,6 @@ class UsersDao:
     async def get_user_by_id(self, user_id: UUID) -> User:
         return await self._get_user(user_id=user_id)
 
-    async def get_user_by_email(self, email: str) -> User:
-        return await self._get_user(email=email)
-
     async def get_user_count(self, global_search: str = None) -> int:
         """
         Get how many users are currently registered
@@ -287,84 +242,20 @@ class UsersDao:
         logger.warning("is_email_verified: row was found with " + email + " but the content was null")
         return False
 
-    async def _get_user(self, user_id: UUID=None, email: str=None) -> Union[User, None]:
-        sql = "SELECT id, name, email, created FROM users"
+    async def _get_user(self, user_id: UUID=None) -> Union[User, None]:
+        sql = "SELECT id, created FROM users WHERE id = $1"
 
-        if user_id is not None:
-            sql += " WHERE id = $1"
-            search_with = user_id
-        elif email is not None:
-            sql += " WHERE email = $1"
-            search_with = email
-        else:
+        if user_id is None:
             return None
 
         async with self.pool.acquire() as con:  # type: Connection
-            row = await con.fetchrow(sql, search_with)
+            row = await con.fetchrow(sql, user_id)
 
         if row is None:
             return None
 
         user = User()
         user.id = row["id"]
-        user.name = row["name"]
-        user.email = row["email"]
         user.created = row["created"]
 
         return user
-
-    async def new_session(self, user_id: UUID, ip: str) -> Session:
-        session_id = uuid4()
-        user = await self._get_user(user_id=user_id)
-        created = datetime.utcnow()
-        sess_hash = sha256((u"%s %s %s" % (session_id, user.id, created)).encode("utf8")).hexdigest()
-
-        sql = "INSERT INTO sessions (id, \"user\", hash, created, last_used, last_ip) VALUES ($1, $2, $3, $4, $5, $6)"
-
-        async with self.pool.acquire() as con:  # type: Connection
-            await con.execute(sql, session_id, user_id, sess_hash, created, created, ip)
-
-        session = Session()
-        session.id = session_id
-        session.user = user
-        session.hash = sess_hash
-        session.created = created
-        session.last_used = created
-        session.last_ip = ip
-
-        return session
-
-    async def update_session(self, session_hash: str, ip: str) -> Union[Session, None]:
-        now = datetime.utcnow()
-
-        sql = "UPDATE sessions SET last_used = $1, last_ip = $2 WHERE hash = $3"
-
-        async with self.pool.acquire() as con:  # type: Connection
-            await con.execute(sql, now, ip, session_hash)
-
-        return await self.get_session_by_hash(session_hash)
-
-    async def remove_session(self, session_hash: str) -> None:
-        sql = "DELETE FROM sessions WHERE hash = $1"
-
-        async with self.pool.acquire() as con:  # type: Connection
-            await con.execute(sql, session_hash)
-
-    async def get_session_by_hash(self, session_hash: str) -> Union[Session, None]:
-        sql = "SELECT * FROM sessions WHERE hash = $1"
-
-        async with self.pool.acquire() as con:  # type: Connection
-            row = await con.fetchrow(sql, session_hash)
-
-        if row is None:
-            return None
-
-        session = Session()
-        session.id = row['id']
-        session.user = await self.get_user_by_id(user_id=row['user'])
-        session.hash = row['hash']
-        session.created = row['created']
-        session.last_used = row['last_used']
-        session.last_ip = row['last_ip']
-
-        return session
