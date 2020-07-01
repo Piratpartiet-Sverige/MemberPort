@@ -10,8 +10,8 @@ from asyncpg.pool import Pool
 from asyncpg.exceptions import UniqueViolationError
 from bcrypt import checkpw, hashpw, gensalt
 
-from app.database.dao.emails import EmailDao
-from app.models import User, Member, Organization
+from app.database.dao.organizations import OrganizationsDao
+from app.models import User, Membership, Organization
 from app.email import send_email
 
 
@@ -19,8 +19,8 @@ class MembersDao:
     def __init__(self, pool: Pool):
         self.pool = pool
 
-    async def create_membership(self, user_id: UUID, organization_id: UUID) -> Member:
-        sql = "INSERT INTO memberships (\"organization\", \"user\", created, renewal) VALUES ($1, $2, $3, $4);"
+    async def create_membership(self, user_id: UUID, organization_id: UUID) -> bool:
+        sql = "INSERT INTO memberships (\"user\", \"organization\", created, renewal) VALUES ($1, $2, $3, $4);"
 
         created = datetime.utcnow()
         renewal = datetime(created.year + 1, created.month, created.day)
@@ -74,13 +74,13 @@ class MembersDao:
                 sql += ", "
             sql += "renewal"
         
-        if value_count is 0:
+        if value_count == 0:
             logger.debug("Nothing to update membership with...")
             return None
 
         sql += ") VALUES ($1"
 
-        if value_count is 2:
+        if value_count == 2:
             sql += ", $2"
         
         sql += ");"
@@ -112,28 +112,28 @@ class MembersDao:
 
         return row["members"]
 
-    async def _get_member(self, user_id: UUID=None, email: str=None) -> Union[User, None]:
-        sql = "SELECT id, name, email, created FROM users"
+    async def get_memberships_for_user(self, user: User) -> list:
+        sql = "SELECT \"organization\", created, renewal FROM memberships WHERE \"user\" = $1"
 
-        if user_id is not None:
-            sql += " WHERE id = $1"
-            search_with = user_id
-        elif email is not None:
-            sql += " WHERE email = $1"
-            search_with = email
-        else:
-            return None
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                rows = await con.fetch(sql, user.id)
+        except Exception:
+            logger.error("An error occured when trying to retrieve memberships for an user!", stack_info=True)
+            return False
 
-        async with self.pool.acquire() as con:  # type: Connection
-            row = await con.fetchrow(sql, search_with)
+        if rows is None:
+            return list()
 
-        if row is None:
-            return None
+        memberships = list()
+        dao = OrganizationsDao(self.pool)
 
-        user = User()
-        user.id = row["id"]
-        user.name = row["name"]
-        user.email = row["email"]
-        user.created = row["created"]
+        for row in rows:
+            membership = Membership()
+            membership.user = user
+            membership.organization = await dao.get_organization_by_id(row["organization"])
+            membership.created = row["created"]
+            membership.renewal = row["renewal"]
+            memberships.append(membership)
 
-        return user
+        return memberships

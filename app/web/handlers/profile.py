@@ -4,9 +4,10 @@ import ory_kratos_client
 from ory_kratos_client.rest import ApiException
 from ory_kratos_client.configuration import Configuration
 
-from app.database.dao.users import UsersDao
+from app.database.dao.members import MembersDao
 from app.logger import logger
 from app.web.handlers.base import BaseHandler
+from uuid import UUID
 
 
 class ProfileHandler(BaseHandler):
@@ -37,10 +38,17 @@ class ProfileHandler(BaseHandler):
             except ApiException as e:
                 logger.error("Exception when calling PublicApi->get_self_service_browser_settings_request: %s\n" % e)
 
+        members_dao = MembersDao(self.db)
+        memberships = await members_dao.get_memberships_for_user(user=self.current_user.user)
+
+        if len(memberships) == 0:
+            logger.debug("Creating membership")
+            await members_dao.create_membership(self.current_user.user.id, UUID("00000000-0000-0000-0000-000000000000"))
+
         if error != "":
             logger.error("Error: " + error.message)
 
-        await self.render("profile.html", title="Profil", user=self.current_user.user, action=action, error=error, csrf_token=csrf_token)
+        await self.render("profile.html", title="Profil", user=self.current_user.user, action=action, error=error, csrf_token=csrf_token, memberships=memberships)
 
     @tornado.web.authenticated
     async def post(self):

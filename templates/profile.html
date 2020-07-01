@@ -303,20 +303,15 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% for membership in memberships %}
                     <tr>
-                        <th>Piratpartiet</th>
-                        <td>2018-06-20</td>
-                        <td>2020-06-20</td>
+                        <th>{{ membership.organization.name }}</th>
+                        <td>{{ membership.created }}</td>
+                        <td>{{ membership.renewal }}</td>
                         <td><button class="button is-success">Förnya</button></td>
                         <td><button class="button is-danger">Avsluta</button></td>
                     </tr>
-                    <tr>
-                        <th>Piratpartiet Lund</th>
-                        <td>2019-10-20</td>
-                        <td>2020-10-20</td>
-                        <td><button class="button is-success">Förnya</button></td>
-                        <td><button class="button is-danger">Avsluta</button></td>
-                    </tr>
+                    {% end %}
                 </tbody>
             </table>
 

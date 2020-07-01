@@ -19,7 +19,7 @@ class OrganizationsDao:
     def __init__(self, pool: Pool):
         self.pool = pool
 
-    async def get_default_organization() -> Union[Organization, None]:
+    async def get_default_organization(self) -> Union[Organization, None]:
         sql = "SELECT default_organization FROM settings"
 
         try:
@@ -35,7 +35,7 @@ class OrganizationsDao:
 
         return await self.get_organization_by_id(row["default_organization"])
 
-    async def get_organization_by_id(id: UUID) -> Union[Organization, None]:
+    async def get_organization_by_id(self, id: UUID) -> Union[Organization, None]:
         sql = "SELECT name, description, created FROM organizations WHERE id = $1"
 
         try:
@@ -52,12 +52,12 @@ class OrganizationsDao:
         organization = Organization()
         organization.id = id
         organization.name = row["name"]
-        organization.name = row["description"]
-        organization.name = row["created"]
+        organization.description = row["description"]
+        organization.created = row["created"]
 
         return organization
 
-    async def get_organization_by_name(name: str) -> Union[Organization, None]:
+    async def get_organization_by_name(self, name: str) -> Union[Organization, None]:
         sql = "SELECT id, description, created FROM organizations WHERE name = $1"
 
         try:
