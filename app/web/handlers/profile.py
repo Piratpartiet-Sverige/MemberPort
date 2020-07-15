@@ -30,8 +30,8 @@ class ProfileHandler(BaseHandler):
             try:
                 api_response = api_instance.get_self_service_browser_settings_request(request)
 
-                if api_response.methods["profile"].config.errors != None:
-                    error = api_response.methods["profile"].config.errors[0]
+                if api_response.methods["profile"].config.messages != None:
+                    error = api_response.methods["profile"].config.messages[0].text
                 
                 action = api_response.methods["profile"].config.action
                 csrf_token = api_response.methods["profile"].config.fields[0].value

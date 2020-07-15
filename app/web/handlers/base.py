@@ -73,7 +73,7 @@ class BaseHandler(RequestHandler):
                 user.street = api_response.identity.traits["street"]
                 user.postal_code = api_response.identity.traits["postal_code"]
                 user.country = api_response.identity.traits["country"]
-                user.verified = api_response.identity.addresses[0].verified
+                user.verified = api_response.identity.verifiable_addresses[0].verified
                 
                 session.user = user
                 logger.debug("Session user: " + str(user.id))

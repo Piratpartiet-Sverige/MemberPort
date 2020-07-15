@@ -120,7 +120,7 @@ class MembersDao:
                 rows = await con.fetch(sql, user.id)
         except Exception:
             logger.error("An error occured when trying to retrieve memberships for an user!", stack_info=True)
-            return False
+            return list()
 
         if rows is None:
             return list()

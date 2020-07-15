@@ -1,21 +1,46 @@
 dsn: sqlite:///home/ory/sqlite/db.sqlite?_fk=true
 
 identity:
-  traits:
-    default_schema_url: file:///etc/pirate-config/identity.traits.schema.json
+  default_schema_url: file:///etc/pirate-config/identity.schema.json
 
 selfservice:
-  settings:
-    after:
-      default_return_to: http://127.0.0.1:8888/profile
-      profile:
-        hooks:
-          - hook: verify
-    request_lifespan: 1h
-    privileged_session_max_age: 5m
+  flows:
+    login:
+      ui_url: http://127.0.0.1:8888/auth/login
+      request_lifespan: 10m
+      after:
+        default_browser_return_url: http://127.0.0.1:8888/
+        password:
+          default_browser_return_url: http://127.0.0.1:8888/
+          hooks:
+            - hook: revoke_active_sessions
 
-  logout:
-    redirect_to: http://127.0.0.1:8888/auth/login
+    registration:
+      ui_url: http://127.0.0.1:8888/auth/registration
+      request_lifespan: 10m
+      after:
+        default_browser_return_url: http://127.0.0.1:8888/
+        password:
+          default_browser_return_url: http://127.0.0.1:8888/
+          hooks:
+            - hook: session
+
+    error:
+      ui_url: http://127.0.0.1:8888/error
+
+    settings:
+      ui_url: http://127.0.0.1:8888/profile
+      request_lifespan: 1h
+      privileged_session_max_age: 5m
+      after:
+        default_browser_return_url: http://127.0.0.1:8888/profile
+
+    verification:
+      enabled: true
+      ui_url: http://127.0.0.1:8888/verify
+      request_lifespan: 1h
+      after:
+        default_browser_return_url: http://127.0.0.1:8888/
 
   strategies:
     password:
@@ -23,54 +48,23 @@ selfservice:
     oidc:
       enabled: false
 
-  verify:
-    return_to: http://127.0.0.1:8888/
-    request_lifespan: 1h
-    link_lifespan: 24h
-
-  login:
-    request_lifespan: 10m
-    after:
-      default_return_to: http://127.0.0.1:8888/
-      password:
-        default_return_to: http://127.0.0.1:8888/
-        hooks:
-          - hook: revoke_active_sessions
-
-  registration:
-    request_lifespan: 10m
-    after:
-      default_return_to: http://127.0.0.1:8888/
-      password:
-        default_return_to: http://127.0.0.1:8888/
-        hooks:
-          - hook: session
-          - hook: verify
+  default_browser_return_url: http://127.0.0.1:8888/
+  whitelisted_return_urls:
+    - http://127.0.0.1:8888
 
 log:
   level: debug
   format: text
 
 secrets:
-  session:
+  default:
     - PLEASE-CHANGE-ME-I-AM-VERY-INSECURE-YES-PLEASE24234§13!%!"!VFFgg23R"#FS#45234
 
-urls:
-  login_ui: http://127.0.0.1:8888/auth/login
-  registration_ui: http://127.0.0.1:8888/auth/registration
-  error_ui: http://127.0.0.1:8888/error
-  settings_ui: http://127.0.0.1:8888/profile
-  verify_ui: http://127.0.0.1:8888/verify
-
-  # These are undefined because not available in this demo
-  mfa_ui: http://127.0.0.1:8888/
-
-  self:
-    public: http://127.0.0.1:8888/kratos
-    admin: http://pirate-kratos:4434
-  default_return_to: http://127.0.0.1:8888/
-  whitelisted_return_to_urls:
-    - http://127.0.0.1:8888
+serve:
+  public:
+    base_url: http://127.0.0.1:8888/kratos
+  admin:
+    base_url: http://pirate-kratos:4434
 
 hashers:
   argon2:

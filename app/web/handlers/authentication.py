@@ -28,8 +28,8 @@ class SignInHandler(BaseHandler):
                 # Get the request context of browser-based registration user flows
                 api_response = api_instance.get_self_service_browser_login_request(request)
                 csrf_token = api_response.methods['password'].config.fields[-1].value
-                if api_response.methods['password'].config.errors != None:
-                    error = api_response.methods['password'].config.errors[0].message
+                if api_response.methods['password'].config.messages != None:
+                    error = api_response.methods['password'].config.messages[0].text
             except ApiException as e:
                 logger.error("Exception when calling PublicApi->get_self_service_browser_login_request: %s\n" % e)
 
@@ -57,8 +57,8 @@ class SignUpHandler(BaseHandler):
                 api_response = api_instance.get_self_service_browser_registration_request(request)
                 csrf_token = api_response.methods['password'].config.fields[0].value
                 inputs = api_response.methods['password'].config.fields
-                if api_response.methods['password'].config.errors != None:
-                    error = api_response.methods['password'].config.errors[0].message
+                if api_response.methods['password'].config.messages != None:
+                    error = api_response.methods['password'].config.messages[0].text
             except ApiException as e:
                 logger.error("Exception when calling AdminApi->get_self_service_browser_registration_request: %s\n" % e)
             except ValueError as e:
