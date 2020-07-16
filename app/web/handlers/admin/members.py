@@ -29,4 +29,4 @@ class MembersHandler(BaseHandler):
                 logger.error("Exception when calling AdminApi->list_identities: %s\n" % e)
 
         logger.debug(members)
-        await self.render("admin/member.html", title="Members", members=members, organizations=organizations)
+        await self.render("admin/members.html", title="Members", members=members, organizations=organizations)

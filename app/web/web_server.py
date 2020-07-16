@@ -12,6 +12,7 @@ from app.logger import logger
 from app.plugins.plugin import get_available_plugins, load_plugins
 from app.web.handlers.admin.add_member import AddMemberHandler
 from app.web.handlers.admin.members import MembersHandler
+from app.web.handlers.admin.roles import RolesHandler
 from app.web.handlers.api.member import APIMemberHandler
 from app.web.handlers.authentication import SignInHandler, SignUpHandler
 from app.web.handlers.kratos import KratosHandler
@@ -73,6 +74,7 @@ def configure_application(options: WebAppOptions):
         (r"/kratos/(.*)", KratosHandler),
         (r"/admin/add-member", AddMemberHandler),
         (r"/admin/members", MembersHandler),
+        (r"/admin/roles", RolesHandler),
         (r"/api/member", APIMemberHandler),
         (r"/auth/login", SignInHandler),
         (r"/auth/registration", SignUpHandler),

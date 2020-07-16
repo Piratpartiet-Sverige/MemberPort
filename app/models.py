@@ -38,6 +38,12 @@ class Membership:
     renewal: datetime
 
 
+class Role:
+    id: str
+    name: str
+    description: str
+
+
 class Session:
     id: UUID
     user: User
