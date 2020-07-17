@@ -7,22 +7,40 @@
 {% block content %}
 <div class="container">
     <h1 class="title">Roller</h1>
+    <p>Roller fungerar sådan att en roll är egentligen bara en samling av rättigheter. Dessa rättigheter styr vad en användare är tillåten att göra inom systemet. Dock när man tilldelar en roll så finns det två andra saker som begränsar användaren också. Dels vilken förening man blev tilldelad rollen i men också ifall rollen blev tilldelad ett visst geografiskt område.</p>
     <div id="myGrid" style="width: 100%; height: 80vh;" class="ag-theme-alpine"></div>
+    <br>
+    <button class="button is-success" style="margin-bottom: 1rem;">Spara</button>
 </div>
 {% end %}
 
 {% block scripts %}
+<script src="{{ static_url('js/checkbox-renderer.js') }}"></script>
 <script type="text/javascript" charset="utf-8">
     // specify the columns
     var columnDefs = [
-        { headerName: "Namn", field: "name" },
+        {
+            headerName: "Namn på roll",
+            field: "name"
+        },
+        {% for permission in permissions %}
+        {
+            headerName: "{{ permission.name }}",
+            field: "{{ permission.id }}",
+            cellRenderer: 'checkboxRenderer',
+            resizable: true
+        },
+        {% end %}
     ];
 
     // specify the data
     var rowData = [
         {% for role in roles %}
         {
-            name: "{{ role.name }}"
+            name: "{{ role.name }}",
+            {% for permission in permissions %}
+            {{ permission.id }}: {{ "true" if permission in permissions_by_role[role.id] else "false"}},
+            {% end %}
         },
         {% end %}
     ];
@@ -30,7 +48,10 @@
     // let the grid know which columns and what data to use
     var gridOptions = {
         columnDefs: columnDefs,
-        rowData: rowData
+        rowData: rowData,
+        components: {
+            checkboxRenderer: CheckboxRenderer
+        }
     };
 
     // lookup the container we want the Grid to use

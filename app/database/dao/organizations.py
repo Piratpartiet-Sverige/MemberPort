@@ -42,7 +42,7 @@ class OrganizationsDao:
             async with self.pool.acquire() as con:  # type: Connection
                 row = await con.fetchrow(sql, id)
         except Exception:
-            logger.error("An error occured when trying to retrieve an organization!", stack_info=True)
+            logger.error("An error occured when trying to retrieve an organization by id!", stack_info=True)
             return None
 
         if row is None:
@@ -64,7 +64,7 @@ class OrganizationsDao:
             async with self.pool.acquire() as con:  # type: Connection
                 row = await con.fetchrow(sql, name)
         except Exception:
-            logger.error("An error occured when trying to retrieve an organization!", stack_info=True)
+            logger.error("An error occured when trying to retrieve an organization by name!", stack_info=True)
             return None
 
         if row is None:

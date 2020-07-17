@@ -41,6 +41,7 @@ services:
     image: crew-db:latest
     depends_on:
       - postgres-db
+      - pirate-kratos
     ports:
       - "8888:8888"
     volumes:
@@ -66,7 +67,6 @@ services:
 
   pirate-kratos:
     depends_on:
-      - crew-db
       - pirate-kratos-migrate
     image: oryd/kratos:latest-sqlite
     ports:

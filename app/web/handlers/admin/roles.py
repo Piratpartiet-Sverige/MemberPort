@@ -8,11 +8,23 @@ from uuid import uuid4
 
 
 class RolesHandler(BaseHandler):
+    @tornado.web.authenticated
     async def get(self):
-        roles = None
-
         dao = RolesDao(self.db)
         roles = await dao.get_roles()
+        permissions = await dao.get_permissions()
 
-        logger.debug(roles)
-        await self.render("admin/roles.html", title="Roller", roles=roles)
+        permissions_by_role = {}
+
+        for role in roles:
+            permissions_by_role[role.id] = await dao.get_permissions_by_role(role.id)
+        
+        await self.render("admin/roles.html", title="Roller", roles=roles, permissions=permissions, permissions_by_role=permissions_by_role)
+
+    @tornado.web.authenticated
+    async def put(self):
+        dao = RolesDao(self.db)
+
+        roles = self.get_argument("roles")
+
+        await self.respond("Roles succesfully updated", 200)

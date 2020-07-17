@@ -39,9 +39,17 @@ class Membership:
 
 
 class Role:
-    id: str
+    id: UUID
     name: str
     description: str
+
+
+class Permission:
+    id: str
+    name: str
+
+    def __eq__(self, other):
+        return self.id == other.id
 
 
 class Session:

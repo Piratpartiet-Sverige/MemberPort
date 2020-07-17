@@ -43,24 +43,6 @@ class UsersDao:
 
         return False
 
-    async def check_user_permission(self, user_id: UUID, permission: str) -> bool:
-        sql = 'SELECT "group" FROM users_groups WHERE "user" = $1'
-
-        async with self.pool.acquire() as con:  # type: Connection
-            rows = await con.fetch(sql, user_id)
-
-        for group in rows:
-            sql = 'SELECT "permission" FROM groups_permissions WHERE "group" = $1'
-
-            async with self.pool.acquire() as con:  # type: Connection
-                permissions = await con.fetch(sql, group["group"])
-
-            for p in permissions:
-                if permission == p["permission"]:
-                    return True
-
-        return False
-
     async def create_user(self, id: UUID) -> bool:
         sql = "INSERT INTO users (id, created) VALUES ($1, $2);"
 

@@ -10,6 +10,7 @@ from uuid import uuid4
 
 
 class MembersHandler(BaseHandler):
+    @tornado.web.authenticated
     async def get(self):
         members = None
         organizations = None
