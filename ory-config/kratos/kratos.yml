@@ -1,7 +1,10 @@
 dsn: sqlite:///home/ory/sqlite/db.sqlite?_fk=true
 
 identity:
-  default_schema_url: file:///etc/pirate-config/identity.schema.json
+  default_schema_url: file:///etc/pirate-config/member.schema.json
+  schemas:
+    - id: bot
+      url: file:///etc/pirate-config/bot.schema.json
 
 selfservice:
   flows:

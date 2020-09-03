@@ -89,7 +89,7 @@ class RolesDao:
             async with self.pool.acquire() as con:  # type: Connection
                 await con.execute(sql, role_id, permission_id)
         except UniqueViolationError:
-            logger.debug("Permission " + permission_id + "was already added to role: " + str(role_id))
+            logger.debug("Permission " + permission_id + " was already added to role: " + str(role_id))
         except Exception:
             logger.error("An error occured when trying to add permission to role!", stack_info=True)
 

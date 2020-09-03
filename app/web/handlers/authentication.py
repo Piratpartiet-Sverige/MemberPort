@@ -55,6 +55,7 @@ class SignUpHandler(BaseHandler):
             api_instance = ory_kratos_client.AdminApi(api_client)
             try:
                 api_response = api_instance.get_self_service_browser_registration_request(request)
+                logger.debug(api_response)
                 csrf_token = api_response.methods['password'].config.fields[0].value
                 inputs = api_response.methods['password'].config.fields
                 if api_response.methods['password'].config.messages != None:

@@ -49,6 +49,7 @@ CREATE TABLE role_permissions
 
 CREATE TABLE settings
 (
+    initialized          BOOLEAN NOT NULL,
     created              TIMESTAMP WITHOUT TIME ZONE NOT NULL PRIMARY KEY,
     default_organization UUID REFERENCES organizations(id),
     version              INTEGER NOT NULL
@@ -124,9 +125,5 @@ VALUES ('00000000-0000-0000-0000-000000000000', 'delete_organizations');
 INSERT INTO role_permissions ("role", "permission")
 VALUES ('00000000-0000-0000-0000-000000000000', 'global');
 
--- Create an organization
-INSERT INTO organizations (id, name, description, created)
-VALUES ('00000000-0000-0000-0000-000000000000', 'Ship#01', 'Default organization for Crew DB.', localtimestamp);
-
-INSERT INTO settings (created, default_organization, version)
-VALUES (localtimestamp, '00000000-0000-0000-0000-000000000000', 3);
+INSERT INTO settings (initialized, created, default_organization, version)
+VALUES (FALSE, localtimestamp, NULL, 3);

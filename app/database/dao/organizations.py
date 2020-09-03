@@ -19,6 +19,28 @@ class OrganizationsDao:
     def __init__(self, pool: Pool):
         self.pool = pool
 
+    async def create_organization(self, name, description) -> Union[Organization, None]:
+        sql = "INSERT INTO organizations (id, name, description, created) VALUES ($1, $2, $3, $4);"
+
+        id = uuid4()
+        created = datetime.utcnow()
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                await con.execute(sql, id, name, description, created)
+        except UniqueViolationError as exc:
+            logger.debug(exc.__str__())
+            logger.warning("Tried to create organization: " + str(id) + " but organization already existed")
+            return None
+
+        organization = Organization()
+        organization.id = id
+        organization.name = name
+        organization.description = description
+        organization.created = created
+
+        return organization
+
     async def get_default_organization(self) -> Union[Organization, None]:
         sql = "SELECT default_organization FROM settings"
 

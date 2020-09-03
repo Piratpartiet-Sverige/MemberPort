@@ -10,7 +10,8 @@
     <p>Roller fungerar sådan att en roll är egentligen bara en samling av rättigheter. Dessa rättigheter styr vad en användare är tillåten att göra inom systemet. Dock när man tilldelar en roll så finns det två andra saker som begränsar användaren också. Dels vilken förening man blev tilldelad rollen i men också ifall rollen blev tilldelad ett visst geografiskt område.</p>
     <div id="myGrid" style="width: 100%; height: 80vh;" class="ag-theme-alpine"></div>
     <br>
-    <button class="button is-success" style="margin-bottom: 1rem;">Spara</button>
+    {% module xsrf_form_html() %}
+    <button onclick="saveRoles();" class="button is-success" style="margin-bottom: 1rem;">Spara</button>
 </div>
 {% end %}
 
@@ -19,6 +20,11 @@
 <script type="text/javascript" charset="utf-8">
     // specify the columns
     var columnDefs = [
+        {
+            headerName: "ID",
+            field: "id",
+            hide: true
+        },
         {
             headerName: "Namn på roll",
             field: "name"
@@ -37,6 +43,7 @@
     var rowData = [
         {% for role in roles %}
         {
+            id: "{{ role.id }}",
             name: "{{ role.name }}",
             {% for permission in permissions %}
             {{ permission.id }}: {{ "true" if permission in permissions_by_role[role.id] else "false"}},
@@ -60,5 +67,57 @@
     // create the grid passing in the div to use together with the columns & data we want to use
     new agGrid.Grid(eGridDiv, gridOptions);
 
+    async function sendRequest() {
+        let permissions = [];
+        for (let index = 2; index < columnDefs.length; index++) {
+            permissions.push(columnDefs[index].field);
+        }
+
+        let rolesData = {}; 
+
+        gridOptions.api.forEachNode((node, index) => {
+            rolesData[node.data.id] = {};
+            for (let i = 0; i < permissions.length; i++) {
+                rolesData[node.data.id][permissions[i]] = node.data[permissions[i]];
+            }
+        });
+
+        const response = await fetch("/admin/roles", {
+            method: 'PUT',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-XSRFToken': document.getElementsByName("_xsrf")[0].value
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'same-origin',
+            body: JSON.stringify(rolesData)
+        });
+
+        return response;
+    }
+
+    function saveRoles() {
+        sendRequest()
+                .then(response => {
+                    if (response.ok) {
+                        hide("errorNotification");
+                        var successElement = document.getElementById("successText");
+                        successElement.innerHTML = "Ändringar sparade";
+                        show("successNotification");
+                    } else {
+                        response.json().then(response => {
+                            if (response.error.code >= 400) {
+                                hide("successNotification");
+                                var errorElement = document.getElementById("errorText");
+                                errorElement.innerHTML = response.error.message;
+                                show("errorNotification");
+                            }
+                        });
+                    }
+                });
+    }
 </script>
 {% end %}

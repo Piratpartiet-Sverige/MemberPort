@@ -23,8 +23,19 @@ class RolesHandler(BaseHandler):
 
     @tornado.web.authenticated
     async def put(self):
+        self.args = tornado.escape.json_decode(self.request.body)
+
         dao = RolesDao(self.db)
 
-        roles = self.get_argument("roles")
+        roles = await dao.get_roles()
 
-        await self.respond("Roles succesfully updated", 200)
+        for role in self.args:
+            permissions_for_role = self.args[role]
+
+            for permission in permissions_for_role:
+                if permissions_for_role[permission] is True:
+                    await dao.add_permission_to_role(role, permission)
+                else:
+                    await dao.remove_permission_from_role(role, permission)
+
+        return self.respond("Roles succesfully updated", 200)
