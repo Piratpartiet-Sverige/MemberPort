@@ -19,7 +19,7 @@ class RolesHandler(BaseHandler):
         for role in roles:
             permissions_by_role[role.id] = await dao.get_permissions_by_role(role.id)
         
-        await self.render("admin/roles.html", title="Roller", roles=roles, permissions=permissions, permissions_by_role=permissions_by_role)
+        await self.render("admin/roles.html", admin=True, title="Roller", roles=roles, permissions=permissions, permissions_by_role=permissions_by_role)
 
     @tornado.web.authenticated
     async def put(self):

@@ -17,6 +17,10 @@ selfservice:
           default_browser_return_url: http://127.0.0.1:8888/
           hooks:
             - hook: revoke_active_sessions
+    
+    logout:
+      after:
+        default_browser_return_url: http://127.0.0.1:8888/
 
     registration:
       ui_url: http://127.0.0.1:8888/auth/registration

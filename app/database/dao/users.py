@@ -16,27 +16,67 @@ from app.email import send_email
 
 
 class UsersDao:
-    # Note: http://dustwell.com/how-to-handle-passwords-bcrypt.html
-
     def __init__(self, pool: Pool):
         self.pool = pool
 
+    async def get_user_member_number(self, user_id: UUID) -> dict:
+        """
+        Retrieves the member number for the user, assigns a new one if not fond
+        :returns An int, the member number for the user with the id: user_id
+        """
+
+        sql = 'SELECT member_number, created FROM users WHERE kratos_id = $1'
+
+        async with self.pool.acquire() as con:  # type: Connection
+            row = await con.fetchrow(sql, user_id)
+
+        user_info = {}
+
+        if row is None:
+            logger.debug("Assign new member number for user: " + str(user_id))
+
+            created = datetime.utcnow()
+            user_info["created"] = created
+
+            sql = 'INSERT INTO users (kratos_id, created) VALUES ($1, $2);'
+
+            async with self.pool.acquire() as con:  # type: Connection
+                await con.execute(sql, user_id, created)
+
+            sql = 'SELECT member_number FROM users WHERE kratos_id = $1'
+
+            async with self.pool.acquire() as con:  # type: Connection
+                row = await con.fetchrow(sql, user_id)
+            
+            user_info["member_number"] = row["member_number"]
+
+            if user_info["member_number"] == 1:
+                sql = 'INSERT INTO user_roles ("user", "role") VALUES ($1, $2);'
+
+                async with self.pool.acquire() as con:  # type: Connection
+                    await con.execute(sql, user_id, UUID('00000000-0000-0000-0000-000000000000'))
+        else:
+            user_info["created"] = row["created"]
+            user_info["member_number"] = row["member_number"]
+
+        return user_info
+
     async def check_user_admin(self, user_id: UUID) -> bool:
         """
-        Checks if the user is in a group that has any privileged permissions
+        Checks if the user is in a role that has any privileged permissions
         :returns A boolean, true if user needs access to admin view
         """
 
-        sql = 'SELECT "group" FROM users_groups WHERE "user" = $1'
+        sql = 'SELECT "role" FROM user_roles WHERE "user" = $1'
 
         async with self.pool.acquire() as con:  # type: Connection
             rows = await con.fetch(sql, user_id)
 
-        for group in rows:
-            sql = 'SELECT "permission" FROM groups_permissions WHERE "group" = $1'
+        for role in rows:
+            sql = 'SELECT "permission" FROM role_permissions WHERE "role" = $1'
 
             async with self.pool.acquire() as con:  # type: Connection
-                permissions = await con.fetch(sql, group["group"])
+                permissions = await con.fetch(sql, role["role"])
 
             if len(permissions) > 0:
                 return True

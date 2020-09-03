@@ -42,4 +42,16 @@ class VerifyHandler(BaseHandler):
             logger.error("Error: " + error.message)
             error = error.message
 
-        await self.render("verify.html", title="Verifiera", user=self.current_user.user, action=action, error=error, success=success,csrf_token=csrf_token)
+        dao = UsersDao(self.db)
+        permissions_check = await dao.check_user_admin(self.current_user.user.id)
+
+        await self.render(
+            "verify.html",
+            admin=admin,
+            title="Verifiera",
+            user=self.current_user.user,
+            action=action,
+            error=error,
+            success=success,
+            csrf_token=csrf_token
+        )

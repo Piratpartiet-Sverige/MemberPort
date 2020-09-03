@@ -22,6 +22,7 @@
 <script type="text/javascript" charset="utf-8">
     // specify the columns
     var columnDefs = [
+        { headerName: "Medlemsnummer", field: "number" },
         { headerName: "Namn", field: "name" },
         { headerName: "E-mail", field: "email" },
         { headerName: "Telefon", field: "phone" },
@@ -35,6 +36,7 @@
     var rowData = [
         {% for member in members %}
         {
+            number: "{{ member.traits['member_number'] }}",
             name: "{{ member.traits['name']['first'] + " " + member.traits['name']['last'] }}",
             email: "{{ member.traits['email'] }}",
             phone: "070000000",

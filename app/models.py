@@ -12,6 +12,7 @@ class User:
         self.name = Name()
     
     id: UUID
+    number: int
     name: Name
     email: str
     phone: str

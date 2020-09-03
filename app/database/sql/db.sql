@@ -11,10 +11,17 @@ CREATE TABLE organizations
     created     TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
+CREATE TABLE users
+(
+    kratos_id     UUID PRIMARY KEY,
+    member_number SERIAL UNIQUE NOT NULL,
+    created       TIMESTAMP WITHOUT TIME ZONE NOT NULL
+);
+
 CREATE TABLE memberships
 (
     "organization" UUID REFERENCES organizations(id),
-    "user"         UUID NOT NULL,
+    "user"         UUID REFERENCES users(kratos_id),
     created        TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     renewal        TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     PRIMARY KEY ("organization", "user")
@@ -35,7 +42,7 @@ CREATE TABLE permissions
 
 CREATE TABLE user_roles
 (
-    "user" UUID,
+    "user" UUID REFERENCES users(kratos_id),
     "role" UUID REFERENCES roles(id),
     PRIMARY KEY ("user", "role")
 );
