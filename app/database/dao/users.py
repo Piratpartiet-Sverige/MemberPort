@@ -8,7 +8,6 @@ from uuid import uuid4, UUID
 from asyncpg import Connection
 from asyncpg.pool import Pool
 from asyncpg.exceptions import UniqueViolationError
-from bcrypt import checkpw, hashpw, gensalt
 
 from app.database.dao.emails import EmailDao
 from app.models import User, Membership
@@ -97,54 +96,6 @@ class UsersDao:
             return False
 
         return True
-
-    async def update_user(self, user_id: UUID, name: str, email: str, password: str = None) -> Union[User, None]:
-        user = await self.get_user_by_id(user_id)
-
-        if email != user.email:
-            email_dao = EmailDao(self.pool)
-            await email_dao.remove_verify_link_for_email(user.email)
-            await email_dao.unverify_email(user.email)
-            await self.unverify_user_by_email(user.email)
-
-        if password is not None:
-            hashed = hashpw(password.encode("utf8"), gensalt()).decode("utf8")
-            sql = "UPDATE users SET name = $1, email = $2, password = $3 WHERE id = $4"
-
-            try:
-                async with self.pool.acquire() as con:  # type: Connection
-                    await con.execute(sql, name, email, hashed, user_id)
-            except Exception as e:
-                logger.error("Failed to update user: " + str(e))
-                return None
-        else:
-            sql = "UPDATE users SET name = $1, email = $2 WHERE id = $3"
-
-            try:
-                async with self.pool.acquire() as con:  # type: Connection
-                    await con.execute(sql, name, email, user_id)
-            except Exception as e:
-                logger.error("Failed to update user: " + str(e))
-                return None
-
-        if email != user.email:
-            email_dao = EmailDao(self.pool)
-            link = await email_dao.create_email_verify_link(email)
-            await send_email(email, "TornadoBase: New e-mail address", "Account with username: '" + name +
-                             "' has specified this e-mail as it's new e-mail address.", True, link)
-
-        sql = "SELECT id, name, email, created FROM users WHERE id = $1"
-
-        async with self.pool.acquire() as con:  # type: Connection
-            row = await con.fetchrow(sql, user_id)
-
-        user = User()
-        user.id = row["id"]
-        user.name = row["name"]
-        user.email = row["email"]
-        user.created = row["created"]
-
-        return user
 
     async def remove_user(self, user_id: UUID) -> None:
         user = await self.get_user_by_id(user_id)

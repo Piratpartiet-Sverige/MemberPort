@@ -8,7 +8,6 @@ from uuid import uuid4, UUID
 from asyncpg import Connection
 from asyncpg.pool import Pool
 from asyncpg.exceptions import UniqueViolationError
-from bcrypt import checkpw, hashpw, gensalt
 
 from app.database.dao.emails import EmailDao
 from app.models import Organization
