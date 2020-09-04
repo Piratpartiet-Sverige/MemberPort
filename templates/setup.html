@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Crew DB | Installation</title>
+    <link rel="stylesheet" href="{{ static_url('css/bulma.min.css') }}" />
+</head>
+
+<body>
+    <section class="hero is-dark is-fullheight">
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                <div class="column is-4 is-offset-4">
+                    <h3 class="title has-text-white">Crew DB</h3>
+                    <p class="subtitle has-text-grey">Installation</p>
+                    <div class="box">
+                        <form id="setup" action="/">
+                            <figure class="avatar">
+                                <img src="{{ static_url('img/logo.svg') }}" >
+                            </figure>
+                            {% module xsrf_form_html() %}
+                            <div class="field">
+                                <div class="control">
+                                    <input name="org.name" class="input is-large" type="text" placeholder="Namn på organisationen" />
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="control">
+                                    <input name="org.description" class="input is-large" type="text" placeholder="Beskrivning av organisationen" />
+                                </div>
+                            </div>
+                            <button id="install" onclick="saveSettings();" type="button" class="button is-block is-info is-large is-fullwidth">
+                                Installera
+                            </button>
+                        </div>
+                    </form>
+                    <br>
+                    <div id="successNotification" class="notification is-success is-hidden">
+                        <button type="button" class="delete" onclick="document.getElementById('successNotification').classList.add('is-hidden');"></button>
+                        <p id="successText"></p>
+                    </div>
+                    <div id="errorNotification" class="notification is-danger is-hidden">
+                        <button type="button" class="delete" onclick="document.getElementById('errorNotification').classList.add('is-hidden');"></button>
+                        <p id="errorText"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+<script>
+    async function sendRequest() {
+        var form = document.getElementById("setup");
+        const formData = new FormData(form);
+
+        const response = await fetch(form.getAttribute("action"), {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'include',
+            headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'same-origin',
+            body: new URLSearchParams(formData)
+        });
+
+        return response;
+    }
+
+    function saveSettings() {
+        sendRequest()
+                .then(response => {
+                    if (response.ok) {
+                        document.getElementById("errorNotification").classList.add('is-hidden');
+                        var successElement = document.getElementById("successText");
+                        successElement.innerHTML = "Första organisationen är nu tillagd! Starta om servern för att slutföra installationen";
+                        document.getElementById("successNotification").classList.remove('is-hidden');
+
+                        document.getElementById("install").remove();
+                        document.getElementsByName("org.name")[0].disabled = true;
+                        document.getElementsByName("org.description")[0].disabled = true;
+                    } else {
+                        response.json().then(response => {
+                            console.log(response);
+                            document.getElementById("successNotification").classList.add('is-hidden');
+                            var errorElement = document.getElementById("errorText");
+                            
+                            errorElement.innerHTML = response.reason;
+                            document.getElementById("errorNotification").classList.remove('is-hidden');
+                        });
+                    }
+                });
+    }
+</script>
+</html>

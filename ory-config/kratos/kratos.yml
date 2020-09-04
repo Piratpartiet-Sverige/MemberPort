@@ -1,7 +1,10 @@
 dsn: sqlite:///home/ory/sqlite/db.sqlite?_fk=true
 
 identity:
-  default_schema_url: file:///etc/pirate-config/identity.schema.json
+  default_schema_url: file:///etc/pirate-config/member.schema.json
+  schemas:
+    - id: bot
+      url: file:///etc/pirate-config/bot.schema.json
 
 selfservice:
   flows:
@@ -14,6 +17,10 @@ selfservice:
           default_browser_return_url: http://127.0.0.1:8888/
           hooks:
             - hook: revoke_active_sessions
+    
+    logout:
+      after:
+        default_browser_return_url: http://127.0.0.1:8888/
 
     registration:
       ui_url: http://127.0.0.1:8888/auth/registration

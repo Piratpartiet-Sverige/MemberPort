@@ -12,12 +12,14 @@ from app.logger import logger
 from app.plugins.plugin import get_available_plugins, load_plugins
 from app.web.handlers.admin.add_member import AddMemberHandler
 from app.web.handlers.admin.members import MembersHandler
+from app.web.handlers.admin.roles import RolesHandler
 from app.web.handlers.api.member import APIMemberHandler
 from app.web.handlers.authentication import SignInHandler, SignUpHandler
 from app.web.handlers.kratos import KratosHandler
 from app.web.handlers.main import MainHandler
 from app.web.handlers.error import Error404Handler
 from app.web.handlers.profile import ProfileHandler
+from app.web.handlers.setup import SetupHandler
 from app.web.handlers.verify import VerifyHandler
 from app.database.setup import db_setup
 
@@ -73,6 +75,7 @@ def configure_application(options: WebAppOptions):
         (r"/kratos/(.*)", KratosHandler),
         (r"/admin/add-member", AddMemberHandler),
         (r"/admin/members", MembersHandler),
+        (r"/admin/roles", RolesHandler),
         (r"/api/member", APIMemberHandler),
         (r"/auth/login", SignInHandler),
         (r"/auth/registration", SignUpHandler),
@@ -83,6 +86,17 @@ def configure_application(options: WebAppOptions):
 
     for plugin in plugins:
         handlers.append(plugin.get_handler())
+
+    db = init_db(options)
+    if db is not None:
+        logger.debug("Database connection initialized...")
+        db = asyncio.get_event_loop().run_until_complete(db)
+        asyncio.get_event_loop().run_until_complete(db_setup(db))
+        asyncio.get_event_loop().run_until_complete(first_setup(db, handlers))
+    else:
+        logger.error("Database connection failed")
+        logger.warning("Running without a database")
+        db = None
 
     webapp = tornado.web.Application(
         handlers,
@@ -96,15 +110,7 @@ def configure_application(options: WebAppOptions):
         debug=options.debug
     )
 
-    db = init_db(options)
-    if db is not None:
-        logger.debug("Database connection initialized...")
-        webapp.db = asyncio.get_event_loop().run_until_complete(db)
-        asyncio.get_event_loop().run_until_complete(db_setup(webapp.db))
-    else:
-        logger.error("Database connection failed")
-        logger.warning("Running without a database")
-        webapp.db = None
+    webapp.db = db
 
     if options.https is True:
         cert_file = os.path.abspath(options.cert_file)
@@ -142,3 +148,20 @@ def init_db(options: WebAppOptions):
     )
 
     return asyncpg.create_pool(dsn, min_size=2, max_size=20, max_inactive_connection_lifetime=1800)
+
+
+async def first_setup(pool, handlers):
+    sql = """SELECT s.initialized FROM settings s JOIN (
+                SELECT initialized, MAX(created) AS created
+                FROM settings se
+                GROUP BY initialized
+            ) lastEntry ON s.initialized = lastEntry.initialized AND s.created = lastEntry.created;"""
+    
+    async with pool.acquire() as con:  # type: Connection
+        row = await con.fetchrow(sql)
+
+    if row["initialized"] == False:
+        logger.info("Starting first time setup")
+        handlers.clear()
+        handlers.append((r"/kratos/(.*)", KratosHandler))
+        handlers.append((r"/", SetupHandler))

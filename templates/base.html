@@ -109,6 +109,30 @@
             </div>
     
             <div class="navbar-end">
+                {% if admin is True %}
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        <span class="icon"><i class="fas fa-comments" aria-hidden="true"></i></span>
+                        <p>Administration</p>
+                    </a>
+    
+                    <div class="navbar-dropdown">
+                        <a href="/admin/organizations" class="navbar-item">
+                            Föreningar
+                        </a>
+                        <a href="/admin/members" class="navbar-item">
+                            Medlemmar
+                        </a>
+                        <hr class="navbar-divider">
+                        <a href="/admin/roles" class="navbar-item">
+                            Roller
+                        </a>
+                        <a href="/admin" class="navbar-item">
+                            Inställningar för Crew-DB
+                        </a>
+                    </div>
+                </div>
+                {% end %}
                 <div class="navbar-item">
                     <div class="buttons">
                         <a href="/kratos/self-service/browser/flows/logout" class="button is-light">

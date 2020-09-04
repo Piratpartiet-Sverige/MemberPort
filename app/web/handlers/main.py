@@ -10,4 +10,13 @@ class MainHandler(BaseHandler):
     async def get(self):
         logger.debug("Entered main handler...")
 
-        await self.render("main.html", title="Dashboard", name=self.current_user.user.name.first + " " + self.current_user.user.name.last)
+        dao = UsersDao(self.db)
+        permissions_check = await dao.check_user_admin(self.current_user.user.id)
+
+        await self.render(
+            "main.html",
+            title="Dashboard",
+            admin=permissions_check,
+            name=self.current_user.user.name.first + " " + self.current_user.user.name.last,
+            number=self.current_user.user.number
+        )

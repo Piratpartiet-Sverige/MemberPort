@@ -9,3 +9,4 @@ database.dia~
 app/plugins/*
 !app/plugins/plugin.py
 !app/plugins/__init__.py
+scc.exe

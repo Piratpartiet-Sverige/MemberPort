@@ -12,6 +12,7 @@ class User:
         self.name = Name()
     
     id: UUID
+    number: int
     name: Name
     email: str
     phone: str
@@ -36,6 +37,20 @@ class Membership:
     organization: Organization
     created: datetime
     renewal: datetime
+
+
+class Role:
+    id: UUID
+    name: str
+    description: str
+
+
+class Permission:
+    id: str
+    name: str
+
+    def __eq__(self, other):
+        return self.id == other.id
 
 
 class Session:

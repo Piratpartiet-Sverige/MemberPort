@@ -24,31 +24,33 @@ function toggleHidden(buttonID) {
     }
 }
 
-function toggleSaveButton(buttonID) {
+function toggleSaveButton(buttonID, save=true) {
     var button = document.getElementById(buttonID);
     if (button.innerHTML === "Ändra") {
         button.innerHTML = "Spara";
     } else {
         button.innerHTML = "Ändra";
         
-        sendRequest()
-            .then(response => {
-                if (response.ok) {
-                    hide("errorNotification");
-                    var successElement = document.getElementById("successText");
-                    successElement.innerHTML = "Ändringar sparade";
-                    show("successNotification");
-                } else {
-                    response.json().then(response => {
-                        if (response.error.code >= 400) {
-                            hide("successNotification");
-                            var errorElement = document.getElementById("errorText");
-                            errorElement.innerHTML = response.error.message;
-                            show("errorNotification");
-                        }
-                    });
-                }
-            });
+        if (save) {
+            sendRequest()
+                .then(response => {
+                    if (response.ok) {
+                        hide("errorNotification");
+                        var successElement = document.getElementById("successText");
+                        successElement.innerHTML = "Ändringar sparade";
+                        show("successNotification");
+                    } else {
+                        response.json().then(response => {
+                            if (response.error.code >= 400) {
+                                hide("successNotification");
+                                var errorElement = document.getElementById("errorText");
+                                errorElement.innerHTML = response.error.message;
+                                show("errorNotification");
+                            }
+                        });
+                    }
+                });
+        }
     }
 }
 

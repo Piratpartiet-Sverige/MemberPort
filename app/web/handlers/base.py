@@ -28,7 +28,7 @@ class BaseHandler(RequestHandler):
         """
         Do not call manually. This runs on every request before get/post/etc.
         """
-        self._current_user = self.get_current_user()
+        self._current_user = await self.get_current_user()
 
     def is_authenticated(self) -> bool:
         """
@@ -38,7 +38,7 @@ class BaseHandler(RequestHandler):
         """
         return self.current_user != None
 
-    def get_current_user(self) -> Union[Session, None]:
+    async def get_current_user(self) -> Union[Session, None]:
         """
         Do not use this method to get the current user session, use the property `self.current_user` instead.
         """
@@ -74,7 +74,12 @@ class BaseHandler(RequestHandler):
                 user.postal_code = api_response.identity.traits["postal_code"]
                 user.country = api_response.identity.traits["country"]
                 user.verified = api_response.identity.verifiable_addresses[0].verified
-                
+
+                dao = UsersDao(self.db)
+                user_info = await dao.get_user_member_number(user.id)
+                user.created = user_info["created"]
+                user.number = user_info["member_number"]
+
                 session.user = user
                 logger.debug("Session user: " + str(user.id))
 
