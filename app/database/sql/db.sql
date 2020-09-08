@@ -65,13 +65,15 @@ CREATE TABLE settings
 
 CREATE TABLE countries
 (
-    id   UUID PRIMARY KEY,
-    name TEXT NOT NULL
+    id      UUID PRIMARY KEY,
+    created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    name    TEXT NOT NULL
 );
 
 CREATE TABLE areas
 (
     id        SERIAL PRIMARY KEY,
+    created   TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     "country" UUID REFERENCES countries(id)
 );
 
@@ -79,6 +81,7 @@ CREATE TABLE cities
 (
     id        UUID PRIMARY KEY,
     name      TEXT NOT NULL,
+    created   TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     "country" UUID REFERENCES countries(id),
     "area"    SERIAL REFERENCES areas(id)
 );
@@ -88,7 +91,7 @@ CREATE TABLE area_paths
     "ancestor"   INTEGER REFERENCES areas(id) NOT NULL,
     "descendent" INTEGER REFERENCES areas(id) NOT NULL,
     depth        INTEGER NOT NULL,
-    PRIMARY KEY ("ancestor", "descendent")
+    PRIMARY KEY  ("ancestor", "descendent")
 );
 
 -- Create an administrator role
