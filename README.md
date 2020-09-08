@@ -1,10 +1,10 @@
-# Crew DB
+# Member Port
 
 A membership management system, written in Python with the [Tornado web-framework](https://www.tornadoweb.org/en/stable/) and [ORY](https://www.ory.sh/) as the authentication and identification handler.
 
 ## Installation
 
-This project uses [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/). Every docker image in use can be found in the `docker-compose.yml` file. To build the `crew-db` docker image use the command: `docker build . --no-cache -t crew-db:latest`. This will update all the python dependencies to their latest versions. To run the project, simply run: `docker-compose up`.
+This project uses [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/). Every docker image in use can be found in the `docker-compose.yml` file. To build the `member-port` docker image use the command: `docker build . --no-cache -t member-port:latest`. This will update all the python dependencies to their latest versions. To run the project, simply run: `docker-compose up`.
 
 ```
 docker-compose down -v
@@ -20,4 +20,4 @@ docker-compose rm -fsv
 
 ## License
 
-Crew DB is licensed under the MIT License. For more information, see the file LICENSE.
+Member Port is licensed under GNU GPLv3. For more information, see the file `LICENSE`.

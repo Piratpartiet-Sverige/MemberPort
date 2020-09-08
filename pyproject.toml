@@ -1,9 +1,9 @@
 [tool.poetry]
-name = "crew-db"
+name = "member-port"
 version = "0.1.0"
 description = "Medlemshanteringssystem"
 authors = ["Piratpartiet <info@piratpartiet.se>"]
-license = "MIT License"
+license = "GPL-3.0-or-later"
 
 [tool.poetry.dependencies]
 python = "^3.8"

@@ -37,8 +37,8 @@ services:
     networks:
       - intranet
 
-  crew-db:
-    image: crew-db:latest
+  member-port:
+    image: member-port:latest
     depends_on:
       - postgres-db
       - pirate-kratos
