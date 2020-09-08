@@ -63,6 +63,34 @@ CREATE TABLE settings
     version              INTEGER NOT NULL
 );
 
+CREATE TABLE countries
+(
+    id   UUID PRIMARY KEY,
+    name TEXT NOT NULL
+);
+
+CREATE TABLE areas
+(
+    id        SERIAL PRIMARY KEY,
+    "country" UUID REFERENCES countries(id)
+);
+
+CREATE TABLE cities
+(
+    id        UUID PRIMARY KEY,
+    name      TEXT NOT NULL,
+    "country" UUID REFERENCES countries(id),
+    "area"    SERIAL REFERENCES areas(id)
+);
+
+CREATE TABLE area_paths
+(
+    "ancestor"   INTEGER REFERENCES areas(id) NOT NULL,
+    "descendent" INTEGER REFERENCES areas(id) NOT NULL,
+    depth        INTEGER NOT NULL,
+    PRIMARY KEY ("ancestor", "descendent")
+);
+
 -- Create an administrator role
 INSERT INTO roles (id, name, description)
 VALUES ('00000000-0000-0000-0000-000000000000', 'Admin', 'Default role for admins.');
