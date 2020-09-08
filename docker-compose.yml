@@ -25,7 +25,7 @@ services:
   postgres-db:
     image: postgres
     environment:
-      POSTGRES_DB: crewdb
+      POSTGRES_DB: memberportdb
       POSTGRES_USER: super
       POSTGRES_PASSWORD: super
       PGDATA: /data/postgres
