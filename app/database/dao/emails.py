@@ -4,12 +4,10 @@ from asyncpg import Connection, UniqueViolationError
 from asyncpg.pool import Pool
 
 from app.logger import logger
+from app.database.dao.base import BaseDao
 
 
-class EmailDao:
-    def __init__(self, pool: Pool):
-        self.pool = pool
-
+class EmailDao(BaseDao):
     async def create_email_verify_link(self, email: str) -> str:
         sql = 'INSERT INTO email_verify_links ("email", link) VALUES ($1, $2)'
 

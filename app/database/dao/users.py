@@ -12,12 +12,10 @@ from asyncpg.exceptions import UniqueViolationError
 from app.database.dao.emails import EmailDao
 from app.models import User, Membership
 from app.email import send_email
+from app.database.dao.base import BaseDao
 
 
-class UsersDao:
-    def __init__(self, pool: Pool):
-        self.pool = pool
-
+class UsersDao(BaseDao):
     async def get_user_member_number(self, user_id: UUID) -> dict:
         """
         Retrieves the member number for the user, assigns a new one if not fond

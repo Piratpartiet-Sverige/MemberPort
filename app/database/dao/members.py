@@ -12,12 +12,10 @@ from asyncpg.exceptions import UniqueViolationError
 from app.database.dao.organizations import OrganizationsDao
 from app.models import User, Membership, Organization
 from app.email import send_email
+from app.database.dao.base import BaseDao
 
 
-class MembersDao:
-    def __init__(self, pool: Pool):
-        self.pool = pool
-
+class MembersDao(BaseDao):
     async def create_membership(self, user_id: UUID, organization_id: UUID) -> bool:
         sql = "INSERT INTO memberships (\"user\", \"organization\", created, renewal) VALUES ($1, $2, $3, $4);"
 

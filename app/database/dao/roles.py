@@ -9,12 +9,10 @@ from app.models import Permission
 from asyncpg import Connection
 from asyncpg.pool import Pool
 from asyncpg.exceptions import UniqueViolationError
+from app.database.dao.base import BaseDao
 
 
-class RolesDao:
-    def __init__(self, pool: Pool):
-        self.pool = pool
-
+class RolesDao(BaseDao):
     async def get_roles(self) -> list:
         sql = "SELECT id, name, description FROM roles;"
 

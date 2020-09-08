@@ -9,12 +9,10 @@ from app.models import Permission
 from asyncpg import Connection
 from asyncpg.pool import Pool
 from asyncpg.exceptions import UniqueViolationError
+from app.database.dao.base import BaseDao
 
 
-class SettingsDao:
-    def __init__(self, pool: Pool):
-        self.pool = pool
-
+class SettingsDao(BaseDao):
     async def is_initialized(self) -> bool:
         sql = """SELECT s.initialized FROM settings s JOIN (
                     SELECT initialized, MAX(created) AS created
