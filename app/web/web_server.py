@@ -17,6 +17,7 @@ from app.web.handlers.api.member import APIMemberHandler
 from app.web.handlers.authentication import SignInHandler, SignUpHandler
 from app.web.handlers.kratos import KratosHandler
 from app.web.handlers.main import MainHandler
+from app.web.handlers.new_member import NewMemberHandler
 from app.web.handlers.error import Error404Handler
 from app.web.handlers.profile import ProfileHandler
 from app.web.handlers.setup import SetupHandler
@@ -80,6 +81,7 @@ def configure_application(options: WebAppOptions):
         (r"/auth/login", SignInHandler),
         (r"/auth/registration", SignUpHandler),
         (r"/login", tornado.web.RedirectHandler, dict(url=r"/auth/login")),
+        (r"/new-member", NewMemberHandler),
         (r"/profile", ProfileHandler),
         (r"/verify", VerifyHandler),
     ]

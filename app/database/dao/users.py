@@ -16,7 +16,7 @@ from app.database.dao.base import BaseDao
 
 
 class UsersDao(BaseDao):
-    async def get_user_member_number(self, user_id: UUID) -> dict:
+    async def get_user_info(self, user_id: UUID) -> dict:
         """
         Retrieves the member number for the user, assigns a new one if not fond
         :returns An int, the member number for the user with the id: user_id
@@ -30,33 +30,33 @@ class UsersDao(BaseDao):
         user_info = {}
 
         if row is None:
-            logger.debug("Assign new member number for user: " + str(user_id))
-
-            created = datetime.utcnow()
-            user_info["created"] = created
-
-            sql = 'INSERT INTO users (kratos_id, created) VALUES ($1, $2);'
-
-            async with self.pool.acquire() as con:  # type: Connection
-                await con.execute(sql, user_id, created)
-
-            sql = 'SELECT member_number FROM users WHERE kratos_id = $1'
-
-            async with self.pool.acquire() as con:  # type: Connection
-                row = await con.fetchrow(sql, user_id)
-            
-            user_info["member_number"] = row["member_number"]
-
-            if user_info["member_number"] == 1:
-                sql = 'INSERT INTO user_roles ("user", "role") VALUES ($1, $2);'
-
-                async with self.pool.acquire() as con:  # type: Connection
-                    await con.execute(sql, user_id, UUID('00000000-0000-0000-0000-000000000000'))
+            return None
         else:
             user_info["created"] = row["created"]
             user_info["member_number"] = row["member_number"]
 
         return user_info
+
+    async def set_user_member_number(self, user_id: UUID) -> None:
+        logger.debug("Assign new member number for user: " + str(user_id))
+
+        created = datetime.utcnow()
+
+        sql = 'INSERT INTO users (kratos_id, created) VALUES ($1, $2);'
+
+        async with self.pool.acquire() as con:  # type: Connection
+            await con.execute(sql, user_id, created)
+
+        sql = 'SELECT member_number FROM users WHERE kratos_id = $1'
+
+        async with self.pool.acquire() as con:  # type: Connection
+            row = await con.fetchrow(sql, user_id)
+
+        if row["member_number"] == 1:
+            sql = 'INSERT INTO user_roles ("user", "role") VALUES ($1, $2);'
+
+            async with self.pool.acquire() as con:  # type: Connection
+                await con.execute(sql, user_id, UUID('00000000-0000-0000-0000-000000000000'))
 
     async def check_user_admin(self, user_id: UUID) -> bool:
         """

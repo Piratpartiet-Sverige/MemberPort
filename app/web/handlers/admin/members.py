@@ -32,7 +32,7 @@ class MembersHandler(BaseHandler):
         user_dao = UsersDao(self.db)
 
         for member in members:
-            user_info = await user_dao.get_user_member_number(member.id)
+            user_info = await user_dao.get_user_info(member.id)
             member.traits["member_number"] = user_info["member_number"]
             member.traits["created"] = user_info["created"]
 

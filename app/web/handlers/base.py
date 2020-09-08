@@ -76,9 +76,14 @@ class BaseHandler(RequestHandler):
                 user.verified = api_response.identity.verifiable_addresses[0].verified
 
                 dao = UsersDao(self.db)
-                user_info = await dao.get_user_member_number(user.id)
-                user.created = user_info["created"]
-                user.number = user_info["member_number"]
+                user_info = await dao.get_user_info(user.id)
+
+                if user_info is not None:
+                    user.created = user_info["created"]
+                    user.number = user_info["member_number"]
+                else:
+                    user.created = None
+                    user.number = None
 
                 session.user = user
                 logger.debug("Session user: " + str(user.id))
