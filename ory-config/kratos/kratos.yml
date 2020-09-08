@@ -26,9 +26,9 @@ selfservice:
       ui_url: http://127.0.0.1:8888/auth/registration
       request_lifespan: 10m
       after:
-        default_browser_return_url: http://127.0.0.1:8888/
+        default_browser_return_url: http://127.0.0.1:8888/new-member
         password:
-          default_browser_return_url: http://127.0.0.1:8888/
+          default_browser_return_url: http://127.0.0.1:8888/new-member
           hooks:
             - hook: session
 
