@@ -39,6 +39,7 @@ services:
 
   member-port:
     image: member-port:latest
+    build: .
     depends_on:
       - postgres-db
       - pirate-kratos
