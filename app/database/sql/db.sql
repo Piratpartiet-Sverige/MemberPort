@@ -66,8 +66,8 @@ CREATE TABLE settings
 CREATE TABLE countries
 (
     id      UUID PRIMARY KEY,
-    created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    name    TEXT NOT NULL
+    name    TEXT NOT NULL,
+    created TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
 CREATE TABLE areas
@@ -77,13 +77,13 @@ CREATE TABLE areas
     "country" UUID REFERENCES countries(id)
 );
 
-CREATE TABLE cities
+CREATE TABLE municipalities
 (
     id        UUID PRIMARY KEY,
     name      TEXT NOT NULL,
     created   TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     "country" UUID REFERENCES countries(id),
-    "area"    SERIAL REFERENCES areas(id)
+    "area"    INTEGER REFERENCES areas(id)
 );
 
 CREATE TABLE area_paths
@@ -163,6 +163,57 @@ VALUES ('00000000-0000-0000-0000-000000000000', 'delete_organizations');
 
 INSERT INTO role_permissions ("role", "permission")
 VALUES ('00000000-0000-0000-0000-000000000000', 'global');
+
+INSERT INTO countries (id, name, created)
+VALUES ('00000000-0000-0000-0000-000000000000', 'Sverige', localtimestamp);
+
+INSERT INTO municipalities (id, name, created, "country", "area")
+VALUES (uuid_generate_v4(), 'Ale kommun', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+
+INSERT INTO municipalities (id, name, created, "country", "area")
+VALUES (uuid_generate_v4(), 'Alingsås kommun', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+
+INSERT INTO municipalities (id, name, created, "country", "area")
+VALUES (uuid_generate_v4(), 'Alvesta kommun', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+
+INSERT INTO municipalities (id, name, created, "country", "area")
+VALUES (uuid_generate_v4(), 'Aneby kommun', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+
+INSERT INTO municipalities (id, name, created, "country", "area")
+VALUES (uuid_generate_v4(), 'Arboga kommun', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+
+INSERT INTO municipalities (id, name, created, "country", "area")
+VALUES (uuid_generate_v4(), 'Arjeplogs kommun', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+
+INSERT INTO municipalities (id, name, created, "country", "area")
+VALUES (uuid_generate_v4(), 'Arvidsjaurs kommun', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+
+INSERT INTO municipalities (id, name, created, "country", "area")
+VALUES (uuid_generate_v4(), 'Arvika kommun', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+
+INSERT INTO municipalities (id, name, created, "country", "area")
+VALUES (uuid_generate_v4(), 'Askersunds kommun', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+
+INSERT INTO municipalities (id, name, created, "country", "area")
+VALUES (uuid_generate_v4(), 'Avesta kommun', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+
+INSERT INTO municipalities (id, name, created, "country", "area")
+VALUES (uuid_generate_v4(), 'Bengtsfors kommun', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+
+INSERT INTO municipalities (id, name, created, "country", "area")
+VALUES (uuid_generate_v4(), 'Bergs kommun', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+
+INSERT INTO municipalities (id, name, created, "country", "area")
+VALUES (uuid_generate_v4(), 'Bjurholms kommun', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+
+INSERT INTO municipalities (id, name, created, "country", "area")
+VALUES (uuid_generate_v4(), 'Bjuvs kommun', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+
+INSERT INTO municipalities (id, name, created, "country", "area")
+VALUES (uuid_generate_v4(), 'Bodens kommun', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+
+INSERT INTO municipalities (id, name, created, "country", "area")
+VALUES (uuid_generate_v4(), 'Bollebygds kommun', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
 
 INSERT INTO settings (initialized, created, default_organization, version)
 VALUES (FALSE, localtimestamp, NULL, 3);

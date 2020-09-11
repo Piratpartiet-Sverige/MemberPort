@@ -67,9 +67,10 @@ class BaseHandler(RequestHandler):
                 user.name.last = api_response.identity.traits["name"]["last"]
                 user.email = api_response.identity.traits["email"]
                 user.phone = "070 00 00 000"  # api_response.identity.traits["phone"] ory does not yet support phone numbers
-                user.city = api_response.identity.traits["city"]
-                user.street = api_response.identity.traits["street"]
-                user.postal_code = api_response.identity.traits["postal_code"]
+                user.postal_address.street = api_response.identity.traits["postal_address"]["street"]
+                user.postal_address.postal_code = api_response.identity.traits["postal_address"]["postal_code"]
+                user.postal_address.city = api_response.identity.traits["postal_address"]["city"]
+                user.municipality = api_response.identity.traits["municipality"]
                 user.country = api_response.identity.traits["country"]
                 user.verified = api_response.identity.verifiable_addresses[0].verified
 

@@ -2,6 +2,7 @@ import ory_kratos_client
 
 from ory_kratos_client.rest import ApiException
 from ory_kratos_client.configuration import Configuration
+from app.database.dao.geography import GeographyDao
 from app.web.handlers.base import BaseHandler
 from app.logger import logger
 from tornado import httpclient  # noqa needed for kratos response
@@ -70,4 +71,14 @@ class SignUpHandler(BaseHandler):
 
         logger.debug("csrf_token: " + csrf_token)
 
-        self.render("sign-up.html", flow=flow, csrf_token=csrf_token, error=error, inputs=inputs)
+        dao = GeographyDao(self.db)
+        municipalities = await dao.get_municipalities()
+
+        self.render(
+            "sign-up.html",
+            flow=flow,
+            csrf_token=csrf_token,
+            error=error,
+            inputs=inputs,
+            municipalities=municipalities
+        )

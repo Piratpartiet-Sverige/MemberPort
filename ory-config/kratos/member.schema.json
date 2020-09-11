@@ -18,13 +18,21 @@
             }
           }
         },
-        "street": {
-          "type": "string"
+        "postal_address": {
+          "type": "object",
+          "properties": {
+            "street": {
+              "type": "string"
+            },
+            "postal_code": {
+              "type": "string"
+            },
+            "city": {
+              "type": "string"
+            }
+          }
         },
-        "city": {
-          "type": "string"
-        },
-        "postal_code": {
+        "municipality": {
           "type": "string"
         },
         "country": {
@@ -63,9 +71,8 @@
       "required": [
         "email",
         "name",
-        "street",
-        "city",
-        "postal_code",
+        "postal_address",
+        "municipality",
         "country"
       ],
       "additionalProperties": false

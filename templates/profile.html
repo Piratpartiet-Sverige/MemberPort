@@ -137,7 +137,7 @@
                         <div class="field is-grouped">
                             <div class="control">
                                 <input class="input is-static" name="traits.street" type="text"
-                                    value="{{ user.street }}" id="traits.street" readonly>
+                                    value="{{ user.postal_address.street }}" id="traits.postal_address.street" readonly>
                             </div>
                             <div class="field is-grouped">
                                 <p class="control">
@@ -156,7 +156,7 @@
                         <div class="field is-grouped">
                             <div class="control">
                                 <input class="input is-static" name="traits.postal_code" type="text"
-                                    value="{{ user.postal_code }}" id="traits.postal_code" readonly>
+                                    value="{{ user.postal_address.postal_code }}" id="traits.postal_address.postal_code" readonly>
                             </div>
                             <div class="field is-grouped">
                                 <p class="control">
@@ -173,7 +173,7 @@
                         <label class="label">Postort</label>
                         <div class="field is-grouped">
                             <div class="control">
-                                <input class="input is-static" name="traits.city" type="text" value="{{ user.city }}"
+                                <input class="input is-static" name="traits.postal_address.city" type="text" value="{{ user.postal_address.city }}"
                                     id="traits.city" readonly>
                             </div>
                             <div class="field is-grouped">

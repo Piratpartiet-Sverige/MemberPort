@@ -7,18 +7,24 @@ class Name:
     last: str
 
 
+class PostalAddress:
+    street: str
+    postal_code: str
+    city: str
+
+
 class User:
     def __init__(self):
         self.name = Name()
+        self.postal_address = PostalAddress()
 
     id: UUID
     number: int
     name: Name
     email: str
     phone: str
-    city: str
-    street: str
-    postal_code: str
+    postal_address: PostalAddress
+    municipality: str
     country: str
     verified: bool
 
@@ -72,3 +78,16 @@ class Session:
     issued_at: datetime
     expires_at: datetime
     last_ip: str
+
+
+class Country:
+    id: UUID
+    name: str
+    created: datetime
+
+
+class Municipality:
+    id: UUID
+    name: str
+    country: Country
+    created: datetime
