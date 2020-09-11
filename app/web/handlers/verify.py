@@ -20,7 +20,7 @@ class VerifyHandler(BaseHandler):
         configuration = Configuration()
         configuration.host = "http://pirate-kratos:4434"
 
-        csrf_token = ""
+        csrf_token = ""  # noqa: S105 # nosec
         error = ""
         action = ""
         success = False
@@ -47,7 +47,7 @@ class VerifyHandler(BaseHandler):
 
         await self.render(
             "verify.html",
-            admin=admin,
+            admin=permissions_check,
             title="Verifiera",
             user=self.current_user.user,
             action=action,

@@ -22,7 +22,7 @@ class ProfileHandler(BaseHandler):
         configuration = Configuration()
         configuration.host = "http://pirate-kratos:4433"
 
-        csrf_token = ""
+        csrf_token = ""  # noqa: S105 # nosec
         error = ""
         action = ""
 

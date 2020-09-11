@@ -104,13 +104,13 @@ class OrganizationsDao(BaseDao):
         if order_dir_asc is True:
             order_dir = "ASC"
 
-        if order_column != "name" and order_column != "email" and order_column != "created":
+        if order_column != "name" or order_column != "created":
             order_column = "name"
 
         if search == "":
             sql = """ SELECT o.id, o.name, o.description, o.created
                       FROM organizations o
-                      ORDER BY """ + order_column + " " + order_dir + ";"
+                      ORDER BY """ + order_column + " " + order_dir + ";"  # noqa: S608 # nosec
 
             async with self.pool.acquire() as con:  # type: Connection
                 rows = await con.fetch(sql)
@@ -121,7 +121,7 @@ class OrganizationsDao(BaseDao):
                       WHERE o.name LIKE $1
                       OR o.description LIKE $1
                       OR to_char(o.created, 'YYYY-MM-DD HH24:MI:SS.US') LIKE $1
-                      ORDER BY """ + order_column + " " + order_dir + ";"
+                      ORDER BY """ + order_column + " " + order_dir + ";"  # noqa: S608 # nosec
 
             async with self.pool.acquire() as con:  # type: Connection
                 rows = await con.fetch(sql, search)

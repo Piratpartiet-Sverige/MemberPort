@@ -25,8 +25,6 @@ class RolesHandler(BaseHandler):
 
         dao = RolesDao(self.db)
 
-        roles = await dao.get_roles()
-
         for role in self.args:
             permissions_for_role = self.args[role]
 

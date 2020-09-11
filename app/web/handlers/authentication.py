@@ -6,6 +6,7 @@ from app.web.handlers.base import BaseHandler
 from app.logger import logger
 from tornado import httpclient  # noqa needed for kratos response
 
+
 class SignInHandler(BaseHandler):
     def get(self):
         request = self.get_argument("request", default="")
@@ -16,7 +17,7 @@ class SignInHandler(BaseHandler):
         configuration = Configuration()
         configuration.host = "http://pirate-kratos:4434"
 
-        csrf_token = ""
+        csrf_token = ""  # noqa: S105 # nosec
         error = ""
 
         with ory_kratos_client.ApiClient(configuration) as api_client:
@@ -45,7 +46,7 @@ class SignUpHandler(BaseHandler):
         configuration = Configuration()
         configuration.host = "http://pirate-kratos:4434"
 
-        csrf_token = ""
+        csrf_token = ""  # noqa: S105 # nosec
         error = ""
 
         with ory_kratos_client.ApiClient(configuration) as api_client:
