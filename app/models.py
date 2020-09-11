@@ -1,6 +1,6 @@
 from datetime import datetime
-from typing import NamedTuple, Union
 from uuid import UUID
+
 
 class Name:
     first: str
@@ -10,7 +10,7 @@ class Name:
 class User:
     def __init__(self):
         self.name = Name()
-    
+
     id: UUID
     number: int
     name: Name
@@ -21,7 +21,7 @@ class User:
     postal_code: str
     country: str
     verified: bool
-    
+
     created: datetime
 
 

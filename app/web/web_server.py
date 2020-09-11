@@ -158,11 +158,11 @@ async def first_setup(pool, handlers):
                 FROM settings se
                 GROUP BY initialized
             ) lastEntry ON s.initialized = lastEntry.initialized AND s.created = lastEntry.created;"""
-    
-    async with pool.acquire() as con:  # type: Connection
+
+    async with pool.acquire() as con:  # noqa type: Connection 
         row = await con.fetchrow(sql)
 
-    if row["initialized"] == False:
+    if row["initialized"] is False:
         logger.info("Starting first time setup")
         handlers.clear()
         handlers.append((r"/kratos/(.*)", KratosHandler))

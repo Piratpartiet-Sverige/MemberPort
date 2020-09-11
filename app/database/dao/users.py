@@ -1,17 +1,13 @@
 from app.logger import logger
 
 from datetime import datetime
-from hashlib import sha256
 from typing import Union
-from uuid import uuid4, UUID
+from uuid import UUID
 
 from asyncpg import Connection
-from asyncpg.pool import Pool
 from asyncpg.exceptions import UniqueViolationError
 
-from app.database.dao.emails import EmailDao
-from app.models import User, Membership
-from app.email import send_email
+from app.models import User
 from app.database.dao.base import BaseDao
 
 
@@ -159,7 +155,6 @@ class UsersDao(BaseDao):
 
         return users
 
-
     async def get_user_by_id(self, user_id: UUID) -> User:
         return await self._get_user(user_id=user_id)
 
@@ -213,7 +208,7 @@ class UsersDao(BaseDao):
         logger.warning("is_email_verified: row was found with " + email + " but the content was null")
         return False
 
-    async def _get_user(self, user_id: UUID=None) -> Union[User, None]:
+    async def _get_user(self, user_id: UUID = None) -> Union[User, None]:
         sql = "SELECT id, created FROM users WHERE id = $1"
 
         if user_id is None:

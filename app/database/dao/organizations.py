@@ -1,17 +1,13 @@
 from app.logger import logger
 
 from datetime import datetime
-from hashlib import sha256
 from typing import Union
 from uuid import uuid4, UUID
 
 from asyncpg import Connection
-from asyncpg.pool import Pool
 from asyncpg.exceptions import UniqueViolationError
 
-from app.database.dao.emails import EmailDao
 from app.models import Organization
-from app.email import send_email
 from app.database.dao.base import BaseDao
 
 
@@ -47,7 +43,7 @@ class OrganizationsDao(BaseDao):
         except Exception:
             logger.error("An error occured when trying to retrieve the default organization!", stack_info=True)
             return None
-        
+
         if row["default_organization"] is None:
             logger.debug("No default organization found...")
             return None

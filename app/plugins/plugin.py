@@ -16,6 +16,7 @@ def get_available_plugins():
 
     return plugins
 
+
 def load_plugins(plugins_paths):
     plugins = []
 
