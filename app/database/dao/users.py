@@ -124,7 +124,7 @@ class UsersDao(BaseDao):
                       LEFT JOIN members m
                       ON u.id = m."user"
                       WHERE m."user" IS NULL
-                      ORDER BY """ + order_column + " " + order_dir + ";"
+                      ORDER BY """ + order_column + " " + order_dir + ";"  # noqa: S608 # nosec
 
             async with self.pool.acquire() as con:  # type: Connection
                 rows = await con.fetch(sql)
@@ -138,7 +138,7 @@ class UsersDao(BaseDao):
                       LEFT JOIN members m
                       ON u.id = m."user"
                       WHERE m."user" IS NULL
-                      ORDER BY """ + order_column + " " + order_dir + ";"
+                      ORDER BY """ + order_column + " " + order_dir + ";"  # noqa: S608 # nosec
 
             async with self.pool.acquire() as con:  # type: Connection
                 rows = await con.fetch(sql, search)

@@ -35,7 +35,7 @@ class MembersDao(BaseDao):
 
     async def update_membership(self, user_id: UUID, organization_id: UUID,
                                 created: Union[datetime, None] = None, renewal: Union[datetime, None] = None) -> bool:
-        sql = _construct_sql_string_update(created, renewal)
+        sql = self._construct_sql_string_update(created, renewal)
 
         if sql is None:
             return False

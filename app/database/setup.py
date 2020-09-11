@@ -26,8 +26,14 @@ async def db_setup(pool: Pool):
                 logger.info("Upgrading database from version " + str(current_version) + " to version " + str(new_version))
                 await upgrade_db(pool, current_version, new_version)
             elif new_version < current_version:
-                logger.critical("Database numbers mismatch, the \"new\" version number is older than the current one. This could be because of a failed downgrade!")
-                raise RuntimeError("Database numbers mismatch, the \"new\" version number is older than the current one. This could be because of a failed downgrade!")
+                logger.critical(
+                    "Database numbers mismatch, the \"new\" version number is older than the current one." +
+                    "This could be because of a failed downgrade!"
+                )
+                raise RuntimeError(
+                    "Database numbers mismatch, the \"new\" version number is older than the current one." +
+                    "This could be because of a failed downgrade!"
+                )
             else:
                 logger.info("No action required for database")
     except UndefinedTableError:
@@ -69,7 +75,13 @@ async def upgrade_db(pool, current_version, new_version):
                         await con.execute(sql)
                     logger.info("Succesfully upgraded database from version " + str(version) + " to " + str(version + 1))
                 except Exception:
-                    logger.critical("Could not upgrade database from version " + str(version) + " to " + str(version + 1) + " due to SQL error!", exc_info=1)
+                    logger.critical(
+                        "Could not upgrade database from version " + str(version) + " to " + str(version + 1) + " due to SQL error!",
+                        exc_info=1
+                    )
         except FileNotFoundError:
-            logger.critical("Could not upgrade database from version " + str(version) + " to " + str(version + 1) + " due to no upgrade script found!", exc_info=1)
+            logger.critical(
+                "Could not upgrade database from version " + str(version) + " to " + str(version + 1) + " due to no upgrade script found!",
+                exc_info=1
+            )
             break

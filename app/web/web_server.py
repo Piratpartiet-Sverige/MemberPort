@@ -159,7 +159,7 @@ async def first_setup(pool, handlers):
                 GROUP BY initialized
             ) lastEntry ON s.initialized = lastEntry.initialized AND s.created = lastEntry.created;"""
 
-    async with pool.acquire() as con:  # noqa type: Connection 
+    async with pool.acquire() as con:
         row = await con.fetchrow(sql)
 
     if row["initialized"] is False:
