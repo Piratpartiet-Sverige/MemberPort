@@ -1,7 +1,6 @@
 from uuid import uuid4, UUID
 
 from asyncpg import Connection, UniqueViolationError
-from asyncpg.pool import Pool
 
 from app.logger import logger
 from app.database.dao.base import BaseDao

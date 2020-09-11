@@ -7,7 +7,6 @@ from app.logger import logger
 from app.database.dao.users import UsersDao
 from app.database.dao.organizations import OrganizationsDao
 from app.web.handlers.base import BaseHandler
-from uuid import uuid4
 
 
 class MembersHandler(BaseHandler):

@@ -1,5 +1,4 @@
-from uuid import uuid4, UUID
-from asyncpg import Connection, UniqueViolationError, UndefinedTableError
+from asyncpg import Connection, UndefinedTableError
 from asyncpg.pool import Pool
 from app.logger import logger
 
@@ -13,11 +12,11 @@ async def db_setup(pool: Pool):
                 FROM settings se
                 GROUP BY version
             ) lastEntry ON s.version = lastEntry.version AND s.created = lastEntry.created;"""
-    
+
     try:
         async with pool.acquire() as con:  # type: Connection
             row = await con.fetchrow(sql)
-    
+
         if row["version"] is None:
             logger.info("No version info in database found, initializing new database")
             await initialize_db(pool)
@@ -35,6 +34,7 @@ async def db_setup(pool: Pool):
         logger.info("No version info in database found, initializing new database")
         await initialize_db(pool)
 
+
 def get_new_version_number():
     version = ""
     last_line = ""
@@ -44,8 +44,9 @@ def get_new_version_number():
     for char in last_line:
         if char.isdigit():
             version += char
-    
+
     return int(version)
+
 
 async def initialize_db(pool):
     with open('app/database/sql/db.sql', 'r') as sql_file:
@@ -56,6 +57,7 @@ async def initialize_db(pool):
             logger.info("Succesfully initialized new database!")
         except Exception:
             logger.critical("Could not initialize database due to SQL error!", exc_info=1)
+
 
 async def upgrade_db(pool, current_version, new_version):
     for version in range(current_version, new_version):

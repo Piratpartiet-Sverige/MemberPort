@@ -9,7 +9,6 @@ from app.database.dao.members import MembersDao
 from app.database.dao.users import UsersDao
 from app.logger import logger
 from app.web.handlers.base import BaseHandler
-from uuid import UUID
 
 
 class ProfileHandler(BaseHandler):
@@ -32,9 +31,9 @@ class ProfileHandler(BaseHandler):
             try:
                 api_response = api_instance.get_self_service_browser_settings_request(request)
 
-                if api_response.methods["profile"].config.messages != None:
+                if api_response.methods["profile"].config.messages is not None:
                     error = api_response.methods["profile"].config.messages[0].text
-                
+
                 action = api_response.methods["profile"].config.action
                 csrf_token = api_response.methods["profile"].config.fields[0].value
             except ApiException as e:

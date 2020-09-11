@@ -2,7 +2,6 @@ import tornado.web
 
 from app.database.dao.members import MembersDao
 from app.database.dao.users import UsersDao
-from app.logger import logger
 from app.web.handlers.base import BaseHandler
 
 

@@ -1,18 +1,7 @@
-import os
-import sys
-
-import tornado.web
-import ory_kratos_client
-
-from ory_kratos_client.rest import ApiException
-from ory_kratos_client.configuration import Configuration
-
-from app.database.dao.users import UsersDao
 from app.database.dao.settings import SettingsDao
 from app.database.dao.organizations import OrganizationsDao
 from app.logger import logger
 from app.web.handlers.base import BaseHandler
-from uuid import uuid4
 
 
 class SetupHandler(BaseHandler):
@@ -76,6 +65,6 @@ class SetupHandler(BaseHandler):
 
             except ApiException as e:
                 logger.error("Exception when calling AdminApi->create_identity: %s\n" % e)
-        
+
         self.respond("Something went wrong", 500)
         """

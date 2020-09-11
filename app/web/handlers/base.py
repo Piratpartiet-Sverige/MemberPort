@@ -2,14 +2,12 @@ import ory_kratos_client
 
 from ory_kratos_client.rest import ApiException
 from ory_kratos_client.configuration import Configuration
-from datetime import datetime, timedelta
 from typing import Union
 from uuid import UUID
 
 from asyncpg.pool import Pool
 from tornado.web import RequestHandler
 
-from app.config import Config
 from app.logger import logger
 from app.database.dao.users import UsersDao
 from app.models import Session, User
@@ -36,7 +34,7 @@ class BaseHandler(RequestHandler):
 
         :returns: a boolean
         """
-        return self.current_user != None
+        return self.current_user is not None
 
     async def get_current_user(self) -> Union[Session, None]:
         """
@@ -68,7 +66,7 @@ class BaseHandler(RequestHandler):
                 user.name.first = api_response.identity.traits["name"]["first"]
                 user.name.last = api_response.identity.traits["name"]["last"]
                 user.email = api_response.identity.traits["email"]
-                user.phone = "070 00 00 000" # api_response.identity.traits["phone"] ory does not yet support phone numbers
+                user.phone = "070 00 00 000"  # api_response.identity.traits["phone"] ory does not yet support phone numbers
                 user.city = api_response.identity.traits["city"]
                 user.street = api_response.identity.traits["street"]
                 user.postal_code = api_response.identity.traits["postal_code"]

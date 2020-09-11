@@ -1,13 +1,10 @@
 from app.logger import logger
 
-from datetime import datetime
-from typing import Union
-from uuid import uuid4, UUID
+from uuid import UUID
 from app.models import Role
 from app.models import Permission
 
 from asyncpg import Connection
-from asyncpg.pool import Pool
 from asyncpg.exceptions import UniqueViolationError
 from app.database.dao.base import BaseDao
 
@@ -22,7 +19,7 @@ class RolesDao(BaseDao):
         except Exception:
             logger.error("An error occured when trying to retrieve roles!", stack_info=True)
             return list()
-        
+
         roles = list()
 
         for row in rows:
@@ -43,7 +40,7 @@ class RolesDao(BaseDao):
         except Exception:
             logger.error("An error occured when trying to retrieve permissions!", stack_info=True)
             return list()
-        
+
         permissions = list()
 
         for row in rows:
@@ -63,7 +60,7 @@ class RolesDao(BaseDao):
         except Exception:
             logger.error("An error occured when trying to retrieve permissions by role!", stack_info=True)
             return list()
-        
+
         permissions = list()
 
         for row in rows:
@@ -72,7 +69,7 @@ class RolesDao(BaseDao):
 
             async with self.pool.acquire() as con:  # type: Connection
                 p_rows = await con.fetch(sql, row["permission"])
-            
+
             for p_row in p_rows:
                 permission = Permission()
                 permission.id = p_row["id"]

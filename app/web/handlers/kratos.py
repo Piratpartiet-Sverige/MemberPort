@@ -15,7 +15,7 @@ class KratosHandler(RequestHandler):
         pass
 
     @tornado.gen.coroutine
-    def get(self, url: str =""):
+    def get(self, url: str = ""):
         url = "http://pirate-kratos:4433/" + url
 
         logger.debug("GET to Kratos: " + url)
@@ -46,14 +46,15 @@ class KratosHandler(RequestHandler):
 
         self.write(response.body)
         self.finish()
-    
+
     @tornado.gen.coroutine
-    def post(self, url: str =""):
+    def post(self, url: str = ""):
         url = "http://pirate-kratos:4433/" + url + "?" + self.request.query
 
         logger.debug("POST to Kratos: " + url)
 
-        req = tornado.httpclient.HTTPRequest(url, method="POST", body=self.request.body, follow_redirects=False, headers=self.request.headers)
+        req = tornado.httpclient.HTTPRequest(url, method="POST", body=self.request.body,
+                                             follow_redirects=False, headers=self.request.headers)
         logger.debug(req.body)
         client = tornado.httpclient.AsyncHTTPClient()
         response = yield client.fetch(req, raise_error=False)
@@ -66,7 +67,7 @@ class KratosHandler(RequestHandler):
             else:
                 if header.lower() == 'set-cookie':
                     cookie_strings = response.headers.get(header)
-                    cookie_strings = cookie_strings.replace("Domain=pirate-kratos;", "") #Domain=http://127.0.0.1:8888
+                    cookie_strings = cookie_strings.replace("Domain=pirate-kratos;", "")  # Domain=http://127.0.0.1:8888
                     cookies = []
                     for cookie in cookie_strings.split(","):
                         if cookie[0] == ' ':
@@ -78,7 +79,7 @@ class KratosHandler(RequestHandler):
                         self.add_header(header, cookie)
                 elif header.lower() != 'transfer-encoding':
                     self.set_header(header, response.headers.get(header))
-        
+
         if url.endswith("/logout"):
             self.clear_session_cookie()
 

@@ -29,9 +29,9 @@ class VerifyHandler(BaseHandler):
             api_instance = ory_kratos_client.CommonApi(api_client)
             try:
                 api_response = api_instance.get_self_service_verification_request(request)
-                if api_response.form.errors != None:
+                if api_response.form.errors is not None:
                     error = api_response.form.errors[0]
-                
+
                 success = api_response.success
                 action = api_response.form.action
                 csrf_token = api_response.form.fields[0].value

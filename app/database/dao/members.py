@@ -1,17 +1,14 @@
 from app.logger import logger
 
-from datetime import datetime, timedelta
-from hashlib import sha256
+from datetime import datetime
 from typing import Union
-from uuid import uuid4, UUID
+from uuid import UUID
 
 from asyncpg import Connection
-from asyncpg.pool import Pool
 from asyncpg.exceptions import UniqueViolationError
 
 from app.database.dao.organizations import OrganizationsDao
-from app.models import User, Membership, Organization
-from app.email import send_email
+from app.models import User, Membership
 from app.database.dao.base import BaseDao
 
 
@@ -27,7 +24,8 @@ class MembersDao(BaseDao):
                 await con.execute(sql, user_id, organization_id, created, renewal)
         except UniqueViolationError as exc:
             logger.debug(exc.__str__())
-            logger.warning("Tried to create membership with user ID: " + str(user_id) + " and organization ID: " + str(organization_id) + " but it already existed")
+            logger.warning("Tried to create membership with user ID: " + str(user_id) +
+                           " and organization ID: " + str(organization_id) + " but it already existed")
             return False
         except Exception:
             logger.error("An error occured when trying to create new membership!", stack_info=True)
@@ -35,12 +33,13 @@ class MembersDao(BaseDao):
 
         return True
 
-    async def update_membership(self, user_id: UUID, organization_id: UUID, created: Union[datetime, None]=None, renewal: Union[datetime, None]=None) -> bool:
-        sql = _construct_sql_string_update(created, renewal) 
-        
+    async def update_membership(self, user_id: UUID, organization_id: UUID,
+                                created: Union[datetime, None] = None, renewal: Union[datetime, None] = None) -> bool:
+        sql = _construct_sql_string_update(created, renewal)
+
         if sql is None:
             return False
-        
+
         try:
             if created is not None and renewal is None:
                 async with self.pool.acquire() as con:  # type: Connection
@@ -50,18 +49,19 @@ class MembersDao(BaseDao):
                     await con.execute(sql, user_id, organization_id, renewal)
             else:
                 async with self.pool.acquire() as con:  # type: Connection
-                    await con.execute(sql, user_id, organization_id, created, renewal)            
+                    await con.execute(sql, user_id, organization_id, created, renewal)
         except Exception:
             logger.error("An error occured when trying to update a membership!", stack_info=True)
             return False
 
         return True
 
-    def _construct_sql_string_update(self, created: Union[datetime, None]=None, renewal: Union[datetime, None]=None) -> Union[str, None]:
+    def _construct_sql_string_update(self, created: Union[datetime, None] = None,
+                                     renewal: Union[datetime, None] = None) -> Union[str, None]:
         sql = "UPDATE memberships SET ("
 
         value_count = 0
-        
+
         if created is not None:
             value_count += 1
             sql += "created"
@@ -70,7 +70,7 @@ class MembersDao(BaseDao):
             if sql.endswith("created"):
                 sql += ", "
             sql += "renewal"
-        
+
         if value_count == 0:
             logger.debug("Nothing to update membership with...")
             return None
@@ -79,7 +79,7 @@ class MembersDao(BaseDao):
 
         if value_count == 2:
             sql += ", $2"
-        
+
         sql += ");"
 
         logger.debug(sql)
@@ -94,7 +94,7 @@ class MembersDao(BaseDao):
         except Exception:
             logger.error("An error occured when trying to delete a membership!", stack_info=True)
             return False
-        
+
         return True
 
     async def get_member_count(self, organization_id: UUID) -> int:
