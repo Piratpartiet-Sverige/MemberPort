@@ -1,4 +1,4 @@
--- Example database upgrade script for Crew DB
+-- Example database upgrade script for Member Port
 -- SQL is written with PostgreSQL syntax
 
 INSERT INTO permissions (id, name, description)

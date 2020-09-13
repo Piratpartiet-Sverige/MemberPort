@@ -1,7 +1,7 @@
 import logging
 
 # Server logger
-logger = logging.getLogger("Crew DB")
+logger = logging.getLogger("Member Port")
 access = logging.getLogger("tornado.access")
 application = logging.getLogger("tornado.application")
 general = logging.getLogger("tornado.general")
