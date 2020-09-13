@@ -55,12 +55,29 @@ def get_new_version_number():
 
 
 async def initialize_db(pool):
+    await initialize_tables(pool)
+    await initialize_geography(pool)
+    logger.info("Succesfully initialized new database!")
+
+
+async def initialize_tables(pool):
     with open('app/database/sql/db.sql', 'r') as sql_file:
         sql = sql_file.read()
         try:
             async with pool.acquire() as con:  # type: Connection
                 await con.execute(sql)
-            logger.info("Succesfully initialized new database!")
+            logger.info("Succesfully initialized essential data and tables!")
+        except Exception:
+            logger.critical("Could not initialize database due to SQL error!", exc_info=1)
+
+
+async def initialize_geography(pool):
+    with open('app/database/sql/geography.sql', 'r') as sql_file:
+        sql = sql_file.read()
+        try:
+            async with pool.acquire() as con:  # type: Connection
+                await con.execute(sql)
+            logger.info("Succesfully initialized geography data!")
         except Exception:
             logger.critical("Could not initialize database due to SQL error!", exc_info=1)
 
