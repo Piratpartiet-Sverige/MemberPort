@@ -68,7 +68,13 @@
                             </div>
                             <div class="field">
                                 <div class="control">
-                                    <input name="traits.country" class="input is-large" type="text" placeholder="Country" />
+                                    <div class="select is-large">
+                                        <select name="traits.country" value="Sverige">
+                                            {% for country in countries %}
+                                            <option value="{{ country.name }}">{{ country.name }}</option>
+                                            {% end %}
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                             <button type="submit" class="button is-block is-info is-large is-fullwidth">
