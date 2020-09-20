@@ -126,6 +126,10 @@ class BaseHandler(RequestHandler):
 
         return uuid
 
+    async def permission_check(self):
+        dao = UsersDao(self.db)
+        return await dao.check_user_admin(self.current_user.user.id)
+
     def respond(self, message: str, status_code: int = 200, json_data: Union[None, dict] = None,
                 show_error_page: bool = False):
         if show_error_page is True and status_code >= 400:

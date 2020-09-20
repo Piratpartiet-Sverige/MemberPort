@@ -1,16 +1,17 @@
 import asyncio
-import asyncpg
 import os.path
 import ssl
+import asyncpg
 import tornado.ioloop
 import tornado.web
 
 from configparser import ConfigParser
-from tornado.platform.asyncio import AnyThreadEventLoopPolicy
 from app.config import Config
+from app.database.setup import db_setup
 from app.logger import logger
 from app.plugins.plugin import get_available_plugins, load_plugins
 from app.web.handlers.admin.add_member import AddMemberHandler
+from app.web.handlers.admin.geography import GeographyHandler
 from app.web.handlers.admin.members import MembersHandler
 from app.web.handlers.admin.organizations import OrganizationsHandler
 from app.web.handlers.admin.add_organization import AddOrganizationHandler
@@ -20,14 +21,14 @@ from app.web.handlers.api.member import APIMemberHandler
 from app.web.handlers.api.organization import APIOrganizationHandler
 from app.web.handlers.api.postal_code import APIPostalCodeHandler
 from app.web.handlers.authentication import SignInHandler, SignUpHandler
+from app.web.handlers.error import Error404Handler
 from app.web.handlers.kratos import KratosHandler
 from app.web.handlers.main import MainHandler
 from app.web.handlers.new_member import NewMemberHandler
-from app.web.handlers.error import Error404Handler
 from app.web.handlers.profile import ProfileHandler
 from app.web.handlers.setup import SetupHandler
 from app.web.handlers.verify import VerifyHandler
-from app.database.setup import db_setup
+from tornado.platform.asyncio import AnyThreadEventLoopPolicy
 
 
 class WebAppOptions:
@@ -80,6 +81,7 @@ def configure_application(options: WebAppOptions):
         (r"/", MainHandler),
         (r"/kratos/(.*)", KratosHandler),
         (r"/admin/add-member", AddMemberHandler),
+        (r"/admin/geography", GeographyHandler),
         (r"/admin/members", MembersHandler),
         (r"/admin/organizations", OrganizationsHandler),
         (r"/admin/add-organization", AddOrganizationHandler),

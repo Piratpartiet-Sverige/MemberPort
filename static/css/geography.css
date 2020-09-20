@@ -1,0 +1,16 @@
+.node .box {
+    margin-bottom: 0.5rem;
+}
+
+.node {
+    margin: 0;
+    margin-bottom: 0.5rem;
+    padding-left: 2rem;
+}
+
+.dropzone {
+    margin-left: 2rem;
+    border-style: dashed;
+    border-color: grey;
+    border-width: medium;
+}
