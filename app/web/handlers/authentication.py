@@ -58,6 +58,12 @@ class SignUpHandler(BaseHandler):
                 inputs = api_response.methods['password'].config.fields
                 if api_response.methods['password'].config.messages is not None:
                     error = api_response.methods['password'].config.messages[0].text
+                else:
+                    for field in api_response.methods['password'].config.fields:
+                        if field.messages is not None:
+                            error = field.messages[0].text
+                            break
+                logger.debug(error)
             except ApiException as e:
                 logger.error("Exception when calling AdminApi->get_self_service_browser_registration_request: %s\n" % e)
             except ValueError as e:
