@@ -1,0 +1,63 @@
+{% extends "../base.html" %}
+{% block head %}
+<script src="{{ static_url('js/ag-grid-community.min.noStyle.js') }}"></script>
+<link rel="stylesheet" href="{{ static_url('css/ag-grid.css') }}">
+<link rel="stylesheet" href="{{ static_url('css/ag-theme-alpine.css') }}">
+{% end %}
+{% block content %}
+{% module xsrf_form_html() %}
+<div class="container">
+    <div class="field">
+        <div class="label">Namn</div>
+        <div class="control">
+            <input class="input" name="name" type="text" placeholder="Name">
+        </div>
+    </div>
+    <div class="field">
+        <div class="label">Beskrivning</div>
+        <div class="control">
+            <input class="input" name="description" type="text" placeholder="Name">
+        </div>
+    </div>
+    <div class="control">
+        <button type="button"
+            class="button is-success"
+            onclick="submit()"
+            id="saveButtonLastName">Spara</button></p>
+    </div>
+</div>
+{% end %}
+{% block scripts %}
+<script type="text/javascript" charset="utf-8">
+    async function postData(url = '', data = {}) {
+        const response = await fetch(url, {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+            body: data
+        });
+        return await response.json(); // parses JSON response into native JavaScript objects
+    }
+
+
+    function submit() {
+        const details = {
+            '_xsrf' : document.getElementsByName("_xsrf")[0].value,
+            'name': document.getElementsByName("name")[0].value,
+            'description': document.getElementsByName("description")[0].value 
+        }
+
+        const formBody = Object.keys(details).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(details[key])).join('&')
+
+        postData('/api/organization', formBody).then((data) => {
+            console.log(data); // JSON data parsed by `response.json()` call
+        })
+    }
+</script>
+{% end %}

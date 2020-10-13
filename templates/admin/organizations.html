@@ -9,6 +9,11 @@
     <h1 class="title">Föreningar</h1>
     <div id="organizations" style="width: 100%; height: 80vh;" class="ag-theme-alpine"></div>
     <div class="field is-grouped">
+    <p class="control">
+        <button type="button" class="button is-success"
+            onclick="location.href='add-organization'"
+            id="saveButtonLastName">Lägg till</button></p>
+    </div>
 </div>
 
 {% end %}
@@ -26,7 +31,7 @@
         {
             name: "{{ organization.name }}",
             description: "{{ organization.description }}",
-        }
+        },
         {% end %}
     ];
 
