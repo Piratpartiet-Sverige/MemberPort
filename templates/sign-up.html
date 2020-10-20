@@ -18,7 +18,7 @@
                         <figure class="avatar">
                             <img src="{{ static_url('img/logo.svg') }}" >
                         </figure>
-                        <form action="/kratos/self-service/browser/flows/registration/strategies/password?request={{ request }}" method="post">
+                        <form action="/kratos/self-service/registration/methods/password?flow={{ flow }}" method="post">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                             <div class="field">
                                 <div class="control">

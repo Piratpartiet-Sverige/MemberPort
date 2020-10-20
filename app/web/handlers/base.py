@@ -56,7 +56,7 @@ class BaseHandler(RequestHandler):
             try:
                 api_response = api_instance.whoami()
                 session = Session()
-                session.id = UUID(api_response.sid)
+                session.id = UUID(api_response.id)
                 session.hash = session_hash
                 session.issued_at = api_response.issued_at
                 session.expires_at = api_response.expires_at
