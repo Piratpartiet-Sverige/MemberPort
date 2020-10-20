@@ -10,7 +10,7 @@ selfservice:
   flows:
     login:
       ui_url: http://127.0.0.1:8888/auth/login
-      request_lifespan: 10m
+      lifespan: 10m
       after:
         default_browser_return_url: http://127.0.0.1:8888/
         password:
@@ -24,7 +24,7 @@ selfservice:
 
     registration:
       ui_url: http://127.0.0.1:8888/auth/registration
-      request_lifespan: 10m
+      lifespan: 10m
       after:
         default_browser_return_url: http://127.0.0.1:8888/new-member
         password:
@@ -37,7 +37,7 @@ selfservice:
 
     settings:
       ui_url: http://127.0.0.1:8888/profile
-      request_lifespan: 1h
+      lifespan: 1h
       privileged_session_max_age: 5m
       after:
         default_browser_return_url: http://127.0.0.1:8888/profile
@@ -45,11 +45,11 @@ selfservice:
     verification:
       enabled: true
       ui_url: http://127.0.0.1:8888/verify
-      request_lifespan: 1h
+      lifespan: 1h
       after:
         default_browser_return_url: http://127.0.0.1:8888/
 
-  strategies:
+  methods:
     password:
       enabled: true
     oidc:

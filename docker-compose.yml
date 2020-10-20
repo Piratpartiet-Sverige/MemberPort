@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   pirate-kratos-migrate:
-    image: oryd/kratos:latest-sqlite
+    image: oryd/kratos:v0.5-sqlite
     environment:
       - DSN=sqlite:///var/lib/sqlite/db.sqlite?_fk=true&mode=rwc
       - SQA_OPT_OUT=true
@@ -69,7 +69,7 @@ services:
   pirate-kratos:
     depends_on:
       - pirate-kratos-migrate
-    image: oryd/kratos:latest-sqlite
+    image: oryd/kratos:v0.5-sqlite
     ports:
       - "4433:4433" # public
       - "4434:4434" # admin

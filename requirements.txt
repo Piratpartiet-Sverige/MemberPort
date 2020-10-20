@@ -1,5 +1,5 @@
 asyncpg==0.21
 tornado==6.0.4
 pytz==2020.1
-ory-kratos-client==0.4.6a1
+ory-kratos-client==0.5.1a1
 aiosmtplib==1.1.3
