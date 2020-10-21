@@ -32,6 +32,17 @@ class Organization:
     created: datetime
 
 
+def organization_to_json(organization: Organization) -> dict:
+    return {
+        'organization': {
+            'id': organization.id.__str__(),
+            'name': organization.name,
+            'description': organization.description,
+            'created': organization.created.isoformat(' ')
+        }
+    }
+
+
 class Membership:
     user: User
     organization: Organization
