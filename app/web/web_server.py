@@ -14,6 +14,7 @@ from app.web.handlers.admin.add_member import AddMemberHandler
 from app.web.handlers.admin.members import MembersHandler
 from app.web.handlers.admin.organizations import OrganizationsHandler
 from app.web.handlers.admin.add_organization import AddOrganizationHandler
+from app.web.handlers.admin.edit_organization import EditOrganizationHandler
 from app.web.handlers.admin.roles import RolesHandler
 from app.web.handlers.api.member import APIMemberHandler
 from app.web.handlers.api.organization import APIOrganizationHandler
@@ -81,6 +82,7 @@ def configure_application(options: WebAppOptions):
         (r"/admin/members", MembersHandler),
         (r"/admin/organizations", OrganizationsHandler),
         (r"/admin/add-organization", AddOrganizationHandler),
+        (r"/admin/edit-organization", EditOrganizationHandler),
         (r"/admin/roles", RolesHandler),
         (r"/api/member", APIMemberHandler),
         (r"/api/organization", APIOrganizationHandler),

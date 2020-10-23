@@ -1,0 +1,29 @@
+{% extends "../base.html" %}
+{% block head %}
+<script src="{{ static_url('js/ag-grid-community.min.noStyle.js') }}"></script>
+<link rel="stylesheet" href="{{ static_url('css/ag-grid.css') }}">
+<link rel="stylesheet" href="{{ static_url('css/ag-theme-alpine.css') }}">
+{% end %}
+{% block content %}
+{% module xsrf_form_html() %}
+<div class="container">
+    <div class="field">
+        <div class="label">Namn</div>
+        <div class="control">
+            <input class="input" name="name" type="text" placeholder="{{ organization.name }}">
+        </div>
+    </div>
+    <div class="field">
+        <div class="label">Beskrivning</div>
+        <div class="control">
+            <input class="input" name="description" type="text" placeholder="{{ organization.description }}">
+        </div>
+    </div>
+    <div class="control">
+        <button type="button"
+            class="button is-success"
+            onclick="submit()"
+            id="saveButtonLastName">Spara</button></p>
+    </div>
+</div>
+{% end %}

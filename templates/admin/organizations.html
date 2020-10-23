@@ -18,11 +18,13 @@
 
 {% end %}
 {% block scripts %}
+<script src="{{ static_url('js/button-renderer.js') }}"></script>
 <script type="text/javascript" charset="utf-8">
     // specify the columns
     var columnDefs = [
         { headerName: "Namn", field: "name" },
-        { headerName: "Beskrivning", field: "description" }
+        { headerName: "Beskrivning", field: "description" },
+        { headerName: "Ändra", field: "edit", cellRenderer: 'buttonRenderer' }
     ]
 
     // specify the data
@@ -31,6 +33,10 @@
         {
             name: "{{ organization.name }}",
             description: "{{ organization.description }}",
+            button: {
+                label: "Ändra",
+                onClick: () => { window.location.href = 'edit-organization?id={{ organization.id }}' }
+            }
         },
         {% end %}
     ];
@@ -38,7 +44,10 @@
     // let the grid know which columns and what data to use
     var gridOptions = {
         columnDefs: columnDefs,
-        rowData: rowData
+        rowData: rowData,
+        components: {
+            buttonRenderer: ButtonRenderer
+        }
     };
 
     // lookup the container we want the Grid to use
