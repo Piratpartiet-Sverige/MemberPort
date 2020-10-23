@@ -1,5 +1,5 @@
 /*
- * Renders buttonss in an ag-grid
+ * Renders buttons in an ag-grid
  */
 function ButtonRenderer() { }
 
