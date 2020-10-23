@@ -151,11 +151,22 @@ class OrganizationsDao(BaseDao):
 
         return await self.get_organization_by_id(id)
 
-    async def delete_organization(self, id: UUID) -> bool:
-        sql = "DELETE FROM organizations WHERE id = $1"
+    async def delete_organization_memberships(self, id: UUID) -> bool:
         try:
             async with self.pool.acquire() as con:  # type: Connection
-                await con.execute(sql, id)
+                await con.execute("DELETE FROM memberships WHERE organization = $1", id)
+        except Exception:
+            return False
+        return True
+
+    async def delete_organization(self, id: UUID) -> bool:
+        success = await self.delete_organization_memberships(id)
+        if not success:
+            return False
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                await con.execute("DELETE FROM organizations WHERE id = $1", id)
         except Exception:
             return False
         return True
