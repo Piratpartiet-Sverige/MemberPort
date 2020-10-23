@@ -49,14 +49,13 @@
     function submit() {
         const details = {
             '_xsrf': document.getElementsByName("_xsrf")[0].value,
-            'id': "{{ organization.id }}",
             'name': document.getElementsByName("name")[0].value,
             'description': document.getElementsByName("description")[0].value
         }
 
         const formBody = Object.keys(details).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(details[key])).join('&')
 
-        putData('/api/organization', formBody).then((data) => {
+        putData('/api/organization/{{ organization.id }}', formBody).then((data) => {
             console.log(data); // JSON data parsed by `response.json()` call
             window.location.href = 'organizations'
         })

@@ -3,6 +3,7 @@ import tornado.web
 from app.web.handlers.base import BaseHandler
 from app.database.dao.organizations import OrganizationsDao
 from app.models import organization_to_json
+from uuid import UUID
 
 
 class APIOrganizationHandler(BaseHandler):
@@ -14,9 +15,17 @@ class APIOrganizationHandler(BaseHandler):
         return self.respond("ORGANIZATION CREATED", 200, organization_to_json(organization))
 
     @tornado.web.authenticated
-    async def put(self):
-        id = self.get_argument("id")
-        name = self.get_argument("name")
-        description = self.get_argument("description")
+    async def put(self, id: UUID = None):
+        if id is None:
+            return self.respond("ORGANIZATION UUID IS MISSING", 400)
+
+        name = self.get_argument("name", None)
+        description = self.get_argument("description", None)
+
+        if name is None:
+            return self.respond("name property is missing", 422)
+        if description is None:
+            return self.respond("description property is missing", 422)
+
         organization = await OrganizationsDao(self.db).update_organization(id, name, description)
         return self.respond("ORGANIZATION CREATED", 200, organization_to_json(organization))
