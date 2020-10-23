@@ -85,6 +85,7 @@ def configure_application(options: WebAppOptions):
         (r"/admin/edit-organization", EditOrganizationHandler),
         (r"/admin/roles", RolesHandler),
         (r"/api/member", APIMemberHandler),
+        (r"/api/organization", APIOrganizationHandler),
         (r"/api/organization/(?P<id>[^\/]+)", APIOrganizationHandler),
         (r"/auth/login", SignInHandler),
         (r"/auth/registration", SignUpHandler),
