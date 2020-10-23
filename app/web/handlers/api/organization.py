@@ -10,5 +10,13 @@ class APIOrganizationHandler(BaseHandler):
     async def post(self):
         name = self.get_argument("name")
         description = self.get_argument("description")
-        organization = await (OrganizationsDao(self.db).create_organization(name, description))
+        organization = await OrganizationsDao(self.db).create_organization(name, description)
+        return self.respond("ORGANIZATION CREATED", 200, organization_to_json(organization))
+
+    @tornado.web.authenticated
+    async def put(self):
+        id = self.get_argument("id")
+        name = self.get_argument("name")
+        description = self.get_argument("description")
+        organization = await OrganizationsDao(self.db).update_organization(id, name, description)
         return self.respond("ORGANIZATION CREATED", 200, organization_to_json(organization))

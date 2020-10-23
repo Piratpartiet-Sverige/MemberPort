@@ -10,13 +10,13 @@
     <div class="field">
         <div class="label">Namn</div>
         <div class="control">
-            <input class="input" name="name" type="text" placeholder="{{ organization.name }}">
+            <input class="input" name="name" type="text" value="{{ organization.name }}">
         </div>
     </div>
     <div class="field">
         <div class="label">Beskrivning</div>
         <div class="control">
-            <input class="input" name="description" type="text" placeholder="{{ organization.description }}">
+            <input class="input" name="description" type="text" value="{{ organization.description }}">
         </div>
     </div>
     <div class="control">
@@ -26,4 +26,40 @@
             id="saveButtonLastName">Spara</button></p>
     </div>
 </div>
+{% end %}
+{% block scripts %}
+<script type="text/javascript" charset="utf-8">
+    async function putData(url = '', data = {}) {
+        const response = await fetch(url, {
+            method: 'PUT', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+            body: data
+        });
+        return await response.json(); // parses JSON response into native JavaScript objects
+    }
+
+
+    function submit() {
+        const details = {
+            '_xsrf': document.getElementsByName("_xsrf")[0].value,
+            'id': "{{ organization.id }}",
+            'name': document.getElementsByName("name")[0].value,
+            'description': document.getElementsByName("description")[0].value
+        }
+
+        const formBody = Object.keys(details).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(details[key])).join('&')
+
+        putData('/api/organization', formBody).then((data) => {
+            console.log(data); // JSON data parsed by `response.json()` call
+            window.location.href = 'organizations'
+        })
+    }
+</script>
 {% end %}

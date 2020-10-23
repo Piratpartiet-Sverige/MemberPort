@@ -137,3 +137,16 @@ class OrganizationsDao(BaseDao):
             organizations.append(organization)
 
         return organizations
+
+    async def update_organization(self, id: UUID, name: str, description: str) -> Union[Organization, None]:
+        sql = "UPDATE organizations SET name = $1, description = $2 WHERE id = $3"
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                await con.execute(sql, name, description, id)
+        except UniqueViolationError as exc:
+            logger.debug(exc.__str__())
+            logger.warning("Tried to u organization: " + str(id))
+            return None
+
+        return await self.get_organization_by_id(id)
