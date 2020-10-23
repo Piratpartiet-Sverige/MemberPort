@@ -146,7 +146,7 @@ class OrganizationsDao(BaseDao):
                 await con.execute(sql, name, description, id)
         except UniqueViolationError as exc:
             logger.debug(exc.__str__())
-            logger.warning("Tried to u organization: " + str(id))
+            logger.warning("Tried to update organization: " + str(id))
             return None
 
         return await self.get_organization_by_id(id)
