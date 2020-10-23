@@ -29,3 +29,11 @@ class APIOrganizationHandler(BaseHandler):
 
         organization = await OrganizationsDao(self.db).update_organization(id, name, description)
         return self.respond("ORGANIZATION CREATED", 200, organization_to_json(organization))
+
+    @tornado.web.authenticated
+    async def delete(self, id: UUID = None):
+        if id is None:
+            return self.respond("ORGANIZATION UUID IS MISSING", 400)
+        if not await OrganizationsDao(self.db).delete_organization(id):
+            return self.respond("INTERNAL SERVER ERROR", 500)
+        return self.respond("ORGANIZATION DELETED", 203)
