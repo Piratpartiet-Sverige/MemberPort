@@ -151,21 +151,23 @@ class OrganizationsDao(BaseDao):
 
         return await self.get_organization_by_id(id)
 
-    async def delete_organization_memberships(self, id: UUID) -> bool:
+    async def delete_organization(self, id: UUID) -> bool:
+        # Remove all memberships
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 await con.execute("DELETE FROM memberships WHERE organization = $1", id)
         except Exception:
             return False
-        return True
 
-    async def delete_organization(self, id: UUID) -> bool:
-        success = await self.delete_organization_memberships(id)
-        if not success:
+        # NULL default_organization if were removing default
+        try:
+            async with self.pool.acquire() as con:
+                await con.execute("UPDATE settings SET default_organization = NULL WHERE default_organization = $1", id)
+        except Exception:
             return False
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 await con.execute("DELETE FROM organizations WHERE id = $1", id)
         except Exception:
             return False
