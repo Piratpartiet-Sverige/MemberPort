@@ -7,12 +7,11 @@ from uuid import UUID
 from asyncpg import Connection
 from asyncpg.exceptions import UniqueViolationError
 
-from app.database.dao.organizations import OrganizationsDao
 from app.models import User, Membership
-from app.database.dao.base import BaseDao
+from app.database.dao.member_org import MemberOrgDao
 
 
-class MembersDao(BaseDao):
+class MembersDao(MemberOrgDao):
     async def create_membership(self, user_id: UUID, organization_id: UUID) -> bool:
         sql = "INSERT INTO memberships (\"user\", \"organization\", created, renewal) VALUES ($1, $2, $3, $4);"
 
@@ -123,12 +122,11 @@ class MembersDao(BaseDao):
             return list()
 
         memberships = list()
-        dao = OrganizationsDao(self.pool)
 
         for row in rows:
             membership = Membership()
             membership.user = user
-            membership.organization = await dao.get_organization_by_id(row["organization"])
+            membership.organization = await self.get_organization_by_id(row["organization"])
             membership.created = row["created"]
             membership.renewal = row["renewal"]
             memberships.append(membership)

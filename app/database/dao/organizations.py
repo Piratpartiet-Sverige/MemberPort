@@ -8,10 +8,10 @@ from asyncpg import Connection
 from asyncpg.exceptions import UniqueViolationError
 
 from app.models import Organization
-from app.database.dao.base import BaseDao
+from app.database.dao.member_org import MemberOrgDao
 
 
-class OrganizationsDao(BaseDao):
+class OrganizationsDao(MemberOrgDao):
     async def create_organization(self, name, description) -> Union[Organization, None]:
         sql = "INSERT INTO organizations (id, name, description, created) VALUES ($1, $2, $3, $4);"
 
@@ -49,28 +49,6 @@ class OrganizationsDao(BaseDao):
             return None
 
         return await self.get_organization_by_id(row["default_organization"])
-
-    async def get_organization_by_id(self, id: UUID) -> Union[Organization, None]:
-        sql = "SELECT name, description, created FROM organizations WHERE id = $1"
-
-        try:
-            async with self.pool.acquire() as con:  # type: Connection
-                row = await con.fetchrow(sql, id)
-        except Exception:
-            logger.error("An error occured when trying to retrieve an organization by id!", stack_info=True)
-            return None
-
-        if row is None:
-            logger.debug("No  organization found with ID: " + str(id))
-            return None
-
-        organization = Organization()
-        organization.id = id
-        organization.name = row["name"]
-        organization.description = row["description"]
-        organization.created = row["created"]
-
-        return organization
 
     async def get_organization_by_name(self, name: str) -> Union[Organization, None]:
         sql = "SELECT id, description, created FROM organizations WHERE name = $1"
@@ -152,11 +130,8 @@ class OrganizationsDao(BaseDao):
         return await self.get_organization_by_id(id)
 
     async def delete_organization(self, id: UUID) -> bool:
-        # Remove all memberships
-        try:
-            async with self.pool.acquire() as con:
-                await con.execute("DELETE FROM memberships WHERE organization = $1", id)
-        except Exception:
+        success = await self.remove_memberships_from_org(id)
+        if not success:
             return False
 
         # NULL default_organization if were removing default
