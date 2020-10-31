@@ -8,9 +8,9 @@ ButtonRenderer.prototype.init = function (params) {
 
     this.eGui = document.createElement('button')
     this.eGui.type = 'button'
-    this.eGui.innerHTML = params.data.button.label
+    this.eGui.innerHTML = params.value.label
 
-    this.eGui.addEventListener('click', this.params.data.button.onClick)
+    this.eGui.addEventListener('click', this.params.value.onClick)
 }
 
 ButtonRenderer.prototype.getGui = function (params) {
