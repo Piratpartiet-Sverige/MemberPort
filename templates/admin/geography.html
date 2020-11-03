@@ -55,4 +55,24 @@
 
 {% block scripts %}
 <script src="{{ static_url('js/geography.js') }}"></script>
+<script>
+    var swedenID = "";
+    {% for country in countries %}
+    geodata["{{ country.id }}"] = {
+        name: "{{ country.name }}",
+        id: "{{ country.id }}"
+    };
+    if ("{{ country.name }}" === "Sverige") {
+        swedenID = "{{ country.id }}";
+        addCountry(swedenID, "{{ country.name }}");
+    }
+    {% end %}
+    {% for municipality in municipalities %}
+    geodata["{{ municipality.id }}"] = {
+        name: "{{ municipality.name }}",
+        id: "{{ municipality.id }}"
+    };
+    addMunicipality("{{ municipality.id }}", "{{ municipality.name }}", swedenID);
+    {% end %}
+</script>
 {% end %}

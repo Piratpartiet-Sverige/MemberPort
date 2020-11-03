@@ -1,38 +1,29 @@
-document.getElementById("newName").oninput = function(e) {
-    if (/^[a-zA-ZåäöÅÄÖ]+$/.test(e.data) === false) {
-        this.value = this.value.slice(0, -e.data.length);
-    }
-};
+var geodata = {};
 
-addCountry("Sverige");
-addArea("Norrland", "Sverige");
-addMunicipality("Luleå", "Norrland");
-addMunicipality("Piteå", "Norrland");
-
-function addArea(name, parent) {
+function addArea(id, name, parent) {
     var parent = document.getElementById(parent);
-    var area = createArea(name, true, "true", "fa-layer-group");
+    var area = createArea(id, name, true, "true", "fa-layer-group");
 
     parent.appendChild(area);
 }
 
-function addMunicipality(name, parent) {
+function addMunicipality(id, name, parent) {
     var parent = document.getElementById(parent);
-    var area = createArea(name, false, "true", "fa-home");
+    var area = createArea(id, name, false, "true", "fa-home");
 
     parent.appendChild(area);
 }
 
-function addCountry(name) {
+function addCountry(id, name) {
     var tree = document.getElementById("tree");
-    var country = createArea(name, true, "false", "fa-flag");
+    var country = createArea(id, name, true, "false", "fa-flag");
 
     tree.appendChild(country);
 }
 
-function createArea(name, hasDropzone, draggable, icon) {
+function createArea(id, name, hasDropzone, draggable, icon) {
     var area = document.createElement("div");
-    area.setAttribute("id", name);
+    area.setAttribute("id", id);
     area.setAttribute("draggable", draggable);
 
     if (draggable === "true") {
@@ -42,7 +33,7 @@ function createArea(name, hasDropzone, draggable, icon) {
 
     area.classList.add("node");
 
-    var nameBox = createNameBox(name, icon);
+    var nameBox = createNameBox(id, name, icon);
     area.appendChild(nameBox);
 
     if (hasDropzone) {
@@ -53,7 +44,7 @@ function createArea(name, hasDropzone, draggable, icon) {
     return area;
 }
 
-function createNameBox(name, icon) {
+function createNameBox(id, name, icon) {
     var nameBox = document.createElement("div");
     nameBox.classList.add("box");
     nameBox.innerHTML =
@@ -67,10 +58,10 @@ function createNameBox(name, icon) {
         "</div>" +
         "</div>" +
         "<div class='media-right'>" +
-        "<a class='editPen' onclick='openEditModal(\"" + name + "\");'><span class='icon'><i class='fas fa-pen'></i></span></a>" +
-        "<a onclick='shrinkList(\"" + name + "\");'><span class='icon'><i class='fas fa-angle-up'></i></span></a>" +
+        "<a class='editPen' onclick='openEditModal(\"" + id + "\");'><span class='icon'><i class='fas fa-pen'></i></span></a>" +
+        "<a onclick='shrinkList(\"" + id + "\");'><span class='icon'><i class='fas fa-angle-up'></i></span></a>" +
         "<span style='display: inline-block; width: 1rem;'></span>" +
-        "<button onclick='openDeleteModal(\"" + name + "\");' class='delete'></button>" +
+        "<button onclick='openDeleteModal(\"" + id + "\");' class='delete'></button>" +
         "</div>" +
         "</article>";
     return nameBox;
@@ -173,7 +164,7 @@ function onDrop(ev) {
         node = ev.target.parentElement;
     }
 
-    node.parentElement.appendChild(document.getElementById(data));
+    node.insertAdjacentElement("afterend", document.getElementById(data));
 }
 
 function findNearestNode(nodes) {
@@ -184,8 +175,8 @@ function findNearestNode(nodes) {
     }
 }
 
-function deleteNode(name) {
-    var node = document.getElementById(name);
+function deleteNode(id) {
+    var node = document.getElementById(id);
     node.remove();
 }
 
@@ -194,15 +185,15 @@ function closeDeleteModal() {
     deleteModal.classList.remove("is-active");
 }
 
-function openDeleteModal(name) {
+function openDeleteModal(id) {
     var deleteModal = document.getElementById("deleteModal");
     deleteModal.classList.add("is-active");
 
     var deleteText = document.getElementById("deleteText");
-    deleteText.innerText = "Är du säker på att du vill ta bort " + name + " och alla områden och kommuner som tillhör det?";
+    deleteText.innerText = "Är du säker på att du vill ta bort " + geodata[id].name + " och alla områden och kommuner som tillhör det?";
 
     var deleteNodeButton = document.getElementById("deleteNodeButton");
-    deleteNodeButton.setAttribute("onclick", "deleteNode('" + name + "');closeDeleteModal();");
+    deleteNodeButton.setAttribute("onclick", "deleteNode('" + id + "');closeDeleteModal();");
 }
 
 function closeEditModal() {
@@ -210,44 +201,29 @@ function closeEditModal() {
     editModal.classList.remove("is-active");
 }
 
-function openEditModal(name) {
+function openEditModal(id) {
     var editModal = document.getElementById("editModal");
     editModal.classList.add("is-active");
 
     var editNameButton = document.getElementById("editNameButton");
-    editNameButton.setAttribute("onclick", "changeNodeName('" + name + "');closeEditModal();");
+    editNameButton.setAttribute("onclick", "changeNodeName('" + geodata[id].id + "');closeEditModal();");
 
     var newNameInput = document.getElementById("newName");
-    newNameInput.value = name;
+    newNameInput.value = geodata[id].name;
 }
 
-function changeNodeName(name) {
-    var node = document.getElementById(name);
+function changeNodeName(id) {
+    var node = document.getElementById(id);
     var newNameInput = document.getElementById("newName");
     var newName = newNameInput.value;
 
-    node.id = newName;
     var nameBox = node.getElementsByClassName("content")[0];
     nameBox.innerText = newName;
-
-    var editPen = node.getElementsByClassName("editPen")[0];
-    editPen.setAttribute("onclick", "openEditModal(\"" + newName + "\");")
+    geodata[id].name = newName;
 }
 
-function getSiblings(node) {
-    let siblings = [];
-
-    if (!node.parentNode) {
-        return siblings;
+document.getElementById("newName").oninput = function(e) {
+    if (/^[a-zA-ZåäöÅÄÖ]+$/.test(e.data) === false) {
+        this.value = this.value.slice(0, -e.data.length);
     }
-
-    let sibling = node.parentNode.firstChild;
-
-    while (sibling) {
-        if (sibling.nodeType === 1 && sibling !== node) {
-            siblings.push(sibling);
-        }
-        sibling = sibling.nextSibling;
-    }
-    return siblings;
 };
