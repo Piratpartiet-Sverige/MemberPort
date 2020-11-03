@@ -19,6 +19,11 @@
             <input class="input" name="description" type="text" value="{{ organization.description }}">
         </div>
     </div>
+    <div class="field">
+        <label class="checkbox">
+        <input type="checkbox", name="active" {{ "checked" if organization.active else None }}>
+        Aktiv
+    </label>
     <div class="control">
         <button type="button"
             class="button is-success"
@@ -50,7 +55,8 @@
         const details = {
             '_xsrf': document.getElementsByName("_xsrf")[0].value,
             'name': document.getElementsByName("name")[0].value,
-            'description': document.getElementsByName("description")[0].value
+            'description': document.getElementsByName("description")[0].value,
+            'active': document.getElementsByName("active")[0].checked
         }
 
         const formBody = Object.keys(details).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(details[key])).join('&')

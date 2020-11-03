@@ -12,6 +12,8 @@ class APIOrganizationHandler(BaseHandler):
         name = self.get_argument("name")
         description = self.get_argument("description")
         active = self.get_argument("active", False)
+        active = active == 'true'
+
         organization = await OrganizationsDao(self.db).create_organization(name, description, active)
         return self.respond("ORGANIZATION CREATED", 200, organization_to_json(organization))
 
@@ -23,6 +25,7 @@ class APIOrganizationHandler(BaseHandler):
         name = self.get_argument("name", None)
         description = self.get_argument("description", None)
         active = self.get_argument("active", False)
+        active = active == 'true'
 
         if name is None:
             return self.respond("name property is missing", 422)
