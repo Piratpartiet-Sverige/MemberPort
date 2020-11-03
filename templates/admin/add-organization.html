@@ -56,7 +56,8 @@
         const details = {
             '_xsrf' : document.getElementsByName("_xsrf")[0].value,
             'name': document.getElementsByName("name")[0].value,
-            'description': document.getElementsByName("description")[0].value 
+            'description': document.getElementsByName("description")[0].value,
+            'active': document.getElementsByName("active")[0].checked
         }
 
         const formBody = Object.keys(details).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(details[key])).join('&')
