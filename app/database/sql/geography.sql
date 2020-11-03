@@ -596,873 +596,957 @@ VALUES (uuid_generate_v4(), 'Österrike', localtimestamp);
 INSERT INTO countries (id, name, created)
 VALUES (uuid_generate_v4(), 'Östtimor', localtimestamp);
 
+-- Areas
+-- Norra
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (1, 'Norra distriktet', '00000000-0000-0000-0000-000000000000', localtimestamp, '1');
+
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (6, 'Region Norrbotten', '00000000-0000-0000-0000-000000000000', localtimestamp, '1.6');
+
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (7, 'Region Västerbotten', '00000000-0000-0000-0000-000000000000', localtimestamp, '1.7');
+
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (8, 'Region Jämtland Härjedalen', '00000000-0000-0000-0000-000000000000', localtimestamp, '1.8');
+
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (9, 'Region Västernorrland', '00000000-0000-0000-0000-000000000000', localtimestamp, '1.9');
+
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (10, 'Region Gävleborg', '00000000-0000-0000-0000-000000000000', localtimestamp, '1.10');
+
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (11, 'Region Dalarna', '00000000-0000-0000-0000-000000000000', localtimestamp, '1.11');
+
+-- Östra
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (2, 'Östra distriktet', '00000000-0000-0000-0000-000000000000', localtimestamp, '2');
+
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (12, 'Region Uppsala', '00000000-0000-0000-0000-000000000000', localtimestamp, '2.12');
+
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (13, 'Region Västmanland', '00000000-0000-0000-0000-000000000000', localtimestamp, '2.13');
+
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (14, 'Region Örebro', '00000000-0000-0000-0000-000000000000', localtimestamp, '2.14');
+
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (15, 'Region Sörmland', '00000000-0000-0000-0000-000000000000', localtimestamp, '2.15');
+
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (16, 'Region Östergötland', '00000000-0000-0000-0000-000000000000', localtimestamp, '2.16');
+
+-- Stockholm
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (3, 'Stockholms distriktet', '00000000-0000-0000-0000-000000000000', localtimestamp, '3');
+
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (18, 'Region Stockholm', '00000000-0000-0000-0000-000000000000', localtimestamp, '3.18');
+
+-- Västra
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (4, 'Västra distriktet', '00000000-0000-0000-0000-000000000000', localtimestamp, '4');
+
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (19, 'Region Värmland', '00000000-0000-0000-0000-000000000000', localtimestamp, '4.19');
+
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (20, 'Västra Götalandsregionen', '00000000-0000-0000-0000-000000000000', localtimestamp, '4.20');
+
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (21, 'Region Halland', '00000000-0000-0000-0000-000000000000', localtimestamp, '4.21');
+
+-- Södra
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (5, 'Södra distriktet', '00000000-0000-0000-0000-000000000000', localtimestamp, '5');
+
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (17, 'Region Blekinge', '00000000-0000-0000-0000-000000000000', localtimestamp, '5.17');
+
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (22, 'Region Skåne', '00000000-0000-0000-0000-000000000000', localtimestamp, '5.22');
+
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (23, 'Region Jönköpings län', '00000000-0000-0000-0000-000000000000', localtimestamp, '5.23');
+
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (24, 'Region Kronoberg', '00000000-0000-0000-0000-000000000000', localtimestamp, '5.24');
+
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (25, 'Region Kalmar', '00000000-0000-0000-0000-000000000000', localtimestamp, '5.25');
+
+INSERT INTO areas (id, name, "country", created, path)
+VALUES (26, 'Region Gotland', '00000000-0000-0000-0000-000000000000', localtimestamp, '5.26');
+
 -- Municipalities
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Ale', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Ale', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Alingsås', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Alingsås', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Alvesta', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Alvesta', localtimestamp, '00000000-0000-0000-0000-000000000000', 24);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Aneby', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Aneby', localtimestamp, '00000000-0000-0000-0000-000000000000', 23);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Arboga', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Arboga', localtimestamp, '00000000-0000-0000-0000-000000000000', 13);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Arjeplog', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Arjeplog', localtimestamp, '00000000-0000-0000-0000-000000000000', 6);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Arvidsjaur', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Arvidsjaur', localtimestamp, '00000000-0000-0000-0000-000000000000', 6);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Arvika', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Arvika', localtimestamp, '00000000-0000-0000-0000-000000000000', 19);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Askersund', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Askersund', localtimestamp, '00000000-0000-0000-0000-000000000000', 14);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Avesta', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Avesta', localtimestamp, '00000000-0000-0000-0000-000000000000', 11);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Bengtsfors', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Bengtsfors', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Berg', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Berg', localtimestamp, '00000000-0000-0000-0000-000000000000', 8);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Bjurholm', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Bjurholm', localtimestamp, '00000000-0000-0000-0000-000000000000', 7);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Bjuv', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Bjuv', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Boden', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Boden', localtimestamp, '00000000-0000-0000-0000-000000000000', 6);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Bollebygd', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Bollebygd', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Bollnäs', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Bollnäs', localtimestamp, '00000000-0000-0000-0000-000000000000', 10);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Borgholm', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Borgholm', localtimestamp, '00000000-0000-0000-0000-000000000000', 25);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Borlänge', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Borlänge', localtimestamp, '00000000-0000-0000-0000-000000000000', 11);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Borås', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Borås', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Botkyrka', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Botkyrka', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Boxholm', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Boxholm', localtimestamp, '00000000-0000-0000-0000-000000000000', 16);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Bromölla', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Bromölla', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Bräcke', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Bräcke', localtimestamp, '00000000-0000-0000-0000-000000000000', 8);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Burlöv', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Burlöv', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Båstad', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Båstad', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Dals-Ed', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Dals-Ed', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Danderyd', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Danderyd', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Degerfors', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Degerfors', localtimestamp, '00000000-0000-0000-0000-000000000000', 14);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Dorotea', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Dorotea', localtimestamp, '00000000-0000-0000-0000-000000000000', 7);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Eda', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Eda', localtimestamp, '00000000-0000-0000-0000-000000000000', 19);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Ekerö', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Ekerö', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Eksjö', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Eksjö', localtimestamp, '00000000-0000-0000-0000-000000000000', 23);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Emmaboda', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Emmaboda', localtimestamp, '00000000-0000-0000-0000-000000000000', 25);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Enköping', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Enköping', localtimestamp, '00000000-0000-0000-0000-000000000000', 12);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Eskilstuna', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Eskilstuna', localtimestamp, '00000000-0000-0000-0000-000000000000', 15);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Eslöv', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Eslöv', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Essunga', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Essunga', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Fagersta', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Fagersta', localtimestamp, '00000000-0000-0000-0000-000000000000', 13);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Falkenberg', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Falkenberg', localtimestamp, '00000000-0000-0000-0000-000000000000', 21);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Falköping', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Falköping', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Falun', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Falun', localtimestamp, '00000000-0000-0000-0000-000000000000', 11);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Filipstad', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Filipstad', localtimestamp, '00000000-0000-0000-0000-000000000000', 19);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Finspång', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Finspång', localtimestamp, '00000000-0000-0000-0000-000000000000', 16);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Flen', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Flen', localtimestamp, '00000000-0000-0000-0000-000000000000', 15);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Forshaga', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Forshaga', localtimestamp, '00000000-0000-0000-0000-000000000000', 19);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Färgelanda', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Färgelanda', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Gagnef', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Gagnef', localtimestamp, '00000000-0000-0000-0000-000000000000', 11);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Gislaved', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Gislaved', localtimestamp, '00000000-0000-0000-0000-000000000000', 23);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Gnesta', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Gnesta', localtimestamp, '00000000-0000-0000-0000-000000000000', 15);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Gnosjö', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Gnosjö', localtimestamp, '00000000-0000-0000-0000-000000000000', 23);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Gotland', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Gotland', localtimestamp, '00000000-0000-0000-0000-000000000000', 26);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Grums', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Grums', localtimestamp, '00000000-0000-0000-0000-000000000000', 19);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Grästorp', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Grästorp', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Gullspång', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Gullspång', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Gällivare', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Gällivare', localtimestamp, '00000000-0000-0000-0000-000000000000', 6);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Gävle', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Gävle', localtimestamp, '00000000-0000-0000-0000-000000000000', 10);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Gothenburg', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Göteborg', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Götene', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Götene', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Habo', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Habo', localtimestamp, '00000000-0000-0000-0000-000000000000', 23);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Hagfors', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Hagfors', localtimestamp, '00000000-0000-0000-0000-000000000000', 19);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Hallsberg', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Hallsberg', localtimestamp, '00000000-0000-0000-0000-000000000000', 14);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Hallstahammar', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Hallstahammar', localtimestamp, '00000000-0000-0000-0000-000000000000', 13);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Halmstad', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Halmstad', localtimestamp, '00000000-0000-0000-0000-000000000000', 21);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Hammarö', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Hammarö', localtimestamp, '00000000-0000-0000-0000-000000000000', 19);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Haninge', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Haninge', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Haparanda', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Haparanda', localtimestamp, '00000000-0000-0000-0000-000000000000', 6);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Heby', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Heby', localtimestamp, '00000000-0000-0000-0000-000000000000', 12);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Hedemora', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Hedemora', localtimestamp, '00000000-0000-0000-0000-000000000000', 11);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Helsingborg', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Helsingborg', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Herrljunga', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Herrljunga', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Hjo', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Hjo', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Hofors', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Hofors', localtimestamp, '00000000-0000-0000-0000-000000000000', 10);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Huddinge', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Huddinge', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Hudiksvall', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Hudiksvall', localtimestamp, '00000000-0000-0000-0000-000000000000', 10);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Hultsfred', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Hultsfred', localtimestamp, '00000000-0000-0000-0000-000000000000', 25);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Hylte', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Hylte', localtimestamp, '00000000-0000-0000-0000-000000000000', 21);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Håbo', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Hällefors', localtimestamp, '00000000-0000-0000-0000-000000000000', 14);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Hällefors', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Härjedalen', localtimestamp, '00000000-0000-0000-0000-000000000000', 8);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Härjedalen', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Härnösand', localtimestamp, '00000000-0000-0000-0000-000000000000', 9);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Härnösand', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Härryda', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Härryda', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Hässleholm', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Hässleholm', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Håbo', localtimestamp, '00000000-0000-0000-0000-000000000000', 12);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Höganäs', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Höganäs', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Högsby', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Högsby', localtimestamp, '00000000-0000-0000-0000-000000000000', 25);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Hörby', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Hörby', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Höör', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Höör', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Jokkmokk', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Jokkmokk', localtimestamp, '00000000-0000-0000-0000-000000000000', 6);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Järfälla', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Järfälla', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Jönköping', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Jönköping', localtimestamp, '00000000-0000-0000-0000-000000000000', 23);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Kalix', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Kalix', localtimestamp, '00000000-0000-0000-0000-000000000000', 6);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Kalmar', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Kalmar', localtimestamp, '00000000-0000-0000-0000-000000000000', 25);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Karlsborg', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Karlsborg', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Karlshamn', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Karlshamn', localtimestamp, '00000000-0000-0000-0000-000000000000', 17);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Karlskoga', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Karlskoga', localtimestamp, '00000000-0000-0000-0000-000000000000', 14);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Karlskrona', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Karlskrona', localtimestamp, '00000000-0000-0000-0000-000000000000', 17);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Karlstad', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Karlstad', localtimestamp, '00000000-0000-0000-0000-000000000000', 19);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Katrineholm', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Katrineholm', localtimestamp, '00000000-0000-0000-0000-000000000000', 15);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Kil', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Kil', localtimestamp, '00000000-0000-0000-0000-000000000000', 19);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Kinda', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Kinda', localtimestamp, '00000000-0000-0000-0000-000000000000', 16);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Kiruna', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Kiruna', localtimestamp, '00000000-0000-0000-0000-000000000000', 6);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Klippan', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Klippan', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Knivsta', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Knivsta', localtimestamp, '00000000-0000-0000-0000-000000000000', 12);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Kramfors', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Kramfors', localtimestamp, '00000000-0000-0000-0000-000000000000', 9);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Kristianstad', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Kristianstad', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Kristinehamn', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Kristinehamn', localtimestamp, '00000000-0000-0000-0000-000000000000', 19);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Krokom', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Krokom', localtimestamp, '00000000-0000-0000-0000-000000000000', 8);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Kumla', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Kumla', localtimestamp, '00000000-0000-0000-0000-000000000000', 14);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Kungsbacka', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Kungsbacka', localtimestamp, '00000000-0000-0000-0000-000000000000', 21);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Kungsör', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Kungsör', localtimestamp, '00000000-0000-0000-0000-000000000000', 13);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Kungälv', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Kungälv', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Kävlinge', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Kävlinge', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Köping', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Köping', localtimestamp, '00000000-0000-0000-0000-000000000000', 13);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Laholm', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Laholm', localtimestamp, '00000000-0000-0000-0000-000000000000', 21);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Landskrona', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Landskrona', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Laxå', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Laxå', localtimestamp, '00000000-0000-0000-0000-000000000000', 14);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Lekeberg', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Lekeberg', localtimestamp, '00000000-0000-0000-0000-000000000000', 14);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Leksand', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Leksand', localtimestamp, '00000000-0000-0000-0000-000000000000', 11);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Lerum', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Lerum', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Lessebo', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Lessebo', localtimestamp, '00000000-0000-0000-0000-000000000000', 24);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Lidingö', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Lidingö', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Lidköping', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Lidköping', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Lilla Edet', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Lilla Edet', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Lindesberg', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Lindesberg', localtimestamp, '00000000-0000-0000-0000-000000000000', 14);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Linköping', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Linköping', localtimestamp, '00000000-0000-0000-0000-000000000000', 16);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Ljungby', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Ljungby', localtimestamp, '00000000-0000-0000-0000-000000000000', 24);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Ljusdal', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Ljusdal', localtimestamp, '00000000-0000-0000-0000-000000000000', 10);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Ljusnarsberg', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Ljusnarsberg', localtimestamp, '00000000-0000-0000-0000-000000000000', 14);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Lomma', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Lomma', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Ludvika', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Ludvika', localtimestamp, '00000000-0000-0000-0000-000000000000', 11);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Luleå', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Luleå', localtimestamp, '00000000-0000-0000-0000-000000000000', 6);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Lund', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Lund', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Lycksele', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Lycksele', localtimestamp, '00000000-0000-0000-0000-000000000000', 7);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Lysekil', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Lysekil', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Malmö', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Malmö', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Malung-Sälen', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Malung-Sälen', localtimestamp, '00000000-0000-0000-0000-000000000000', 11);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Malå', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Malå', localtimestamp, '00000000-0000-0000-0000-000000000000', 7);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Mariestad', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Mariestad', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Mark', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Mark', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Markaryd', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Markaryd', localtimestamp, '00000000-0000-0000-0000-000000000000', 24);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Mellerud', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Mellerud', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Mjölby', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Mjölby', localtimestamp, '00000000-0000-0000-0000-000000000000', 16);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Mora', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Mora', localtimestamp, '00000000-0000-0000-0000-000000000000', 11);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Motala', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Motala', localtimestamp, '00000000-0000-0000-0000-000000000000', 16);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Mullsjö', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Mullsjö', localtimestamp, '00000000-0000-0000-0000-000000000000', 23);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Munkedal', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Munkedal', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Munkfors', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Munkfors', localtimestamp, '00000000-0000-0000-0000-000000000000', 19);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Mölndal', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Mölndal', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Mönsterås', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Mönsterås', localtimestamp, '00000000-0000-0000-0000-000000000000', 25);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Mörbylånga', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Mörbylånga', localtimestamp, '00000000-0000-0000-0000-000000000000', 25);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Nacka', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Nacka', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Nora', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Nora', localtimestamp, '00000000-0000-0000-0000-000000000000', 14);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Norberg', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Norberg', localtimestamp, '00000000-0000-0000-0000-000000000000', 13);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Nordanstig', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Nordanstig', localtimestamp, '00000000-0000-0000-0000-000000000000', 10);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Nordmaling', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Nordmaling', localtimestamp, '00000000-0000-0000-0000-000000000000', 7);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Norrköping', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Norrköping', localtimestamp, '00000000-0000-0000-0000-000000000000', 16);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Norrtälje', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Norrtälje', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Norsjö', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Norsjö', localtimestamp, '00000000-0000-0000-0000-000000000000', 7);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Nybro', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Nybro', localtimestamp, '00000000-0000-0000-0000-000000000000', 25);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Nykvarn', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Nykvarn', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Nyköping', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Nyköping', localtimestamp, '00000000-0000-0000-0000-000000000000', 15);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Nynäshamn', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Nynäshamn', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Nässjö', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Nässjö', localtimestamp, '00000000-0000-0000-0000-000000000000', 23);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Ockelbo', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Ockelbo', localtimestamp, '00000000-0000-0000-0000-000000000000', 10);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Olofström', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Olofström', localtimestamp, '00000000-0000-0000-0000-000000000000', 17);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Orsa', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Orsa', localtimestamp, '00000000-0000-0000-0000-000000000000', 11);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Orust', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Orust', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Osby', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Osby', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Oskarshamn', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Oskarshamn', localtimestamp, '00000000-0000-0000-0000-000000000000', 25);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Ovanåker', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Ovanåker', localtimestamp, '00000000-0000-0000-0000-000000000000', 10);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Oxelösund', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Oxelösund', localtimestamp, '00000000-0000-0000-0000-000000000000', 15);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Pajala', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Pajala', localtimestamp, '00000000-0000-0000-0000-000000000000', 6);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Partille', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Partille', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Perstorp', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Perstorp', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Piteå', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Piteå', localtimestamp, '00000000-0000-0000-0000-000000000000', 6);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Ragunda', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Ragunda', localtimestamp, '00000000-0000-0000-0000-000000000000', 8);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Robertsfors', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Robertsfors', localtimestamp, '00000000-0000-0000-0000-000000000000', 7);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Ronneby', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Ronneby', localtimestamp, '00000000-0000-0000-0000-000000000000', 17);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Rättvik', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Rättvik', localtimestamp, '00000000-0000-0000-0000-000000000000', 11);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Sala', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Sala', localtimestamp, '00000000-0000-0000-0000-000000000000', 13);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Salem', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Salem', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Sandviken', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Sandviken', localtimestamp, '00000000-0000-0000-0000-000000000000', 10);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Sigtuna', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Sigtuna', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Simrishamn', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Simrishamn', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Sjöbo', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Sjöbo', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Skara', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Skara', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Skellefteå', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Skellefteå', localtimestamp, '00000000-0000-0000-0000-000000000000', 7);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Skinnskatteberg', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Skinnskatteberg', localtimestamp, '00000000-0000-0000-0000-000000000000', 13);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Skurup', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Skurup', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Skövde', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Skövde', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Smedjebacken', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Smedjebacken', localtimestamp, '00000000-0000-0000-0000-000000000000', 11);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Sollefteå', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Sollefteå', localtimestamp, '00000000-0000-0000-0000-000000000000', 9);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Sollentuna', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Sollentuna', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Solna', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Solna', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Sorsele', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Sorsele', localtimestamp, '00000000-0000-0000-0000-000000000000', 7);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Sotenäs', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Sotenäs', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Staffanstorp', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Staffanstorp', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Stenungsund', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Stenungsund', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Stockholm', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Stockholm', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Storfors', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Storfors', localtimestamp, '00000000-0000-0000-0000-000000000000', 19);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Storuman', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Storuman', localtimestamp, '00000000-0000-0000-0000-000000000000', 7);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Strängnäs', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Strängnäs', localtimestamp, '00000000-0000-0000-0000-000000000000', 15);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Strömstad', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Strömstad', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Strömsund', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Strömsund', localtimestamp, '00000000-0000-0000-0000-000000000000', 8);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Sundbyberg', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Sundbyberg', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Sundsvall', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Sundsvall', localtimestamp, '00000000-0000-0000-0000-000000000000', 9);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Sunne', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Sunne', localtimestamp, '00000000-0000-0000-0000-000000000000', 19);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Surahammar', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Surahammar', localtimestamp, '00000000-0000-0000-0000-000000000000', 13);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Svalöv', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Svalöv', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Svedala', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Svedala', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Svenljunga', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Svenljunga', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Säffle', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Säffle', localtimestamp, '00000000-0000-0000-0000-000000000000', 19);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Säter', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Säter', localtimestamp, '00000000-0000-0000-0000-000000000000', 11);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Sävsjö', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Sävsjö', localtimestamp, '00000000-0000-0000-0000-000000000000', 23);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Söderhamn', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Söderhamn', localtimestamp, '00000000-0000-0000-0000-000000000000', 10);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Söderköping', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Söderköping', localtimestamp, '00000000-0000-0000-0000-000000000000', 16);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Södertälje', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Södertälje', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Sölvesborg', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Sölvesborg', localtimestamp, '00000000-0000-0000-0000-000000000000', 17);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Tanum', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Tanum', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Tibro', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Tibro', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Tidaholm', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Tidaholm', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Tierp', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Tierp', localtimestamp, '00000000-0000-0000-0000-000000000000', 12);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Timrå', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Timrå', localtimestamp, '00000000-0000-0000-0000-000000000000', 9);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Tingsryd', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Tingsryd', localtimestamp, '00000000-0000-0000-0000-000000000000', 24);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Tjörn', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Tjörn', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Tomelilla', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Tomelilla', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Torsby', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Torsby', localtimestamp, '00000000-0000-0000-0000-000000000000', 19);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Torsås', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Torsås', localtimestamp, '00000000-0000-0000-0000-000000000000', 25);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Tranemo', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Tranemo', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Tranås', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Tranås', localtimestamp, '00000000-0000-0000-0000-000000000000', 23);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Trelleborg', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Trelleborg', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Trollhättan', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Trollhättan', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Trosa', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Trosa', localtimestamp, '00000000-0000-0000-0000-000000000000', 15);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Tyresö', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Tyresö', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Täby', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Täby', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Töreboda', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Töreboda', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Uddevalla', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Uddevalla', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Ulricehamn', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Ulricehamn', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Umeå', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Umeå', localtimestamp, '00000000-0000-0000-0000-000000000000', 7);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Upplands Väsby', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Upplands Väsby', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Upplands-Bro', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Upplands-Bro', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Uppsala', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Uppsala', localtimestamp, '00000000-0000-0000-0000-000000000000', 12);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Uppvidinge', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Uppvidinge', localtimestamp, '00000000-0000-0000-0000-000000000000', 24);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Vadstena', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Vadstena', localtimestamp, '00000000-0000-0000-0000-000000000000', 16);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Vaggeryd', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Vaggeryd', localtimestamp, '00000000-0000-0000-0000-000000000000', 23);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Valdemarsvik', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Valdemarsvik', localtimestamp, '00000000-0000-0000-0000-000000000000', 16);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Vallentuna', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Vallentuna', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Vansbro', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Vansbro', localtimestamp, '00000000-0000-0000-0000-000000000000', 11);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Vara', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Vara', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Varberg', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Varberg', localtimestamp, '00000000-0000-0000-0000-000000000000', 21);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Vaxholm', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Vaxholm', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Vellinge', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Vellinge', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Vetlanda', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Vetlanda', localtimestamp, '00000000-0000-0000-0000-000000000000', 23);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Vilhelmina', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Vilhelmina', localtimestamp, '00000000-0000-0000-0000-000000000000', 7);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Vimmerby', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Vimmerby', localtimestamp, '00000000-0000-0000-0000-000000000000', 25);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Vindeln', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Vindeln', localtimestamp, '00000000-0000-0000-0000-000000000000', 7);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Vingåker', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Vingåker', localtimestamp, '00000000-0000-0000-0000-000000000000', 15);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Vårgårda', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Vänersborg', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Vänersborg', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Vännäs', localtimestamp, '00000000-0000-0000-0000-000000000000', 7);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Vännäs', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Värmdö', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Värmdö', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Värnamo', localtimestamp, '00000000-0000-0000-0000-000000000000', 23);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Värnamo', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Västervik', localtimestamp, '00000000-0000-0000-0000-000000000000', 25);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Västervik', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Västerås', localtimestamp, '00000000-0000-0000-0000-000000000000', 13);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Västerås', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Växjö', localtimestamp, '00000000-0000-0000-0000-000000000000', 24);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Växjö', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Vårgårda', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Ydre', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Ydre', localtimestamp, '00000000-0000-0000-0000-000000000000', 16);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Ystad', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Ystad', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Åmål', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Åmål', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Ånge', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Ånge', localtimestamp, '00000000-0000-0000-0000-000000000000', 9);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Åre', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Åre', localtimestamp, '00000000-0000-0000-0000-000000000000', 8);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Årjäng', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Årjäng', localtimestamp, '00000000-0000-0000-0000-000000000000', 19);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Åsele', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Åsele', localtimestamp, '00000000-0000-0000-0000-000000000000', 7);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Åstorp', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Åstorp', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Åtvidaberg', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Åtvidaberg', localtimestamp, '00000000-0000-0000-0000-000000000000', 16);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Älmhult', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Älmhult', localtimestamp, '00000000-0000-0000-0000-000000000000', 24);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Älvdalen', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Älvdalen', localtimestamp, '00000000-0000-0000-0000-000000000000', 11);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Älvkarleby', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Älvkarleby', localtimestamp, '00000000-0000-0000-0000-000000000000', 12);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Älvsbyn', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Älvsbyn', localtimestamp, '00000000-0000-0000-0000-000000000000', 6);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Ängelholm', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Ängelholm', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Öckerö', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Öckerö', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Ödeshög', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Ödeshög', localtimestamp, '00000000-0000-0000-0000-000000000000', 16);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Örebro', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Örebro', localtimestamp, '00000000-0000-0000-0000-000000000000', 14);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Örkelljunga', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Örkelljunga', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Örnsköldsvik', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Örnsköldsvik', localtimestamp, '00000000-0000-0000-0000-000000000000', 9);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Östersund', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Östersund', localtimestamp, '00000000-0000-0000-0000-000000000000', 8);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Österåker', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Österåker', localtimestamp, '00000000-0000-0000-0000-000000000000', 18);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Östhammar', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Östhammar', localtimestamp, '00000000-0000-0000-0000-000000000000', 12);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Östra Göinge', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Östra Göinge', localtimestamp, '00000000-0000-0000-0000-000000000000', 22);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Överkalix', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Överkalix', localtimestamp, '00000000-0000-0000-0000-000000000000', 6);
 
 INSERT INTO municipalities (id, name, created, "country", "area")
-VALUES (uuid_generate_v4(), 'Övertorneå', localtimestamp, '00000000-0000-0000-0000-000000000000', NULL);
+VALUES (uuid_generate_v4(), 'Övertorneå', localtimestamp, '00000000-0000-0000-0000-000000000000', 6);

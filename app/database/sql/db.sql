@@ -2,6 +2,7 @@
 -- SQL is written with PostgreSQL syntax
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS ltree;
 
 CREATE TABLE organizations
 (
@@ -73,25 +74,21 @@ CREATE TABLE countries
 CREATE TABLE areas
 (
     id        SERIAL PRIMARY KEY,
+    name      TEXT NOT NULL,
     created   TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    "country" UUID REFERENCES countries(id)
+    "country" UUID REFERENCES countries(id),
+    path ltree
 );
+
+CREATE INDEX area_path_idx ON areas USING GIST (path);
 
 CREATE TABLE municipalities
 (
     id        UUID PRIMARY KEY,
     name      TEXT NOT NULL,
     created   TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    "country" UUID REFERENCES countries(id),
+    "country" UUID REFERENCES countries(id) NOT NULL,
     "area"    INTEGER REFERENCES areas(id)
-);
-
-CREATE TABLE area_paths
-(
-    "ancestor"   INTEGER REFERENCES areas(id) NOT NULL,
-    "descendent" INTEGER REFERENCES areas(id) NOT NULL,
-    depth        INTEGER NOT NULL,
-    PRIMARY KEY  ("ancestor", "descendent")
 );
 
 -- Create an administrator role
