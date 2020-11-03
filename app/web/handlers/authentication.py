@@ -37,7 +37,7 @@ class SignInHandler(BaseHandler):
 
 
 class SignUpHandler(BaseHandler):
-    def get(self):
+    async def get(self):
         flow = self.get_argument("flow", default="")
 
         if (flow == ""):
