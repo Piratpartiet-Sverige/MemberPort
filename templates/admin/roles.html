@@ -46,7 +46,10 @@
             id: "{{ role.id }}",
             name: "{{ role.name }}",
             {% for permission in permissions %}
-            {{ permission.id }}: {{ "true" if permission in permissions_by_role[role.id] else "false"}},
+            {{ permission.id }}: {
+                checked: {{ "true" if permission in permissions_by_role[role.id] else "false"}},
+                disabled: false
+            },
             {% end %}
         },
         {% end %}

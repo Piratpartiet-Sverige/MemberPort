@@ -19,6 +19,7 @@
 
 {% end %}
 {% block scripts %}
+<script src="{{ static_url('js/checkbox-renderer.js') }}"></script>
 <script src="{{ static_url('js/button-renderer.js') }}"></script>
 <script type="text/javascript" charset="utf-8">
     async function deleteData(url = '', data = {}) {
@@ -41,6 +42,7 @@
     var columnDefs = [
         { headerName: "Namn", field: "name" },
         { headerName: "Beskrivning", field: "description" },
+        { headerName: "Aktiv", field: "active", cellRenderer: 'checkboxRenderer' },
         { headerName: "Ändra", field: "edit", cellRenderer: 'buttonRenderer' },
         { headerName: "Ta bort", field: "delete", cellRenderer: 'buttonRenderer' }
     ]
@@ -51,6 +53,10 @@
         {
             name: "{{ organization.name }}",
             description: "{{ organization.description }}",
+            active: {
+                checked: {{ "true" if organization.active else "false"}},
+                disabled: true
+            },
             edit: {
                 label: "Ändra",
                 onClick: () => { window.location.href = 'edit-organization?id={{ organization.id }}' }
@@ -93,7 +99,8 @@
         columnDefs: columnDefs,
         rowData: rowData,
         components: {
-            buttonRenderer: ButtonRenderer
+            buttonRenderer: ButtonRenderer,
+            checkboxRenderer: CheckboxRenderer
         }
     };
 

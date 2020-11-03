@@ -29,6 +29,7 @@ class Organization:
     id: UUID
     name: str
     description: str
+    active: bool
     created: datetime
 
 

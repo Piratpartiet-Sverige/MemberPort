@@ -8,7 +8,8 @@ CheckboxRenderer.prototype.init = function (params) {
 
     this.eGui = document.createElement('input');
     this.eGui.type = 'checkbox';
-    this.eGui.checked = params.value;
+    this.eGui.checked = params.value.checked;
+    this.eGui.disabled = typeof params.value.disabled !== 'undefined' ? params.value.disabled : false
 
     this.checkedHandler = this.checkedHandler.bind(this);
     this.eGui.addEventListener('click', this.checkedHandler);

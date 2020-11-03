@@ -30,6 +30,7 @@ class OrganizationsDao(MemberOrgDao):
         organization.id = id
         organization.name = name
         organization.description = description
+        organization.active = active
         organization.created = created
 
         return organization
@@ -86,7 +87,7 @@ class OrganizationsDao(MemberOrgDao):
             order_column = "name"
 
         if search == "":
-            sql = """ SELECT o.id, o.name, o.description, o.created
+            sql = """ SELECT o.id, o.name, o.description, o.created, o.active
                       FROM organizations o
                       ORDER BY """ + order_column + " " + order_dir + ";"  # noqa: S608 # nosec
 
@@ -94,7 +95,7 @@ class OrganizationsDao(MemberOrgDao):
                 rows = await con.fetch(sql)
         else:
             search = "%"+search+"%"
-            sql = """ SELECT o.id, o.name, o.description, o.created
+            sql = """ SELECT o.id, o.name, o.description, o.created, o.active
                       FROM organizations o
                       WHERE o.name LIKE $1
                       OR o.description LIKE $1
@@ -110,6 +111,7 @@ class OrganizationsDao(MemberOrgDao):
             organization.id = row["id"]
             organization.name = row["name"]
             organization.description = row["description"]
+            organization.active = row["active"]
             organization.created = row["created"]
 
             organizations.append(organization)
