@@ -91,3 +91,9 @@ class Municipality:
     name: str
     country: Country
     created: datetime
+
+
+class Area:
+    id: int
+    name: str
+    country: Country
