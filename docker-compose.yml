@@ -39,7 +39,9 @@ services:
 
   member-port:
     image: member-port:latest
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     depends_on:
       - postgres-db
       - pirate-kratos
