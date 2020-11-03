@@ -8,6 +8,7 @@ CREATE TABLE organizations
     id          UUID PRIMARY KEY,
     name        TEXT UNIQUE NOT NULL,
     description TEXT,
+    active      BOOLEAN NOT NULL,
     created     TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 

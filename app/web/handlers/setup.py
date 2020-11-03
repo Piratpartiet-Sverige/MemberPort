@@ -22,7 +22,7 @@ class SetupHandler(BaseHandler):
         org_description = self.get_argument("org.description")
 
         org_dao = OrganizationsDao(self.db)
-        organization = await org_dao.create_organization(org_name, org_description)
+        organization = await org_dao.create_organization(org_name, org_description, True)
 
         if organization is None:
             return self.respond("Something went wrong when creating organization", 500)

@@ -12,15 +12,15 @@ from app.database.dao.member_org import MemberOrgDao
 
 
 class OrganizationsDao(MemberOrgDao):
-    async def create_organization(self, name, description) -> Union[Organization, None]:
-        sql = "INSERT INTO organizations (id, name, description, created) VALUES ($1, $2, $3, $4);"
+    async def create_organization(self, name, description, active) -> Union[Organization, None]:
+        sql = "INSERT INTO organizations (id, name, description, active, created) VALUES ($1, $2, $3, $4, $5);"
 
         id = uuid4()
         created = datetime.utcnow()
 
         try:
             async with self.pool.acquire() as con:  # type: Connection
-                await con.execute(sql, id, name, description, created)
+                await con.execute(sql, id, name, description, active, created)
         except UniqueViolationError as exc:
             logger.debug(exc.__str__())
             logger.warning("Tried to create organization: " + str(id) + " but organization already existed")
@@ -116,12 +116,12 @@ class OrganizationsDao(MemberOrgDao):
 
         return organizations
 
-    async def update_organization(self, id: UUID, name: str, description: str) -> Union[Organization, None]:
-        sql = "UPDATE organizations SET name = $1, description = $2 WHERE id = $3"
+    async def update_organization(self, id: UUID, name: str, description: str, active: bool) -> Union[Organization, None]:
+        sql = "UPDATE organizations SET name = $1, description = $2, active = $3 WHERE id = $4"
 
         try:
             async with self.pool.acquire() as con:  # type: Connection
-                await con.execute(sql, name, description, id)
+                await con.execute(sql, name, description, active, id)
         except UniqueViolationError as exc:
             logger.debug(exc.__str__())
             logger.warning("Tried to update organization: " + str(id))

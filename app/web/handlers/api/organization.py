@@ -11,7 +11,8 @@ class APIOrganizationHandler(BaseHandler):
     async def post(self):
         name = self.get_argument("name")
         description = self.get_argument("description")
-        organization = await OrganizationsDao(self.db).create_organization(name, description)
+        active = self.get_argument("active", False)
+        organization = await OrganizationsDao(self.db).create_organization(name, description, active)
         return self.respond("ORGANIZATION CREATED", 200, organization_to_json(organization))
 
     @tornado.web.authenticated
@@ -21,13 +22,14 @@ class APIOrganizationHandler(BaseHandler):
 
         name = self.get_argument("name", None)
         description = self.get_argument("description", None)
+        active = self.get_argument("active", False)
 
         if name is None:
             return self.respond("name property is missing", 422)
         if description is None:
             return self.respond("description property is missing", 422)
 
-        organization = await OrganizationsDao(self.db).update_organization(id, name, description)
+        organization = await OrganizationsDao(self.db).update_organization(id, name, description, active)
         return self.respond("ORGANIZATION CREATED", 200, organization_to_json(organization))
 
     @tornado.web.authenticated
