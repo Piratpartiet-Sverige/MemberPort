@@ -72,8 +72,8 @@ class SignUpHandler(BaseHandler):
         logger.debug("csrf_token: " + csrf_token)
 
         dao = GeographyDao(self.db)
-        municipalities = await dao.get_municipalities()
         countries = await dao.get_countries()
+        municipalities = await dao.get_municipalities_by_country(countries[0].id)
 
         self.render(
             "sign-up.html",

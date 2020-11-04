@@ -57,6 +57,7 @@
 <script src="{{ static_url('js/geography.js') }}"></script>
 <script>
     var swedenID = "";
+    var parentID = "";
     {% for country in countries %}
     geodata["{{ country.id }}"] = {
         name: "{{ country.name }}",
@@ -67,12 +68,26 @@
         addCountry(swedenID, "{{ country.name }}");
     }
     {% end %}
+    {% for area in areas %}
+    geodata["{{ area.id }}"] = {
+        name: "{{ area.name }}",
+        id: "{{ area.id }}",
+        path: "{{ area.path }}"
+    };
+    parentID = getParentID("{{ area.id }}", "{{ area.path }}", swedenID);
+    addArea("{{ area.id }}", "{{ area.name }}", parentID);
+    {% end %}
     {% for municipality in municipalities %}
     geodata["{{ municipality.id }}"] = {
         name: "{{ municipality.name }}",
-        id: "{{ municipality.id }}"
+        id: "{{ municipality.id }}",
+        area: "{{ municipality.area_id }}"
     };
-    addMunicipality("{{ municipality.id }}", "{{ municipality.name }}", swedenID);
+    parentID = "{{ municipality.area_id }}";
+    if (parentID === "") {
+        parentID = swedenID;
+    }
+    addMunicipality("{{ municipality.id }}", "{{ municipality.name }}", parentID);
     {% end %}
 </script>
 {% end %}

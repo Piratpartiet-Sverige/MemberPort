@@ -14,11 +14,16 @@ class GeographyHandler(BaseHandler):
 
         dao = GeographyDao(self.db)
         countries = await dao.get_countries()
-        municipalities = await dao.get_municipalities()
+        municipalities = await dao.get_municipalities_by_country(countries[0].id)
+        areas = await dao.get_areas_by_country(countries[0].id)
+
+        areas = sorted(areas, key=lambda a: a.path.count('.'))
+
         await self.render(
             "admin/geography.html",
             admin=permission_check,
             title="Geography",
             countries=countries,
-            municipalities=municipalities
+            municipalities=municipalities,
+            areas=areas
         )

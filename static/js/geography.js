@@ -222,6 +222,23 @@ function changeNodeName(id) {
     geodata[id].name = newName;
 }
 
+function getParentID(id, path, fallbackID) {
+    var parentID = "";
+
+    if (path === id) {
+        parentID = fallbackID;
+    } else {
+        var count = (path.match(/./g) || []).length;
+        if (count === 1) {
+            parentID = path.substring(0, path.indexOf('.'));
+        } else {
+            parentID = path.substring(path.lastIndexOf(".", path.lastIndexOf(".") - 1), path.lastIndexOf("."));
+        }
+    }
+
+    return parentID;
+}
+
 document.getElementById("newName").oninput = function(e) {
     if (/^[a-zA-ZåäöÅÄÖ]+$/.test(e.data) === false) {
         this.value = this.value.slice(0, -e.data.length);

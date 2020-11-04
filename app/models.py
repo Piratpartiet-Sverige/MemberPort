@@ -86,14 +86,17 @@ class Country:
     created: datetime
 
 
-class Municipality:
-    id: UUID
-    name: str
-    country: Country
-    created: datetime
-
-
 class Area:
     id: int
     name: str
+    created: datetime
     country: Country
+    path: str
+
+
+class Municipality:
+    id: UUID
+    name: str
+    created: datetime
+    country: Country
+    area_id: Area
