@@ -1,4 +1,7 @@
 var geodata = {};
+var changedGeoData = {};
+var newGeoData = {};
+var deletedGeoData = [];
 
 function addArea(id, name, parent) {
     var parent = document.getElementById(parent);
@@ -220,6 +223,18 @@ function changeNodeName(id) {
     var nameBox = node.getElementsByClassName("content")[0];
     nameBox.innerText = newName;
     geodata[id].name = newName;
+    recordChangedValue(id, "name", newName);
+}
+
+function recordChangedValue(id, key, value) {
+    i
+    if (changedGeoData[id] === undefined) {
+        changedGeoData[id] = {};
+        changedGeoData[id][key] = value;
+    } else {
+        changedGeoData[id][key] = value;
+    }
+    console.log(changedGeoData);
 }
 
 function getParentID(id, path, fallbackID) {
