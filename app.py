@@ -1,6 +1,6 @@
 #!/bin/env python3
 """
-Member Port - Member management system
+MemberPort - Member management system
 Copyright (C) 2020 Piratpartiet
 
 This program is free software: you can redistribute it and/or modify
