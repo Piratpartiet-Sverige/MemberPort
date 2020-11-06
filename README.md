@@ -1,4 +1,4 @@
-# Member Port
+# MemberPort
 
 A membership management system, written in Python with the [Tornado web-framework](https://www.tornadoweb.org/en/stable/) and [ORY Kratos](https://www.ory.sh/kratos) as the authentication and identification handler.
 
@@ -25,7 +25,7 @@ docker-compose rm -fsv
 
 ## Development
 
-The default Docker setup is configured as a development environment currently. After running Member Port for the first time, a config file will be created: `config/config.ini`. In this config file, set debug mode on:
+The default Docker setup is configured as a development environment currently. After running MemberPort for the first time, a config file will be created: `config/config.ini`. In this config file, set debug mode on:
 
 ```
 debug = on
@@ -41,7 +41,7 @@ username = super
 password = super
 ```
 
-By default Member Port should be available on `http://127.0.0.1:8888/`.
+By default MemberPort should be available on `http://127.0.0.1:8888/`.
 
 The Tornado server will restart automatically with debug mode on when a change to a source file is detected.
 
@@ -102,4 +102,4 @@ docs: Add a contribution guide to README (#3)
 
 ## License
 
-Member Port is licensed under GNU GPLv3. For more information, see the file `LICENSE`. 
+MemberPort is licensed under GNU GPLv3. For more information, see the file `LICENSE`. 

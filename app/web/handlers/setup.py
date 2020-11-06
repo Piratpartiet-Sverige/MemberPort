@@ -16,7 +16,7 @@ class SetupHandler(BaseHandler):
         settings_dao = SettingsDao(self.db)
 
         if await settings_dao.is_initialized():
-            return self.respond("Member Port is already initialized", 400)
+            return self.respond("MemberPort is already initialized", 400)
 
         org_name = self.get_argument("org.name")
         org_description = self.get_argument("org.description")

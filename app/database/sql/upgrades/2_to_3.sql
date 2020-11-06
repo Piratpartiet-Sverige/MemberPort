@@ -1,4 +1,4 @@
--- Example database upgrade script for Member Port
+-- Example database upgrade script for MemberPort
 -- SQL is written with PostgreSQL syntax
 
 INSERT INTO permissions (id, name, description)
