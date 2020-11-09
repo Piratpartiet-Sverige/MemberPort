@@ -58,7 +58,7 @@ Currently there are 7 design sections and each issue should be tagged with an ap
 - Administration, change settings, creating reports, export members etc
 - Communication, sending messages to members etc
 - General, features that do not fit the other sections
-- Geography, cities, countries, areas etc
+- Geography, municipalities, countries, areas etc
 - Membership, handling of memberships in the system
 - Organization, choose names for organizations, deal with settings for each organization etc
 - Roles, permission management etc

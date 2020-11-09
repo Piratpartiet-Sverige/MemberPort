@@ -72,6 +72,9 @@ class Config:
         add_section_attribute("Users", "max_password_length", "254")
         add_section_attribute("Users", "min_password_length", "5")
 
+        add_section("PAP-API")
+        add_section_attribute("PAP-API", "key", "")
+
         return self._config_updated
 
     def _write_config(self):

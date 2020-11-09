@@ -4,8 +4,8 @@ import ory_kratos_client
 from ory_kratos_client.rest import ApiException
 from ory_kratos_client.configuration import Configuration
 
-from app.database.dao.organizations import OrganizationsDao
 from app.database.dao.members import MembersDao
+from app.database.dao.organizations import OrganizationsDao
 from app.database.dao.users import UsersDao
 from app.logger import logger
 from app.web.handlers.base import BaseHandler

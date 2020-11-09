@@ -22,42 +22,60 @@
                             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                             <div class="field">
                                 <div class="control">
-                                    <input name="traits.name.first" class="input is-large" type="text" placeholder="First name" />
+                                    <input name="traits.name.first" class="input is-large" type="text" placeholder="Förnamn" />
                                 </div>
                             </div>
                             <div class="field">
                                 <div class="control">
-                                    <input name="traits.name.last" class="input is-large" type="text" placeholder="Last name" />
+                                    <input name="traits.name.last" class="input is-large" type="text" placeholder="Efternamn" />
                                 </div>
                             </div>
                             <div class="field">
                                 <div class="control">
-                                    <input name="traits.email" class="input is-large" type="email" placeholder="E-Mail" />
+                                    <input name="traits.email" class="input is-large" type="email" placeholder="E-Post" />
                                 </div>
                             </div>
                             <div class="field">
                                 <div class="control">
-                                    <input name="password" class="input is-large" type="password" placeholder="Password" />
+                                    <input name="password" class="input is-large" type="password" placeholder="Lösenord" />
                                 </div>
                             </div>
                             <div class="field">
                                 <div class="control">
-                                    <input name="traits.street" class="input is-large" type="text" placeholder="Street" />
+                                    <input name="traits.postal_address.street" class="input is-large" type="text" placeholder="Gatuadress" />
                                 </div>
                             </div>
                             <div class="field">
                                 <div class="control">
-                                    <input name="traits.postal_code" class="input is-large" type="text" placeholder="Postal code" />
+                                    <input name="traits.postal_address.postal_code" class="input is-large" type="text" placeholder="Postnummer" />
                                 </div>
                             </div>
                             <div class="field">
                                 <div class="control">
-                                    <input name="traits.city" class="input is-large" type="text" placeholder="City" />
+                                    <input name="traits.postal_address.city" class="input is-large" type="text" placeholder="Postort" />
                                 </div>
                             </div>
                             <div class="field">
                                 <div class="control">
-                                    <input name="traits.country" class="input is-large" type="text" placeholder="Country" />
+                                    <div class="select is-large" style="width: 100%;">
+                                        <select name="traits.municipality" style="width: 100%;">
+                                            <option disabled selected value>Välj din kommun</option>
+                                            {% for municipality in municipalities %}
+                                            <option value="{{ municipality.name }}">{{ municipality.name }}</option>
+                                            {% end %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="control">
+                                    <div class="select is-large">
+                                        <select name="traits.country" value="Sverige">
+                                            {% for country in countries %}
+                                            <option value="{{ country.name }}">{{ country.name }}</option>
+                                            {% end %}
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                             <button type="submit" class="button is-block is-info is-large is-fullwidth">

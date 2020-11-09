@@ -2,7 +2,6 @@
 
 {% block content %}
 <section class="section">
-
     <div class="columns">
         <div class="column is-one-fifth">
             <aside class="menu sticky">
@@ -14,15 +13,12 @@
                     <li><a href="#prenumerationer">Mailprenumerationer</a></li>
                     <li><a href="#medlemskap">Hantera medlemskap</a></li>
                 </ul>
-                <p class="menu-label">
-                    ------------
-                </p>
+                <hr>
                 <ul class="menu-list">
                     <li><a href="#ledare">Mina ledare</a></li>
                 </ul>
             </aside>
         </div>
-
         <div class="column">
             <div name="testmodal" id="testmodal" class="modal">
                 <div class="modal-background"></div>
@@ -40,12 +36,10 @@
                     </footer>
                 </div>
             </div>
-
             <div class="content">
                 <a id="profil"></a>
                 <h1>Min profil</h1>
             </div>
-
             <div class="box">
                 <form id="settings" action="{{ action }}" method="post">
                     <input id="csrf_token" type="hidden" name="csrf_token" value="{{ csrf_token }}">
@@ -84,9 +78,8 @@
                                 </p>
                             </div>
                         </div>
-
                         <label class="label">
-                            Mailadress
+                            E-Post
                             {% if user.verified %}
                             <span class="icon has-text-success">
                                 <i title="Verifierad" class="fas fa-check-square"></i>
@@ -113,8 +106,6 @@
                                 </p>
                             </div>
                         </div>
-
-
                         <label class="label">Telefonnummer</label>
                         <div class="field is-grouped">
                             <div class="control">
@@ -132,62 +123,75 @@
                                 </p>
                             </div>
                         </div>
-
                         <label class="label">Adress</label>
                         <div class="field is-grouped">
                             <div class="control">
-                                <input class="input is-static" name="traits.street" type="text"
-                                    value="{{ user.street }}" id="traits.street" readonly>
+                                <input class="input is-static" name="traits.postal_address.street" type="text"
+                                    value="{{ user.postal_address.street }}" id="traits.postal_address.street" readonly>
                             </div>
                             <div class="field is-grouped">
                                 <p class="control">
                                     <button type="button" class="button is-success"
-                                        onclick="toggleHidden('cancelButtonStreet');toggleSaveButton('saveButtonStreet');toggleInput('traits.street')"
+                                        onclick="toggleHidden('cancelButtonStreet');toggleSaveButton('saveButtonStreet');toggleInput('traits.postal_address.street')"
                                         id="saveButtonStreet">Ändra</button></p>
                                 <p class="control">
                                     <button type="button" class="button is-danger is-hidden" id="cancelButtonStreet"
-                                        onclick="toggleHidden('cancelButtonStreet');toggleSaveButton('saveButtonStreet', false);toggleInput('traits.street')">Avbryt</button>
+                                        onclick="toggleHidden('cancelButtonStreet');toggleSaveButton('saveButtonStreet', false);toggleInput('traits.postal_address.street')">Avbryt</button>
                                 </p>
                             </div>
                         </div>
-
-
                         <label class="label">Postnummer</label>
                         <div class="field is-grouped">
                             <div class="control">
-                                <input class="input is-static" name="traits.postal_code" type="text"
-                                    value="{{ user.postal_code }}" id="traits.postal_code" readonly>
+                                <input class="input is-static" name="traits.postal_address.postal_code" type="text"
+                                    value="{{ user.postal_address.postal_code }}" id="traits.postal_address.postal_code" readonly>
                             </div>
                             <div class="field is-grouped">
                                 <p class="control">
                                     <button type="button" class="button is-success"
-                                        onclick="toggleHidden('cancelButtonPostalCode');toggleSaveButton('saveButtonPostalCode');toggleInput('traits.postal_code')"
+                                        onclick="toggleHidden('cancelButtonPostalCode');toggleSaveButton('saveButtonPostalCode');toggleInput('traits.postal_address.postal_code')"
                                         id="saveButtonPostalCode">Ändra</button></p>
                                 <p class="control">
                                     <button type="button" class="button is-danger is-hidden" id="cancelButtonPostalCode"
-                                        onclick="toggleHidden('cancelButtonPostalCode');toggleSaveButton('saveButtonPostalCode', false);toggleInput('traits.postal_code')">Avbryt</button>
+                                        onclick="toggleHidden('cancelButtonPostalCode');toggleSaveButton('saveButtonPostalCode', false);toggleInput('traits.postal_address.postal_code')">Avbryt</button>
                                 </p>
                             </div>
                         </div>
-
                         <label class="label">Postort</label>
                         <div class="field is-grouped">
                             <div class="control">
-                                <input class="input is-static" name="traits.city" type="text" value="{{ user.city }}"
-                                    id="traits.city" readonly>
+                                <input class="input is-static" name="traits.postal_address.city" type="text" value="{{ user.postal_address.city }}"
+                                    id="traits.postal_address.city" readonly>
                             </div>
                             <div class="field is-grouped">
                                 <p class="control">
                                     <button type="button" class="button is-success"
-                                        onclick="toggleHidden('cancelButtonCity');toggleSaveButton('saveButtonCity');toggleInput('traits.city')"
+                                        onclick="toggleHidden('cancelButtonCity');toggleSaveButton('saveButtonCity');toggleInput('traits.postal_address.city')"
                                         id="saveButtonCity">Ändra</button></p>
                                 <p class="control">
                                     <button type="button" class="button is-danger is-hidden" id="cancelButtonCity"
-                                        onclick="toggleHidden('cancelButtonCity');toggleSaveButton('saveButtonCity', false);toggleInput('traits.city')">Avbryt</button>
+                                        onclick="toggleHidden('cancelButtonCity');toggleSaveButton('saveButtonCity', false);toggleInput('traits.postal_address.city')">Avbryt</button>
                                 </p>
                             </div>
                         </div>
-
+                        <label class="label">Kommun</label>
+                        <div class="field is-grouped">
+                            <div class="control">
+                                <input class="input is-static" name="traits.municipality" type="text" value="{{ user.municipality }}"
+                                    id="traits.municipality" readonly>
+                            </div>
+                            <div class="field is-grouped">
+                                <p class="control">
+                                    <button type="button" class="button is-success"
+                                        onclick="toggleHidden('cancelButtonMunicipality');toggleSaveButton('saveButtonMunicipality');toggleInput('traits.municipality')"
+                                        id="saveButtonMunicipality">Ändra</button>
+                                </p>
+                                <p class="control">
+                                    <button type="button" class="button is-danger is-hidden" id="cancelButtonMunicipality"
+                                        onclick="toggleHidden('cancelButtonMunicipality');toggleSaveButton('saveButtonMunicipality', false);toggleInput('traits.municipality')">Avbryt</button>
+                                </p>
+                            </div>
+                        </div>
                         <label class="label">Land</label>
                         <div class="field is-grouped">
                             <div class="control">
