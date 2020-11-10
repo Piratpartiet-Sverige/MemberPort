@@ -1,5 +1,6 @@
 import tornado.web
 
+from app.logger import logger
 from app.database.dao.roles import RolesDao
 from app.web.handlers.base import BaseHandler
 
@@ -30,8 +31,10 @@ class RolesHandler(BaseHandler):
 
             for permission in permissions_for_role:
                 if permissions_for_role[permission] is True:
+                    logger.debug("Giving permission: " + permission + " for role: " + role)
                     await dao.add_permission_to_role(role, permission)
-                else:
+                elif permissions_for_role[permission] is False:
+                    logger.debug("Removing permission: " + permission + " for role: " + role)
                     await dao.remove_permission_from_role(role, permission)
 
         return self.respond("Roles succesfully updated", 200)

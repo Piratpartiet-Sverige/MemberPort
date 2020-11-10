@@ -12,6 +12,14 @@
     <br>
     {% module xsrf_form_html() %}
     <button onclick="saveRoles();" class="button is-success" style="margin-bottom: 1rem;">Spara</button>
+    <div id="successNotification" class="notification is-success is-hidden">
+        <button type="button" class="delete" onclick="hide('successNotification');"></button>
+        <p id="successText"></p>
+    </div>
+    <div id="errorNotification" class="notification is-danger is-hidden">
+        <button type="button" class="delete" onclick="hide('errorNotification');"></button>
+        <p id="errorText"></p>
+    </div>
 </div>
 {% end %}
 
@@ -100,6 +108,14 @@
         });
 
         return response;
+    }
+
+    function show(ID) {
+        document.getElementById(ID).classList.remove('is-hidden');
+    }
+
+    function hide(ID) {
+        document.getElementById(ID).classList.add('is-hidden');
     }
 
     function saveRoles() {
