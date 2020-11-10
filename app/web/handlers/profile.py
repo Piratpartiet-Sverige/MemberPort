@@ -4,8 +4,8 @@ import ory_kratos_client
 from ory_kratos_client.rest import ApiException
 from ory_kratos_client.configuration import Configuration
 
+from app.database.dao.geography import GeographyDao
 from app.database.dao.members import MembersDao
-from app.database.dao.organizations import OrganizationsDao
 from app.database.dao.users import UsersDao
 from app.logger import logger
 from app.web.handlers.base import BaseHandler
@@ -25,14 +25,22 @@ class ProfileHandler(BaseHandler):
         csrf_token = ""  # noqa: S105 # nosec
         error = ""
         action = ""
+        success = False
 
         with ory_kratos_client.ApiClient(configuration, cookie="ory_kratos_session=" + self.session_hash + ";") as api_client:
             api_instance = ory_kratos_client.PublicApi(api_client)
             try:
                 api_response = api_instance.get_self_service_settings_flow(flow)
 
+                success = True if api_response.state == "success" else False
+
                 if api_response.methods["profile"].config.messages is not None:
                     error = api_response.methods["profile"].config.messages[0].text
+                else:
+                    for field in api_response.methods['profile'].config.fields:
+                        if field.messages is not None:
+                            error = field.messages[0].text
+                            break
 
                 action = api_response.methods["profile"].config.action
                 csrf_token = api_response.methods["profile"].config.fields[0].value
@@ -45,13 +53,12 @@ class ProfileHandler(BaseHandler):
         members_dao = MembersDao(self.db)
         memberships = await members_dao.get_memberships_for_user(user=self.current_user.user)
 
-        if len(memberships) == 0:
-            logger.debug("Creating membership")
-            org_dao = OrganizationsDao(self.db)
-            await members_dao.create_membership(self.current_user.user.id, (await org_dao.get_default_organization()).id)
+        geo_dao = GeographyDao(self.db)
+        country = await geo_dao.get_country_by_name(self.current_user.user.country)
+        countries = await geo_dao.get_countries()
 
-        if error != "":
-            logger.error("Error: " + error.message)
+        if country is not None:
+            municipalities = await geo_dao.get_municipalities_by_country(country.id)
 
         await self.render(
             "profile.html",
@@ -59,8 +66,11 @@ class ProfileHandler(BaseHandler):
             admin=permissions_check,
             user=self.current_user.user,
             action=action,
+            success=success,
             error=error,
             csrf_token=csrf_token,
+            countries=countries,
+            municipalities=municipalities,
             memberships=memberships
         )
 

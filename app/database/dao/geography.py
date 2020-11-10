@@ -146,6 +146,25 @@ class GeographyDao(BaseDao):
 
         return municipalities
 
+    async def get_municipalities(self) -> list:
+        sql = 'SELECT id, name, created, "country", "area" FROM municipalities;'
+
+        async with self.pool.acquire() as con:  # type: Connection
+            rows = await con.fetch(sql)
+
+        municipalities = []
+
+        for row in rows:
+            municipality = Municipality()
+            municipality.id = row["id"]
+            municipality.name = row["name"]
+            municipality.created = row["created"]
+            municipality.country = await self.get_country_by_id(row["country"])
+            municipality.area_id = row["area"]
+            municipalities.append(municipality)
+
+        return municipalities
+
     async def create_country(self, name: str) -> Union[Country, None]:
         sql = 'INSERT INTO countries (id, name, created) VALUES ($1, $2, $3);'
         created = datetime.utcnow()

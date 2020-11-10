@@ -39,8 +39,6 @@ selfservice:
       ui_url: http://127.0.0.1:8888/profile
       lifespan: 1h
       privileged_session_max_age: 5m
-      after:
-        default_browser_return_url: http://127.0.0.1:8888/profile
 
     verification:
       enabled: true

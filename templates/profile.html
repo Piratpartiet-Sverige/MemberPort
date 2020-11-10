@@ -2,381 +2,308 @@
 
 {% block content %}
 <section class="section">
-    <div class="columns">
-        <div class="column is-one-fifth">
-            <aside class="menu sticky">
-                <p class="menu-label">
-                    Mitt medlemskap
-                </p>
-                <ul class="menu-list">
-                    <li><a href="#profil">Min profil</a></li>
-                    <li><a href="#prenumerationer">Mailprenumerationer</a></li>
-                    <li><a href="#medlemskap">Hantera medlemskap</a></li>
-                </ul>
-                <hr>
-                <ul class="menu-list">
-                    <li><a href="#ledare">Mina ledare</a></li>
-                </ul>
-            </aside>
-        </div>
-        <div class="column">
-            <div name="testmodal" id="testmodal" class="modal">
-                <div class="modal-background"></div>
-                <div class="modal-card">
-                    <header class="modal-card-head">
-                        <p class="modal-card-title">Modal title</p>
-                        <button class="delete" aria-label="close" onclick="toggleModal2()"></button>
-                    </header>
-                    <section class="modal-card-body">
-                        <!-- Content ... -->
-                    </section>
-                    <footer class="modal-card-foot">
-                        <button class="button is-success">Save changes</button>
-                        <button class="button">Cancel</button>
-                    </footer>
-                </div>
+    <div class="container">
+        <div class="columns">
+            <div class="column is-one-fifth">
+                <aside class="menu sticky">
+                    <p class="menu-label">
+                        Mitt medlemskap
+                    </p>
+                    <ul class="menu-list">
+                        <li><a href="#profil">Min profil</a></li>
+                        <li><a href="#prenumerationer">Mailprenumerationer</a></li>
+                        <li><a href="#medlemskap">Hantera medlemskap</a></li>
+                    </ul>
+                    <hr>
+                    <ul class="menu-list">
+                        <li><a href="#ledare">Mina ledare</a></li>
+                    </ul>
+                </aside>
             </div>
-            <div class="content">
-                <a id="profil"></a>
-                <h1>Min profil</h1>
-            </div>
-            <div class="box">
-                <form id="settings" action="{{ action }}" method="post">
-                    <input id="csrf_token" type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                    <div class="field">
-                        <label class="label">Förnamn</label>
-                        <div class="field is-grouped">
-                            <div class="control">
-                                <input class="input is-static" name="traits.name.first" type="text"
-                                    value="{{ user.name.first }}" id="traits.name.first" readonly>
-                            </div>
-                            <div class="field is-grouped">
-                                <p class="control">
-                                    <button type="button" class="button is-success"
-                                        onclick="toggleHidden('cancelButtonFirstName');toggleSaveButton('saveButtonFirstName');toggleInput('traits.name.first')"
-                                        id="saveButtonFirstName">Ändra</button></p>
-                                <p class="control">
-                                    <button type="button" class="button is-danger is-hidden" id="cancelButtonFirstName"
-                                        onclick="toggleHidden('cancelButtonFirstName');toggleSaveButton('saveButtonFirstName', false);toggleInput('traits.name.first')">Avbryt</button>
-                                </p>
-                            </div>
-                        </div>
-                        <label class="label">Efternamn</label>
-                        <div class="field is-grouped">
-                            <div class="control">
-                                <input class="input is-static" name="traits.name.last" type="text"
-                                    value="{{ user.name.last }}" id="traits.name.last" readonly>
-                            </div>
-                            <div class="field is-grouped">
-                                <p class="control">
-                                    <button type="button" class="button is-success"
-                                        onclick="toggleHidden('cancelButtonLastName');toggleSaveButton('saveButtonLastName');toggleInput('traits.name.last')"
-                                        id="saveButtonLastName">Ändra</button></p>
-                                <p class="control">
-                                    <button type="button" class="button is-danger is-hidden" id="cancelButtonLastName"
-                                        onclick="toggleHidden('cancelButtonLastName');toggleSaveButton('saveButtonLastName', false);toggleInput('traits.name.last')">Avbryt</button>
-                                </p>
-                            </div>
-                        </div>
-                        <label class="label">
-                            E-Post
-                            {% if user.verified %}
-                            <span class="icon has-text-success">
-                                <i title="Verifierad" class="fas fa-check-square"></i>
-                            </span>
-                            {% else %}
-                            <span class="icon has-text-danger">
-                                <i title="Ej verifierad" class="fas fa-ban"></i>
-                            </span>
-                            {% end %}
-                        </label>
-                        <div class="field is-grouped">
-                            <div class="control">
-                                <input class="input is-static" name="traits.email" type="email" value="{{ user.email }}"
-                                    id="traits.email" readonly>
-                            </div>
-                            <div class="field is-grouped">
-                                <p class="control">
-                                    <button type="button" class="button is-success"
-                                        onclick="toggleHidden('cancelButtonEmail');toggleSaveButton('saveButtonEmail');toggleInput('traits.email')"
-                                        id="saveButtonEmail">Ändra</button></p>
-                                <p class="control">
-                                    <button type="button" class="button is-danger is-hidden" id="cancelButtonEmail"
-                                        onclick="toggleHidden('cancelButtonEmail');toggleSaveButton('saveButtonEmail', false);toggleInput('traits.email')">Avbryt</button>
-                                </p>
-                            </div>
-                        </div>
-                        <label class="label">Telefonnummer</label>
-                        <div class="field is-grouped">
-                            <div class="control">
-                                <input class="input is-static" type="tel" value="{{ user.phone }}" id="traits.phone"
-                                    readonly>
-                            </div>
-                            <div class="field is-grouped">
-                                <p class="control">
-                                    <button type="button" class="button is-success"
-                                        onclick="toggleHidden('cancelButtonPhone');toggleSaveButton('saveButtonPhone');toggleInput('traits.phone')"
-                                        id="saveButtonPhone">Ändra</button></p>
-                                <p class="control">
-                                    <button type="button" class="button is-danger is-hidden" id="cancelButtonPhone"
-                                        onclick="toggleHidden('cancelButtonPhone');toggleSaveButton('saveButtonPhone', false);toggleInput('traits.phone')">Avbryt</button>
-                                </p>
-                            </div>
-                        </div>
-                        <label class="label">Adress</label>
-                        <div class="field is-grouped">
-                            <div class="control">
-                                <input class="input is-static" name="traits.postal_address.street" type="text"
-                                    value="{{ user.postal_address.street }}" id="traits.postal_address.street" readonly>
-                            </div>
-                            <div class="field is-grouped">
-                                <p class="control">
-                                    <button type="button" class="button is-success"
-                                        onclick="toggleHidden('cancelButtonStreet');toggleSaveButton('saveButtonStreet');toggleInput('traits.postal_address.street')"
-                                        id="saveButtonStreet">Ändra</button></p>
-                                <p class="control">
-                                    <button type="button" class="button is-danger is-hidden" id="cancelButtonStreet"
-                                        onclick="toggleHidden('cancelButtonStreet');toggleSaveButton('saveButtonStreet', false);toggleInput('traits.postal_address.street')">Avbryt</button>
-                                </p>
-                            </div>
-                        </div>
-                        <label class="label">Postnummer</label>
-                        <div class="field is-grouped">
-                            <div class="control">
-                                <input class="input is-static" name="traits.postal_address.postal_code" type="text"
-                                    value="{{ user.postal_address.postal_code }}" id="traits.postal_address.postal_code" readonly>
-                            </div>
-                            <div class="field is-grouped">
-                                <p class="control">
-                                    <button type="button" class="button is-success"
-                                        onclick="toggleHidden('cancelButtonPostalCode');toggleSaveButton('saveButtonPostalCode');toggleInput('traits.postal_address.postal_code')"
-                                        id="saveButtonPostalCode">Ändra</button></p>
-                                <p class="control">
-                                    <button type="button" class="button is-danger is-hidden" id="cancelButtonPostalCode"
-                                        onclick="toggleHidden('cancelButtonPostalCode');toggleSaveButton('saveButtonPostalCode', false);toggleInput('traits.postal_address.postal_code')">Avbryt</button>
-                                </p>
-                            </div>
-                        </div>
-                        <label class="label">Postort</label>
-                        <div class="field is-grouped">
-                            <div class="control">
-                                <input class="input is-static" name="traits.postal_address.city" type="text" value="{{ user.postal_address.city }}"
-                                    id="traits.postal_address.city" readonly>
-                            </div>
-                            <div class="field is-grouped">
-                                <p class="control">
-                                    <button type="button" class="button is-success"
-                                        onclick="toggleHidden('cancelButtonCity');toggleSaveButton('saveButtonCity');toggleInput('traits.postal_address.city')"
-                                        id="saveButtonCity">Ändra</button></p>
-                                <p class="control">
-                                    <button type="button" class="button is-danger is-hidden" id="cancelButtonCity"
-                                        onclick="toggleHidden('cancelButtonCity');toggleSaveButton('saveButtonCity', false);toggleInput('traits.postal_address.city')">Avbryt</button>
-                                </p>
-                            </div>
-                        </div>
-                        <label class="label">Kommun</label>
-                        <div class="field is-grouped">
-                            <div class="control">
-                                <input class="input is-static" name="traits.municipality" type="text" value="{{ user.municipality }}"
-                                    id="traits.municipality" readonly>
-                            </div>
-                            <div class="field is-grouped">
-                                <p class="control">
-                                    <button type="button" class="button is-success"
-                                        onclick="toggleHidden('cancelButtonMunicipality');toggleSaveButton('saveButtonMunicipality');toggleInput('traits.municipality')"
-                                        id="saveButtonMunicipality">Ändra</button>
-                                </p>
-                                <p class="control">
-                                    <button type="button" class="button is-danger is-hidden" id="cancelButtonMunicipality"
-                                        onclick="toggleHidden('cancelButtonMunicipality');toggleSaveButton('saveButtonMunicipality', false);toggleInput('traits.municipality')">Avbryt</button>
-                                </p>
-                            </div>
-                        </div>
-                        <label class="label">Land</label>
-                        <div class="field is-grouped">
-                            <div class="control">
-                                <input class="input is-static" name="traits.country" type="text"
-                                    value="{{ user.country }}" id="traits.country" readonly>
-                            </div>
-                            <div class="field is-grouped">
-                                <p class="control">
-                                    <button type="button" class="button is-success"
-                                        onclick="toggleHidden('cancelButtonCountry');toggleSaveButton('saveButtonCountry');toggleInput('traits.country')"
-                                        id="saveButtonCountry">Ändra</button></p>
-                                <p class="control">
-                                    <button type="button" class="button is-danger is-hidden" id="cancelButtonCountry"
-                                        onclick="toggleHidden('cancelButtonCountry');toggleSaveButton('saveButtonCountry', false);toggleInput('traits.country')">Avbryt</button>
-                                </p>
-                            </div>
-                        </div>
+            <div class="column">
+                <div name="testmodal" id="testmodal" class="modal">
+                    <div class="modal-background"></div>
+                    <div class="modal-card">
+                        <header class="modal-card-head">
+                            <p class="modal-card-title">Modal title</p>
+                            <button class="delete" aria-label="close" onclick="toggleModal2()"></button>
+                        </header>
+                        <section class="modal-card-body">
+                            <!-- Content ... -->
+                        </section>
+                        <footer class="modal-card-foot">
+                            <button class="button is-success">Save changes</button>
+                            <button class="button">Cancel</button>
+                        </footer>
                     </div>
-                </form>
-                <br>
-                <div id="successNotification" class="notification is-success is-hidden">
-                    <button type="button" class="delete" onclick="hide('successNotification');"></button>
-                    <p id="successText"></p>
                 </div>
-                <div id="errorNotification" class="notification is-danger is-hidden">
-                    <button type="button" class="delete" onclick="hide('errorNotification');"></button>
-                    <p id="errorText"></p>
+                <div class="content">
+                    <a id="profil"></a>
+                    <h1>Min profil</h1>
                 </div>
-            </div>
-
-            <div class="content">
-                <p><br></p>
-            </div>
-
-            <div class="content">
-                <a id="prenumerationer"></a>
-                <h1>Mail- och SMS-prenumerationer</h1>
-            </div>
-
-            <table class="table is-striped is-hoverable">
-                <thead>
-                    <tr>
-                        <th>Orsak</th>
-                        <th>Mail</th>
-                        <th>SMS</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Medlemskap på väg att löpa ut</td>
-                        <td><button class="button is-success is-light" id="but1"
-                                onclick="togglebutton('but1');toggleYesNoButton('but11')">
-                                <p id="but11">Ja</p>
-                            </button></td>
-                        <td><button class="button is-danger is-light" id="but2"
-                                onclick="togglebutton('but2');toggleYesNoButton('but22')">
-                                <p id="but22">Nej</p>
-                            </button></td>
-                    </tr>
-                    <tr>
-                        <td>Medlemsmail (varannan vecka)</td>
-                        <td><button class="button is-success is-light" id="but3"
-                                onclick="togglebutton('but3');toggleYesNoButton('but33')">
-                                <p id="but33">Ja</p>
-                            </button></td>
-                        <td><button class="button is-danger is-light" id="but8"
-                                onclick="togglebutton('but8');toggleYesNoButton('but88')">
-                                <p id="but88">Nej</p>
-                            </button></td>
-                    </tr>
-                    <tr>
-                        <td>Nationella utskick</td>
-                        <td><button class="button is-success is-light" id="but4"
-                                onclick="togglebutton('but4');toggleYesNoButton('but44')">
-                                <p id="but44">Ja</p>
-                            </button></td>
-                        <td><button class="button is-danger is-light" id="but5"
-                                onclick="togglebutton('but5');toggleYesNoButton('but55')">
-                                <p id="but55">Nej</p>
-                            </button></td>
-                    </tr>
-                    <tr>
-                        <td>Lokala utskick</td>
-                        <td><button class="button is-success is-light" id="but6"
-                                onclick="togglebutton('but6');toggleYesNoButton('but66')">
-                                <p id="but66">Ja</p>
-                            </button></td>
-                        <td><button class="button is-danger is-light" id="but7"
-                                onclick="togglebutton('but7');toggleYesNoButton('but77')">
-                                <p id="but77">Nej</p>
-                            </button></td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="content">
-                <p><br></p>
-            </div>
-
-            <div class="content">
-                <a id="medlemskap"></a>
-                <h1>Hantera medlemskap</h1>
-            </div>
-
-            <table class="table is-striped is-hoverable">
-                <thead>
-                    <tr>
-                        <th>Förening</th>
-                        <th>Medlem sedan</th>
-                        <th>Medlemskap löper ut</th>
-                        <th>Förnya?</th>
-                        <th>Avsluta?</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for membership in memberships %}
-                    <tr>
-                        <th>{{ membership.organization.name }}</th>
-                        <td>{{ membership.created }}</td>
-                        <td>{{ membership.renewal }}</td>
-                        <td><button class="button is-success">Förnya</button></td>
-                        <td><button class="button is-danger">Avsluta</button></td>
-                    </tr>
-                    {% end %}
-                </tbody>
-            </table>
-
-            <div class="columns">
-                <div class="column is-one-quarter">
-                    <div class="select is-pulled-right">
-                        <select>
-                            <option selected="selected" disabled="disabled">Föreningar du kan gå med i</option>
-                            <option>Ung Pirat Skåne</option>
-                        </select>
+                <div class="box">
+                    {% module xsrf_form_html() %}
+                    <form id="settings" action="{{ action }}" method="post">
+                        <input id="csrf_token" type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <div class="field">
+                            <label class="label">Förnamn</label>
+                            <div class="field">
+                                <div class="control">
+                                    <input class="input" name="traits.name.first" type="text"
+                                        value="{{ user.name.first }}" id="traits.name.first">
+                                </div>
+                            </div>
+                            <label class="label">Efternamn</label>
+                            <div class="field">
+                                <div class="control">
+                                    <input class="input" name="traits.name.last" type="text"
+                                        value="{{ user.name.last }}" id="traits.name.last">
+                                </div>
+                            </div>
+                            <label class="label">
+                                E-Post
+                                {% if user.verified %}
+                                <span class="icon has-text-success">
+                                    <i title="Verifierad" class="fas fa-check-square"></i>
+                                </span>
+                                {% else %}
+                                <span class="icon has-text-danger">
+                                    <i title="Ej verifierad" class="fas fa-ban"></i>
+                                </span>
+                                {% end %}
+                            </label>
+                            <div class="field">
+                                <div class="control">
+                                    <input id="traits.email" class="input" name="traits.email" type="email"
+                                        value="{{ user.email }}">
+                                </div>
+                            </div>
+                            <label class="label">Telefonnummer</label>
+                            <div class="field">
+                                <div class="control">
+                                    <input class="input" type="tel" value="{{ user.phone }}" id="traits.phone">
+                                </div>
+                            </div>
+                            <label class="label">Adress</label>
+                            <div class="field">
+                                <div class="control">
+                                    <input id="traits.postal_address.street" class="input"
+                                        name="traits.postal_address.street" type="text"
+                                        value="{{ user.postal_address.street }}">
+                                </div>
+                            </div>
+                            <label class="label">Postnummer</label>
+                            <div class="field">
+                                <div class="control">
+                                    <input id="traits.postal_address.postal_code" class="input"
+                                        name="traits.postal_address.postal_code" type="text"
+                                        value="{{ user.postal_address.postal_code }}">
+                                </div>
+                            </div>
+                            <label class="label">Postort</label>
+                            <div class="field">
+                                <div class="control">
+                                    <input id="traits.postal_address.city" class="input"
+                                        name="traits.postal_address.city" type="text"
+                                        value="{{ user.postal_address.city }}">
+                                </div>
+                            </div>
+                            <label class="label">Kommun</label>
+                            <div class="field">
+                                <div class="control">
+                                    <div class="select" style="width: 100%;">
+                                        <select id="traits.municipality" name="traits.municipality" style="width: 100%;">
+                                            <option disabled value>Välj din kommun</option>
+                                            {% for municipality in municipalities %}
+                                            <option {{ "selected" if user.municipality == municipality.name else "" }} value="{{ municipality.name }}">{{ municipality.name }}</option>
+                                            {% end %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <label class="label">Land</label>
+                            <div class="field">
+                                <div class="control">
+                                    <div class="select" style="width: 100%;">
+                                        <select id="traits.country" name="traits.country" style="width: 100%;" onchange="updateMunicipalities()">
+                                            <option disabled value>Välj ditt land</option>
+                                            {% for country in countries %}
+                                            <option {{ "selected" if user.country == country.name else "" }} value="{{ country.name }}">{{ country.name }}</option>
+                                            {% end %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="control">
+                                    <button class="button is-success">Spara</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <br>
+                    <div id="successNotification" class="notification is-success {{ "" if success else "is-hidden" }}">
+                        <button type="button" class="delete" onclick="hide('successNotification');"></button>
+                        <p id="successText">Ändringar sparade!</p>
+                    </div>
+                    <div id="errorNotification" class="notification is-danger {{ "is-hidden" if error == "" else "" }}">
+                        <button type="button" class="delete" onclick="hide('errorNotification');"></button>
+                        <p id="errorText">{{ error }}</p>
                     </div>
                 </div>
 
-                <div class="column">
-                    <button class="button is-success is-pulled-left">Gå med i vald förening</button>
+                <div class="content">
+                    <p><br></p>
+                </div>
+
+                <div class="content">
+                    <a id="prenumerationer"></a>
+                    <h1>Mail- och SMS-prenumerationer</h1>
+                </div>
+
+                <table class="table is-striped is-hoverable">
+                    <thead>
+                        <tr>
+                            <th>Orsak</th>
+                            <th>Mail</th>
+                            <th>SMS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Medlemskap på väg att löpa ut</td>
+                            <td><button class="button is-success is-light" id="but1"
+                                    onclick="togglebutton('but1');toggleYesNoButton('but11')">
+                                    <p id="but11">Ja</p>
+                                </button></td>
+                            <td><button class="button is-danger is-light" id="but2"
+                                    onclick="togglebutton('but2');toggleYesNoButton('but22')">
+                                    <p id="but22">Nej</p>
+                                </button></td>
+                        </tr>
+                        <tr>
+                            <td>Medlemsmail (varannan vecka)</td>
+                            <td><button class="button is-success is-light" id="but3"
+                                    onclick="togglebutton('but3');toggleYesNoButton('but33')">
+                                    <p id="but33">Ja</p>
+                                </button></td>
+                            <td><button class="button is-danger is-light" id="but8"
+                                    onclick="togglebutton('but8');toggleYesNoButton('but88')">
+                                    <p id="but88">Nej</p>
+                                </button></td>
+                        </tr>
+                        <tr>
+                            <td>Nationella utskick</td>
+                            <td><button class="button is-success is-light" id="but4"
+                                    onclick="togglebutton('but4');toggleYesNoButton('but44')">
+                                    <p id="but44">Ja</p>
+                                </button></td>
+                            <td><button class="button is-danger is-light" id="but5"
+                                    onclick="togglebutton('but5');toggleYesNoButton('but55')">
+                                    <p id="but55">Nej</p>
+                                </button></td>
+                        </tr>
+                        <tr>
+                            <td>Lokala utskick</td>
+                            <td><button class="button is-success is-light" id="but6"
+                                    onclick="togglebutton('but6');toggleYesNoButton('but66')">
+                                    <p id="but66">Ja</p>
+                                </button></td>
+                            <td><button class="button is-danger is-light" id="but7"
+                                    onclick="togglebutton('but7');toggleYesNoButton('but77')">
+                                    <p id="but77">Nej</p>
+                                </button></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="content">
+                    <p><br></p>
+                </div>
+
+                <div class="content">
+                    <a id="medlemskap"></a>
+                    <h1>Hantera medlemskap</h1>
+                </div>
+
+                <table class="table is-striped is-hoverable">
+                    <thead>
+                        <tr>
+                            <th>Förening</th>
+                            <th>Medlem sedan</th>
+                            <th>Medlemskap löper ut</th>
+                            <th>Förnya?</th>
+                            <th>Avsluta?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for membership in memberships %}
+                        <tr>
+                            <th>{{ membership.organization.name }}</th>
+                            <td>{{ membership.created }}</td>
+                            <td>{{ membership.renewal }}</td>
+                            <td><button class="button is-success">Förnya</button></td>
+                            <td><button class="button is-danger">Avsluta</button></td>
+                        </tr>
+                        {% end %}
+                    </tbody>
+                </table>
+
+                <div class="columns">
+                    <div class="column is-one-quarter">
+                        <div class="select is-pulled-right">
+                            <select>
+                                <option selected="selected" disabled="disabled">Föreningar du kan gå med i</option>
+                                <option>Ung Pirat Skåne</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <button class="button is-success is-pulled-left">Gå med i vald förening</button>
+                    </div>
+                </div>
+
+                <div class="content">
+                    <p><br></p>
+                </div>
+
+                <div class="content">
+                    <a id="ledare"></a>
+                    <h1>Mina ledare</h1>
+
+                    <h3>Partiledare</h3>
+                    <div class="field is-grouped">
+                        <p class="control">
+                            <button class="button is-static is-outlined">Katarina Stensson</button></p>
+                        <p class="control">
+                            <button class="button is-info is-pulled-left">Kontakta via chatten</button></p>
+                        <p class="control">
+                            <button class="button is-info">Kontakta via mail</button></p>
+                    </div>
+                    <h3>Distriktsledare för södra distriktet</h3>
+                    <div class="field is-grouped">
+                        <p class="control">
+                            <button class="button is-static is-outlined">Greger Gregersson</button></p>
+                        <p class="control">
+                            <button class="button is-info is-pulled-left">Kontakta via chatten</button></p>
+                        <p class="control">
+                            <button class="button is-info">Kontakta via mail</button></p>
+                    </div>
+                    <h3>Kommunledare för Lunds kommun</h3>
+                    <div class="field is-grouped">
+                        <p class="control">
+                            <button class="button is-static is-outlined">Greger Persson</button></p>
+                        <p class="control">
+                            <button class="button is-info is-pulled-left">Kontakta via chatten</button></p>
+                        <p class="control">
+                            <button class="button is-info">Kontakta via mail</button></p>
+                    </div>
+                </div>
+                <div class="content">
+                    <p><br></p>
                 </div>
             </div>
-
-            <div class="content">
-                <p><br></p>
-            </div>
-
-            <div class="content">
-                <a id="ledare"></a>
-                <h1>Mina ledare</h1>
-
-                <h3>Partiledare</h3>
-                <div class="field is-grouped">
-                    <p class="control">
-                        <button class="button is-static is-outlined">Katarina Stensson</button></p>
-                    <p class="control">
-                        <button class="button is-info is-pulled-left">Kontakta via chatten</button></p>
-                    <p class="control">
-                        <button class="button is-info">Kontakta via mail</button></p>
-                </div>
-                <h3>Distriktsledare för södra distriktet</h3>
-                <div class="field is-grouped">
-                    <p class="control">
-                        <button class="button is-static is-outlined">Greger Gregersson</button></p>
-                    <p class="control">
-                        <button class="button is-info is-pulled-left">Kontakta via chatten</button></p>
-                    <p class="control">
-                        <button class="button is-info">Kontakta via mail</button></p>
-                </div>
-                <h3>Kommunledare för Lunds kommun</h3>
-                <div class="field is-grouped">
-                    <p class="control">
-                        <button class="button is-static is-outlined">Greger Persson</button></p>
-                    <p class="control">
-                        <button class="button is-info is-pulled-left">Kontakta via chatten</button></p>
-                    <p class="control">
-                        <button class="button is-info">Kontakta via mail</button></p>
-                </div>
-            </div>
-
-
-
-            <div class="content">
-                <p><br></p>
-            </div>
-
         </div>
     </div>
 </section>

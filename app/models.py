@@ -100,3 +100,13 @@ class Municipality:
     created: datetime
     country: Country
     area_id: Area
+
+
+def municipality_to_json(municipality: Municipality) -> dict:
+    return {
+        'id': municipality.id.__str__(),
+        'name': municipality.name,
+        'created': municipality.created.isoformat(' '),
+        'country': municipality.country.name,
+        'area_id': municipality.area_id
+    }

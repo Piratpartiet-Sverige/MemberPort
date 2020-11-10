@@ -17,9 +17,10 @@ from app.web.handlers.admin.organizations import OrganizationsHandler
 from app.web.handlers.admin.add_organization import AddOrganizationHandler
 from app.web.handlers.admin.edit_organization import EditOrganizationHandler
 from app.web.handlers.admin.roles import RolesHandler
+from app.web.handlers.api.geography.municipalities import APIMunicipalitiesHandler
+from app.web.handlers.api.geography.postal_code import APIPostalCodeHandler
 from app.web.handlers.api.member import APIMemberHandler
 from app.web.handlers.api.organization import APIOrganizationHandler
-from app.web.handlers.api.postal_code import APIPostalCodeHandler
 from app.web.handlers.authentication import SignInHandler, SignUpHandler
 from app.web.handlers.error import Error404Handler
 from app.web.handlers.kratos import KratosHandler
@@ -88,9 +89,10 @@ def configure_application(options: WebAppOptions):
         (r"/admin/edit-organization", EditOrganizationHandler),
         (r"/admin/roles", RolesHandler),
         (r"/api/member", APIMemberHandler),
+        (r"/api/geography/municipalities", APIMunicipalitiesHandler),
+        (r"/api/geography/postal_code/(?P<postal_code>[^\/]+)", APIPostalCodeHandler),
         (r"/api/organization", APIOrganizationHandler),
         (r"/api/organization/(?P<id>[^\/]+)", APIOrganizationHandler),
-        (r"/api/postal_code/(?P<postal_code>[^\/]+)", APIPostalCodeHandler),
         (r"/auth/login", SignInHandler),
         (r"/auth/registration", SignUpHandler),
         (r"/login", tornado.web.RedirectHandler, dict(url=r"/auth/login")),
