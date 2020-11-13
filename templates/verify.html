@@ -1,28 +1,46 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container" style="margin-top: 1rem;">
-    <div class="box">
-        <form action="{{action}}" method="POST">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-            <label class="label">Mailadress för verifiering</label>
-            <div class="field">
-                <div class="control">
-                    <input type="email" name="to_verify" class="input" required>
-                </div>
-            </div>
-            <div class="field">
-                <div class="control">
-                    <button type="submit" class="button is-primary">Skicka om verifikations kod</button>
-                </div>
-            </div>
-        </form>
-        {% if error != "" %}
-        <div class="notification {{ 'is-success' if success else 'is-danger' }}">
-            <button class="delete"></button>
-            {{ error }}
+<section class="section">
+    <div class="container">
+        <div class="content">
+            <h1>Verifiera din e-post</h1>
         </div>
-        {% end %}
+        <div class="box">
+            <form action="{{ action }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <label class="label">
+                    E-post
+                    <span class="icon">
+                        <i title="En länk kommer skickas till din e-post, när du klickar på den så kommer din e-post att markeras som verifierad"
+                            class="fas fa-info-circle"></i>
+                    </span>
+                </label>
+                <div class="field">
+                    <div class="control">
+                        <input type="email" name="email" class="input" required value="{{ user.email }}">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <button type="submit" class="button is-success is-fullwidth">Skicka om verifikationslänk</button>
+                    </div>
+                </div>
+            </form>
+            <br>
+            {% if error != "" %}
+            <div class="notification is-danger">
+                <button class="delete"></button>
+                {{ error }}
+            </div>
+            {% end %}
+            {% if state == "sent_email" %}
+            <div class="notification is-success">
+                <button class="delete"></button>
+                Verifikationslänk har skickats
+            </div>
+            {% end %}
+        </div>
     </div>
-</div>
+</section>
 {% end %}

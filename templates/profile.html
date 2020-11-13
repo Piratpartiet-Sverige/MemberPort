@@ -38,8 +38,7 @@
                     </div>
                 </div>
                 <div class="content">
-                    <a id="profil"></a>
-                    <h1>Min profil</h1>
+                    <h1 id="profil">Min profil</h1>
                 </div>
                 <div class="box">
                     {% module xsrf_form_html() %}
@@ -61,7 +60,7 @@
                                 </div>
                             </div>
                             <label class="label">
-                                E-Post
+                                E-post
                                 {% if user.verified %}
                                 <span class="icon has-text-success">
                                     <i title="Verifierad" class="fas fa-check-square"></i>
@@ -70,6 +69,7 @@
                                 <span class="icon has-text-danger">
                                     <i title="Ej verifierad" class="fas fa-ban"></i>
                                 </span>
+                                <a href="/verify">Du kan verifiera din e-post här</a>
                                 {% end %}
                             </label>
                             <div class="field">
@@ -136,7 +136,7 @@
                             </div>
                             <div class="field">
                                 <div class="control">
-                                    <button class="button is-success">Spara</button>
+                                    <button class="button is-success is-fullwidth">Spara</button>
                                 </div>
                             </div>
                         </div>
