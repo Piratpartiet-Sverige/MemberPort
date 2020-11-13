@@ -26,8 +26,14 @@ class SignInHandler(BaseHandler):
             try:
                 api_response = api_instance.get_self_service_login_flow(flow)
                 csrf_token = api_response.methods['password'].config.fields[-1].value
+
                 if api_response.methods['password'].config.messages is not None:
                     error = api_response.methods['password'].config.messages[0].text
+                else:
+                    for field in api_response.methods['password'].config.fields:
+                        if field.messages is not None:
+                            error = field.messages[0].text
+                            break
             except ApiException as e:
                 logger.error("Exception when calling PublicApi->get_self_service_login_flow: %s\n" % e)
 
@@ -56,6 +62,7 @@ class SignUpHandler(BaseHandler):
                 logger.debug(api_response)
                 csrf_token = api_response.methods['password'].config.fields[0].value
                 inputs = api_response.methods['password'].config.fields
+
                 if api_response.methods['password'].config.messages is not None:
                     error = api_response.methods['password'].config.messages[0].text
                 else:
@@ -83,4 +90,50 @@ class SignUpHandler(BaseHandler):
             inputs=inputs,
             municipalities=municipalities,
             countries=countries
+        )
+
+
+class RecoveryHandler(BaseHandler):
+    def get(self):
+        flow = self.get_argument("flow", default="")
+
+        if (flow == ""):
+            return self.redirect("http://127.0.0.1:8888/kratos/self-service/recovery/browser")
+
+        configuration = Configuration()
+        configuration.host = "http://pirate-kratos:4434"
+
+        csrf_token = ""  # noqa: S105 # nosec
+        error = ""
+        action = ""
+        state = ""
+
+        with ory_kratos_client.ApiClient(configuration) as api_client:
+            api_instance = ory_kratos_client.PublicApi(api_client)
+            try:
+                api_response = api_instance.get_self_service_recovery_flow(flow)
+                action = api_response.methods["link"].config.action
+                csrf_token = api_response.methods['link'].config.fields[0].value
+                state = api_response.state
+
+                if api_response.methods['link'].config.messages is not None:
+                    error = api_response.methods['link'].config.messages[0].text
+                else:
+                    for field in api_response.methods['link'].config.fields:
+                        if field.messages is not None:
+                            error = field.messages[0].text
+                            break
+            except ApiException as e:
+                logger.error("Exception when calling PublicApi->get_self_service_login_flow: %s\n" % e)
+
+        logger.debug("csrf_token: " + csrf_token)
+        logger.debug(state)
+
+        self.render(
+            "recovery.html",
+            flow=flow,
+            action=action,
+            csrf_token=csrf_token,
+            error=error,
+            state=state
         )

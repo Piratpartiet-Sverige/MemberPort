@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>MemberPort | Logga in</title>
+    <title>MemberPort | Glömt lösenord</title>
     <link rel="stylesheet" href="{{ static_url('css/bulma.min.css') }}" />
 </head>
 
@@ -18,20 +18,15 @@
                         <figure class="avatar">
                             <img src="{{ static_url('img/logo.svg') }}" >
                         </figure>
-                        <form action="/kratos/self-service/login/methods/password?flow={{ flow }}" method="post">
+                        <form action="{{ action }}" method="post">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                             <div class="field">
                                 <div class="control">
-                                    <input name="identifier" class="input is-large" type="email" placeholder="E-mail" autofocus="">
-                                </div>
-                            </div>
-                            <div class="field">
-                                <div class="control">
-                                    <input name="password" class="input is-large" type="password" placeholder="Password">
+                                    <input name="email" class="input is-large" type="email" placeholder="E-mail" autofocus="">
                                 </div>
                             </div>
                             <button type="submit" class="button is-block is-info is-large is-fullwidth">
-                                Sign in
+                                Skicka länk
                             </button>
                         </form>
                     </div>
@@ -41,9 +36,15 @@
                         {{ error }}
                     </div>
                     {% end %}
+                    {% if state == "sent_email" %}
+                    <div class="notification is-success">
+                        <button class="delete"></button>
+                        Länk för att återställa lösenordet har skickats iväg!
+                    </div>
+                    {% end %}
                     <p class="has-text-grey">
-                        <a href="/auth/registration">Bli medlem</a> &nbsp;·&nbsp;
-                        <a href="/recovery">Glömt lösenord</a>
+                        <a href="/auth/login">Logga in</a> &nbsp;·&nbsp;
+                        <a href="/auth/registration">Bli medlem</a>
                     </p>
                 </div>
             </div>

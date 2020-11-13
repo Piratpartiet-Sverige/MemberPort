@@ -21,8 +21,9 @@ from app.web.handlers.api.geography.municipalities import APIMunicipalitiesHandl
 from app.web.handlers.api.geography.postal_code import APIPostalCodeHandler
 from app.web.handlers.api.member import APIMemberHandler
 from app.web.handlers.api.organization import APIOrganizationHandler
-from app.web.handlers.authentication import SignInHandler, SignUpHandler
+from app.web.handlers.authentication import RecoveryHandler, SignInHandler, SignUpHandler
 from app.web.handlers.error import Error404Handler
+from app.web.handlers.error_kratos import ErrorKratosHandler
 from app.web.handlers.kratos import KratosHandler
 from app.web.handlers.main import MainHandler
 from app.web.handlers.new_member import NewMemberHandler
@@ -95,9 +96,11 @@ def configure_application(options: WebAppOptions):
         (r"/api/organization/(?P<id>[^\/]+)", APIOrganizationHandler),
         (r"/auth/login", SignInHandler),
         (r"/auth/registration", SignUpHandler),
+        (r"/error", ErrorKratosHandler),
         (r"/login", tornado.web.RedirectHandler, dict(url=r"/auth/login")),
         (r"/new-member", NewMemberHandler),
         (r"/profile", ProfileHandler),
+        (r"/recovery", RecoveryHandler),
         (r"/verify", VerifyHandler),
     ]
 

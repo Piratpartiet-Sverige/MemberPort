@@ -32,13 +32,17 @@ selfservice:
           hooks:
             - hook: session
 
+    recovery:
+      enabled: true
+      ui_url: http://127.0.0.1:8888/recovery
+
     error:
       ui_url: http://127.0.0.1:8888/error
 
     settings:
       ui_url: http://127.0.0.1:8888/profile
       lifespan: 1h
-      privileged_session_max_age: 5m
+      privileged_session_max_age: 15m
 
     verification:
       enabled: true
@@ -48,6 +52,8 @@ selfservice:
         default_browser_return_url: http://127.0.0.1:8888/
 
   methods:
+    link:
+      enabled: true
     password:
       enabled: true
     oidc:

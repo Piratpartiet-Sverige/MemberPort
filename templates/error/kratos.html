@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kratos error</title>
+    <link rel="stylesheet" href="{{ static_url('css/bulma.min.css') }}">
+</head>
+<body>
+    <div class="container has-text-centered">
+        <br>
+        <br>
+        <h1 class="title is-1 is-centered">
+            {{ message }}
+        </h1>
+        <div class="notification is-link">
+            Ett fel uppstod! Kontakta: <a href="mailto:it@piratpartiet.se">it@piratpartiet.se</a> om du behöver support. <a href="{{ url }}">Klicka här för att gå tillbaka!</a>
+        </div>
+    </div>
+</body>
+</html>

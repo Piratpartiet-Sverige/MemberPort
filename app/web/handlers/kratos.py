@@ -16,7 +16,7 @@ class KratosHandler(RequestHandler):
 
     @tornado.gen.coroutine
     def get(self, url: str = ""):
-        url = "http://pirate-kratos:4433/" + url
+        url = "http://pirate-kratos:4433/" + url + "?" + self.request.query
 
         logger.debug("GET to Kratos: " + url)
 
