@@ -45,6 +45,14 @@ By default MemberPort should be available on `http://127.0.0.1:8888/`.
 
 The Tornado server will restart automatically with debug mode on when a change to a source file is detected.
 
+### Unit tests
+
+You can run tests with this command:
+
+```
+python -m app.test.runtests
+```
+
 ## Contribution
 
 This section will describe how to contribute to this project.
