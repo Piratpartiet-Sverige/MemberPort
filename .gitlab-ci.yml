@@ -1,7 +1,7 @@
 # This file is a template, and might need editing before it works on your project.
 # Official language image. Look for the different tagged releases at:
 # https://hub.docker.com/r/library/python/tags/
-image: python:3.7-alpine
+image: python:3.8-alpine
 
 # Change pip's cache directory to be inside the project directory since we can
 # only cache local items.
@@ -28,10 +28,10 @@ test:
     - pip install flake8 flake8-bandit
     - flake8 --statistics
 
-bandit-run:
-  script:
-    - pip install bandit
-    - bandit -r app
+# bandit-run:
+#  script:
+#    - pip install bandit
+#    - bandit -r app
 
 unit-tests:
   script:
