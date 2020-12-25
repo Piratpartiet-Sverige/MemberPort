@@ -16,7 +16,7 @@ class WebTestCase(AsyncHTTPTestCase):
         return configure_application(options)
 
 
-def get_mock_session():
+async def get_mock_session():
     session = Session()
     session.id = uuid4()
     session.hash = "ccd70ecea6d9f0833b07688e69bf2368f86f9127de17de102e17788a805afb7f"
