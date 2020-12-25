@@ -105,56 +105,6 @@ class UsersDao(BaseDao):
         async with self.pool.acquire() as con:  # type: Connection
             await con.execute(sql, user_id)
 
-    async def get_users(self, search: str, order_column: str, order_dir_asc: bool) -> list:
-        """
-        Get a list only containing account data
-        :return: A list filled dicts
-        """
-        order_dir = "DESC"
-
-        if order_dir_asc is True:
-            order_dir = "ASC"
-
-        if order_column != "name" and order_column != "email" and order_column != "created":
-            order_column = "name"
-
-        if search == "":
-            sql = """ SELECT u.id, u.email, u.name, u.created
-                      FROM users u
-                      LEFT JOIN members m
-                      ON u.id = m."user"
-                      WHERE m."user" IS NULL
-                      ORDER BY """ + order_column + " " + order_dir + ";"  # noqa: S608 # nosec
-
-            async with self.pool.acquire() as con:  # type: Connection
-                rows = await con.fetch(sql)
-        else:
-            search = "%"+search+"%"
-            sql = """ SELECT u.id, u.email, u.name, u.created
-                      FROM users u
-                      WHERE u.name LIKE $1
-                      OR u.email LIKE $1
-                      OR to_char(u.created, 'YYYY-MM-DD HH24:MI:SS.US') LIKE $1
-                      LEFT JOIN members m
-                      ON u.id = m."user"
-                      WHERE m."user" IS NULL
-                      ORDER BY """ + order_column + " " + order_dir + ";"  # noqa: S608 # nosec
-
-            async with self.pool.acquire() as con:  # type: Connection
-                rows = await con.fetch(sql, search)
-
-        users = []
-        for row in rows:
-            user = User()
-            user.id = row["id"]
-            user.email = row["email"]
-            user.name = row["name"]
-            user.created = row["created"]
-
-            users.append(user)
-
-        return users
-
     async def get_user_by_id(self, user_id: UUID) -> User:
         return await self._get_user(user_id=user_id)
 

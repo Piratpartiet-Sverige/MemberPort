@@ -8,6 +8,15 @@ from uuid import UUID
 
 class APIOrganizationHandler(BaseHandler):
     @tornado.web.authenticated
+    async def get(self, id: str):
+        org_id = self.check_uuid(id)
+        if id is None:
+            return self.respond("ORGANIZATION UUID IS MISSING", 400)
+
+        organization = await OrganizationsDao(self.db).get_organization_by_id(org_id)
+        return self.respond("RETRIEVED ORGANIZATION", 200, organization_to_json(organization))
+
+    @tornado.web.authenticated
     async def post(self):
         name = self.get_argument("name")
         description = self.get_argument("description")

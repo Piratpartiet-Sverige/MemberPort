@@ -41,12 +41,11 @@ class Organization:
 
 def organization_to_json(organization: Organization) -> dict:
     return {
-        'organization': {
-            'id': organization.id.__str__(),
-            'name': organization.name,
-            'description': organization.description,
-            'created': organization.created.isoformat(' ')
-        }
+        'id': organization.id.__str__(),
+        'name': organization.name,
+        'description': organization.description,
+        'active': organization.active.__str__().lower(),
+        'created': organization.created.isoformat(' ')
     }
 
 
@@ -99,7 +98,7 @@ class Municipality:
     name: str
     created: datetime
     country: Country
-    area_id: Area
+    area_id: UUID
 
 
 def municipality_to_json(municipality: Municipality) -> dict:
@@ -108,5 +107,5 @@ def municipality_to_json(municipality: Municipality) -> dict:
         'name': municipality.name,
         'created': municipality.created.isoformat(' '),
         'country': municipality.country.name,
-        'area_id': municipality.area_id
+        'area_id': municipality.area_id.__str__()
     }
