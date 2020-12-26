@@ -62,6 +62,30 @@ class GeographyDao(BaseDao):
 
         return areas
 
+    async def get_parent_areas_from_municipality(self, municipality_id) -> list:
+        sql = 'SELECT "area" FROM municipalities WHERE id = $1;'
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                row = await con.fetchrow(sql, municipality_id)
+        except Exception:
+            logger.warning("No municipality with ID: " + str(municipality_id) + " was found!")
+            return None
+
+        sql = 'SELECT id FROM areas WHERE path @> (SELECT path FROM areas WHERE id = $1);'
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                rows = await con.fetch(sql, row["area"])
+        except Exception:
+            logger.warning("No area with ID: " + str(row["area"]) + " was found!")
+            return None
+
+        areas = list()
+
+        for row in rows:
+            areas.append(row["id"])
+
+        return areas
+
     async def _get_path(self, parent_id: Union[int, None]) -> str:
         if parent_id is None:
             return ""
@@ -118,6 +142,25 @@ class GeographyDao(BaseDao):
         if row is not None:
             municipality.id = municipality_id
             municipality.name = row["name"]
+            municipality.created = row["created"]
+            municipality.country = await self.get_country_by_id(row["country"])
+            municipality.area_id = row["area"]
+        else:
+            return None
+
+        return municipality
+
+    async def get_municipality_by_name(self, name: str) -> Union[Municipality, None]:
+        sql = 'SELECT id, created, "country", "area" FROM municipalities WHERE name = $1;'
+
+        async with self.pool.acquire() as con:  # type: Connection
+            row = await con.fetchrow(sql, name)
+
+        municipality = Municipality()
+
+        if row is not None:
+            municipality.id = row["id"]
+            municipality.name = name
             municipality.created = row["created"]
             municipality.country = await self.get_country_by_id(row["country"])
             municipality.area_id = row["area"]
