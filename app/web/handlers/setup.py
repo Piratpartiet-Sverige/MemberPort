@@ -2,6 +2,7 @@ from app.database.dao.settings import SettingsDao
 from app.database.dao.organizations import OrganizationsDao
 from app.logger import logger
 from app.web.handlers.base import BaseHandler
+from uuid import UUID
 
 
 class SetupHandler(BaseHandler):
@@ -21,8 +22,11 @@ class SetupHandler(BaseHandler):
         org_name = self.get_argument("org.name")
         org_description = self.get_argument("org.description")
 
+        countries = list()
+        countries.append(UUID('00000000-0000-0000-0000-000000000000'))
+
         org_dao = OrganizationsDao(self.db)
-        organization = await org_dao.create_organization(org_name, org_description, True)
+        organization = await org_dao.create_organization(org_name, org_description, True, countries)
 
         if organization is None:
             return self.respond("Something went wrong when creating organization", 500)

@@ -76,7 +76,7 @@ CREATE TABLE areas
     id        SERIAL PRIMARY KEY,
     name      TEXT NOT NULL,
     created   TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    "country" UUID REFERENCES countries(id),
+    "country" UUID REFERENCES countries(id) NOT NULL,
     path ltree
 );
 
@@ -89,6 +89,27 @@ CREATE TABLE municipalities
     created   TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     "country" UUID REFERENCES countries(id) NOT NULL,
     "area"    INTEGER REFERENCES areas(id)
+);
+
+CREATE TABLE organization_country
+(
+    "organization" UUID REFERENCES organizations(id),
+    "country"      UUID REFERENCES countries(id),
+    PRIMARY KEY ("organization", "country")
+);
+
+CREATE TABLE organization_area
+(
+    "organization" UUID REFERENCES organizations(id),
+    "area"         INTEGER REFERENCES areas(id),
+    PRIMARY KEY ("organization", "area")
+);
+
+CREATE TABLE organization_municipality
+(
+    "organization" UUID REFERENCES organizations(id),
+    "municipality" UUID REFERENCES municipalities(id),
+    PRIMARY KEY ("organization", "municipality")
 );
 
 -- Create an administrator role

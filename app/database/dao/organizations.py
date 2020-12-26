@@ -12,7 +12,8 @@ from app.database.dao.member_org import MemberOrgDao
 
 
 class OrganizationsDao(MemberOrgDao):
-    async def create_organization(self, name, description, active) -> Union[Organization, None]:
+    async def create_organization(self, name: str, description: str, active: bool, countries: Union[list, None] = None,
+                                  areas: Union[list, None] = None, municipalities: Union[list, None] = None) -> Union[Organization, None]:
         sql = "INSERT INTO organizations (id, name, description, active, created) VALUES ($1, $2, $3, $4, $5);"
 
         id = uuid4()
@@ -26,6 +27,10 @@ class OrganizationsDao(MemberOrgDao):
             logger.warning("Tried to create organization: " + str(id) + " but organization already existed")
             return None
 
+        await self.add_recruitment_countries(id, countries)
+        await self.add_recruitment_areas(id, areas)
+        await self.add_recruitment_municipalities(id, municipalities)
+
         organization = Organization()
         organization.id = id
         organization.name = name
@@ -34,6 +39,30 @@ class OrganizationsDao(MemberOrgDao):
         organization.created = created
 
         return organization
+
+    async def add_recruitment_areas(self, org_id: UUID, areas: Union[list, None]) -> None:
+        await self._add_recruitment_areas(org_id, "area", areas)
+
+    async def add_recruitment_countries(self, org_id: UUID, areas: Union[list, None]) -> None:
+        await self._add_recruitment_areas(org_id, "country", areas)
+
+    async def add_recruitment_municipalities(self, org_id: UUID, areas: Union[list, None]) -> None:
+        await self._add_recruitment_areas(org_id, "municipality", areas)
+
+    async def _add_recruitment_areas(self, org_id: UUID, area_type: str, areas: Union[list, None]) -> None:
+        if areas is None or (area_type != "country" and area_type != "area" and area_type != "municipality"):
+            return
+
+        sql = 'INSERT INTO organization_country ("organization", "country") VALUES ($1, $2);'
+        sql = sql.replace("country", area_type)
+
+        for area in areas:
+            try:
+                async with self.pool.acquire() as con:  # type: Connection
+                    await con.execute(sql, org_id, area)
+            except UniqueViolationError as exc:
+                logger.debug(exc.__str__())
+                logger.warning("Tried to insert recruitment area: " + str(area) + " but the relation already existed")
 
     async def get_default_organization(self) -> Union[Organization, None]:
         sql = "SELECT default_organization FROM settings"
@@ -105,16 +134,44 @@ class OrganizationsDao(MemberOrgDao):
             async with self.pool.acquire() as con:  # type: Connection
                 rows = await con.fetch(sql, search)
 
-        organizations = []
-        for row in rows:
-            organization = Organization()
-            organization.id = row["id"]
-            organization.name = row["name"]
-            organization.description = row["description"]
-            organization.active = row["active"]
-            organization.created = row["created"]
+        organizations = list()
+        self.convert_rows_to_organizations(organizations, rows)
 
-            organizations.append(organization)
+        return organizations
+
+    async def get_organizations_in_area(self, country_id: UUID, areas: list, municipality_id: UUID) -> list:
+        sql = """SELECT o.id, o.name, o.description, o.active, o.created FROM organization_country
+                 INNER JOIN organizations AS o ON organization_country.organization = o.id WHERE country = $1;"""
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                rows = await con.fetch(sql, country_id)
+        except Exception as exc:
+            logger.debug(exc.__str__())
+
+        organizations = list()
+
+        self.convert_rows_to_organizations(organizations, rows)
+
+        sql = """SELECT o.id, o.name, o.description, o.active, o.created FROM organization_area
+               INNER JOIN organizations AS o ON organization_area.organization = o.id WHERE area = $1;"""
+
+        for area_id in areas:
+            try:
+                async with self.pool.acquire() as con:  # type: Connection
+                    rows = await con.fetch(sql, area_id)
+            except Exception as exc:
+                logger.debug(exc.__str__())
+            self.convert_rows_to_organizations(organizations, rows)
+
+        sql = """SELECT o.id, o.name, o.description, o.active, o.created FROM organization_municipality
+               INNER JOIN organizations AS o ON organization_municipality.organization = o.id WHERE municipality = $1;"""
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                rows = await con.fetch(sql, municipality_id)
+        except Exception as exc:
+            logger.debug(exc.__str__())
+
+        self.convert_rows_to_organizations(organizations, rows)
 
         return organizations
 
@@ -149,3 +206,15 @@ class OrganizationsDao(MemberOrgDao):
         except Exception:
             return False
         return True
+
+    def convert_rows_to_organizations(self, organizations: list, rows: list) -> list:
+        for row in rows:
+            organization = Organization()
+            organization.id = row["id"]
+            organization.name = row["name"]
+            organization.description = row["description"]
+            organization.active = row["active"]
+            organization.created = row["created"]
+            organizations.append(organization)
+
+        return organizations
