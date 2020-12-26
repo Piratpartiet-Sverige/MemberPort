@@ -6,6 +6,7 @@ from ory_kratos_client.configuration import Configuration
 
 from app.database.dao.geography import GeographyDao
 from app.database.dao.members import MembersDao
+from app.database.dao.organizations import OrganizationsDao
 from app.database.dao.users import UsersDao
 from app.logger import logger
 from app.web.handlers.base import BaseHandler
@@ -56,6 +57,11 @@ class ProfileHandler(BaseHandler):
         geo_dao = GeographyDao(self.db)
         country = await geo_dao.get_country_by_name(self.current_user.user.country)
         countries = await geo_dao.get_countries()
+        municipality = await geo_dao.get_municipality_by_name(self.current_user.user.municipality)
+        areas = await geo_dao.get_parent_areas_from_municipality(municipality.id)
+
+        org_dao = OrganizationsDao(self.db)
+        organizations = await org_dao.get_organizations_in_area(country.id, areas, municipality.id)
 
         if country is not None:
             municipalities = await geo_dao.get_municipalities_by_country(country.id)
@@ -64,14 +70,14 @@ class ProfileHandler(BaseHandler):
             "profile.html",
             title="Profil",
             admin=permissions_check,
-            user=self.current_user.user,
             action=action,
             success=success,
             error=error,
             csrf_token=csrf_token,
             countries=countries,
             municipalities=municipalities,
-            memberships=memberships
+            memberships=memberships,
+            organizations=organizations
         )
 
     @tornado.web.authenticated
