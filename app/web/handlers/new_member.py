@@ -15,4 +15,4 @@ class NewMemberHandler(BaseHandler):
             await dao.set_user_member_number(self.current_user.user.id)
             logger.debug("Setup of new user complete")
 
-        return await self.redirect("/", True)
+        return self.redirect("/", True)
