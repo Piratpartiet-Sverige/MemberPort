@@ -6,6 +6,7 @@
 {% end %}
 {% block content %}
 {% module xsrf_form_html() %}
+<div class="section">
 <div class="container">
     <div class="field">
         <div class="label">Namn</div>
@@ -30,6 +31,7 @@
             onclick="submit()"
             id="saveButtonLastName">Spara</button></p>
     </div>
+</div>
 </div>
 {% end %}
 {% block scripts %}
