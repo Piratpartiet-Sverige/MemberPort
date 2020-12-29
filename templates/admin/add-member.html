@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="{{ static_url('css/ag-theme-alpine.css') }}">
 {% end %}
 {% block content %}
+<div class="section">
 <h1 class="title">Add member</h1>
 {% module xsrf_form_html() %}
 <div class="field">
@@ -43,6 +44,7 @@
     <div class="control">
         <button type="submit" onclick="submit()" class="button is-link">Submit</button>
     </div>
+</div>
 </div>
 <script>
 async function postData(url = '', data = {}) {
