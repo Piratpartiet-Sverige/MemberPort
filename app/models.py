@@ -7,10 +7,25 @@ class Name:
     last: str
 
 
+def name_to_json(name: Name):
+    return {
+        'first': name.first,
+        'last': name.last
+    }
+
+
 class PostalAddress:
     street: str
     postal_code: str
     city: str
+
+
+def postal_address_to_json(postal_address: PostalAddress):
+    return {
+        'street': postal_address.street,
+        'postal_code': postal_address.postal_code,
+        'city': postal_address.city
+    }
 
 
 class User:
@@ -29,6 +44,21 @@ class User:
     verified: bool
 
     created: datetime
+
+
+def user_to_json(user: User) -> dict:
+    return {
+        'id': user.id.__str__(),
+        'number': user.number.__str__(),
+        'name': name_to_json(user.name),
+        'email': user.email,
+        'phone': user.phone,
+        'postal_address': postal_address_to_json(user.postal_address),
+        'municipality': user.municipality,
+        'country': user.country,
+        'verified': user.verified.__str__().lower(),
+        'created': user.created.isoformat(' ')
+    }
 
 
 class Organization:
@@ -54,6 +84,15 @@ class Membership:
     organization: Organization
     created: datetime
     renewal: datetime
+
+
+def membership_to_json(membership: Membership) -> dict:
+    return {
+        'organization': organization_to_json(membership.organization),
+        'user': user_to_json(membership.user),
+        'created': membership.created.isoformat(' '),
+        'renewal': membership.renewal.isoformat(' ')
+    }
 
 
 class Role:

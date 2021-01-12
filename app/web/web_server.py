@@ -20,6 +20,7 @@ from app.web.handlers.admin.roles import RolesHandler
 from app.web.handlers.api.geography.municipalities import APIMunicipalitiesHandler
 from app.web.handlers.api.geography.postal_code import APIPostalCodeHandler
 from app.web.handlers.api.member import APIMemberHandler
+from app.web.handlers.api.membership import APIMemberShipHandler
 from app.web.handlers.api.organization import APIOrganizationHandler
 from app.web.handlers.authentication import RecoveryHandler, SignInHandler, SignUpHandler
 from app.web.handlers.error import Error404Handler
@@ -90,6 +91,7 @@ def configure_application(options: WebAppOptions):
         (r"/admin/edit-organization", EditOrganizationHandler),
         (r"/admin/roles", RolesHandler),
         (r"/api/member", APIMemberHandler),
+        (r"/api/membership", APIMemberShipHandler),
         (r"/api/geography/municipalities", APIMunicipalitiesHandler),
         (r"/api/geography/postal_code/(?P<postal_code>[^\/]+)", APIPostalCodeHandler),
         (r"/api/organization", APIOrganizationHandler),

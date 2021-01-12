@@ -1,10 +1,29 @@
-from app.models import Country, Organization, Municipality, organization_to_json, municipality_to_json
+from app.models import Country, Organization, Municipality, organization_to_json, municipality_to_json, user_to_json
+from app.test.web_testcase import get_mock_session
 from datetime import datetime
 from unittest import TestCase
 from uuid import uuid4
 
 
 class ModelsTest(TestCase):
+    def test_user_model(self):
+        user = get_mock_session().user
+        json = user_to_json(user)
+
+        self.assertEqual(user.id.__str__(), json["id"])
+        self.assertEqual(user.number, int(json["number"]))
+        self.assertEqual(user.name.first, json["name"]["first"])
+        self.assertEqual(user.name.last, json["name"]["last"])
+        self.assertEqual(user.email, json["email"])
+        self.assertEqual(user.phone, json["phone"])
+        self.assertEqual(user.postal_address.street, json["postal_address"]["street"])
+        self.assertEqual(user.postal_address.postal_code, json["postal_address"]["postal_code"])
+        self.assertEqual(user.postal_address.city, json["postal_address"]["city"])
+        self.assertEqual(user.municipality, json["municipality"])
+        self.assertEqual(user.country, json["country"])
+        self.assertEqual("true", json["verified"])
+        self.assertEqual(user.created.isoformat(' '), json["created"])
+
     def test_organization_model(self):
         id = uuid4()
         created = datetime.utcnow()

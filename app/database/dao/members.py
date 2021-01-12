@@ -12,7 +12,7 @@ from app.database.dao.member_org import MemberOrgDao
 
 
 class MembersDao(MemberOrgDao):
-    async def create_membership(self, user_id: UUID, organization_id: UUID) -> bool:
+    async def create_membership(self, user_id: UUID, organization_id: UUID) -> Union[Membership, None]:
         sql = "INSERT INTO memberships (\"user\", \"organization\", created, renewal) VALUES ($1, $2, $3, $4);"
 
         created = datetime.utcnow()
@@ -25,10 +25,16 @@ class MembersDao(MemberOrgDao):
             logger.debug(exc.__str__())
             logger.warning("Tried to create membership with user ID: " + str(user_id) +
                            " and organization ID: " + str(organization_id) + " but it already existed")
-            return False
+            return None
         except Exception:
             logger.error("An error occured when trying to create new membership!", stack_info=True)
-            return False
+            return None
+
+        membership = Membership()
+        membership.user = user_id
+        membership.organization = await self.get_organization_by_id(organization_id)
+        membership.created = created
+        membership.renewal = renewal
 
         return True
 
