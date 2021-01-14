@@ -11,6 +11,7 @@ class WebTestCase(AsyncHTTPTestCase):
         options = WebAppOptions()
         options.debug = True
         options.xsrf = False
+        options.test = True
         options.cookie_secret = "ccd70ecea6d9f0833b07688e69bf2368f86f9127de17de102e17788a805afb7f"
 
         return configure_application(options)

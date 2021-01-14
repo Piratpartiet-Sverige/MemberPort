@@ -28,7 +28,6 @@ from app.web.handlers.kratos import KratosHandler
 from app.web.handlers.main import MainHandler
 from app.web.handlers.new_member import NewMemberHandler
 from app.web.handlers.profile import ProfileHandler
-from app.web.handlers.setup import SetupHandler
 from app.web.handlers.verify import VerifyHandler
 from tornado.platform.asyncio import AnyThreadEventLoopPolicy
 
@@ -45,6 +44,7 @@ class WebAppOptions:
     db_password: str = ""
     db_hostname: str = ""
     dbname: str = ""
+    test: bool = False
 
 
 def start():
@@ -107,25 +107,29 @@ def configure_application(options: WebAppOptions):
     for plugin in plugins:
         handlers.append(plugin.get_handler())
 
-    db = init_db(options)
+    if options.test is False:
+        db = init_db(options)
 
-    try:
-        db = asyncio.get_event_loop().run_until_complete(db)
-    except Exception:
-        logger.critical(
-            "Error occured when trying to connect to database, check if host, name, username and password is correct in config/config.ini",
-            exc_info=1
-        )
-        db = None
+        try:
+            db = asyncio.get_event_loop().run_until_complete(db)
+        except Exception:
+            logger.critical(
+                """Error occured when trying to connect to database, check if host, name, username and password is correct in
+                   config/config.ini""",
+                exc_info=1
+            )
+            db = None
 
-    if db is not None:
-        logger.debug("Database connection initialized...")
-        asyncio.get_event_loop().run_until_complete(db_setup(db, handlers))
-        asyncio.get_event_loop().run_until_complete(first_setup(db, handlers))
+        if db is not None:
+            logger.debug("Database connection initialized...")
+            asyncio.get_event_loop().run_until_complete(db_setup(db, handlers))
+            asyncio.get_event_loop().run_until_complete(first_setup(db, handlers))
+        else:
+            logger.error("Database connection failed")
+            logger.warning("Running without a database")
+            show_db_error(handlers)
+            db = None
     else:
-        logger.error("Database connection failed")
-        logger.warning("Running without a database")
-        show_db_error(handlers)
         db = None
 
     webapp = tornado.web.Application(
