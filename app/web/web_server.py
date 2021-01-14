@@ -7,7 +7,7 @@ import tornado.web
 
 from configparser import ConfigParser
 from app.config import Config
-from app.database.setup import db_setup
+from app.database.setup import db_setup, first_setup, show_db_error
 from app.logger import logger
 from app.plugins.plugin import get_available_plugins, load_plugins
 from app.web.handlers.admin.add_member import AddMemberHandler
@@ -108,14 +108,24 @@ def configure_application(options: WebAppOptions):
         handlers.append(plugin.get_handler())
 
     db = init_db(options)
+
+    try:
+        db = asyncio.get_event_loop().run_until_complete(db)
+    except Exception:
+        logger.critical(
+            "Error occured when trying to connect to database, check if host, name, username and password is correct in config/config.ini",
+            exc_info=1
+        )
+        db = None
+
     if db is not None:
         logger.debug("Database connection initialized...")
-        db = asyncio.get_event_loop().run_until_complete(db)
-        asyncio.get_event_loop().run_until_complete(db_setup(db))
+        asyncio.get_event_loop().run_until_complete(db_setup(db, handlers))
         asyncio.get_event_loop().run_until_complete(first_setup(db, handlers))
     else:
         logger.error("Database connection failed")
         logger.warning("Running without a database")
+        show_db_error(handlers)
         db = None
 
     webapp = tornado.web.Application(
@@ -168,20 +178,3 @@ def init_db(options: WebAppOptions):
     )
 
     return asyncpg.create_pool(dsn, min_size=2, max_size=20, max_inactive_connection_lifetime=1800)
-
-
-async def first_setup(pool, handlers):
-    sql = """SELECT s.initialized FROM settings s JOIN (
-                SELECT initialized, MAX(created) AS created
-                FROM settings se
-                GROUP BY initialized
-            ) lastEntry ON s.initialized = lastEntry.initialized AND s.created = lastEntry.created;"""
-
-    async with pool.acquire() as con:
-        row = await con.fetchrow(sql)
-
-    if row["initialized"] is False:
-        logger.info("Starting first time setup")
-        handlers.clear()
-        handlers.append((r"/kratos/(.*)", KratosHandler))
-        handlers.append((r"/", SetupHandler))
