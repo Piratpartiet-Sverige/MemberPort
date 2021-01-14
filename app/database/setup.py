@@ -1,9 +1,12 @@
 from asyncpg import Connection, UndefinedTableError
 from asyncpg.pool import Pool
 from app.logger import logger
+from app.web.handlers.error import ErrorDatabase
+from app.web.handlers.kratos import KratosHandler
+from app.web.handlers.setup import SetupHandler
 
 
-async def db_setup(pool: Pool):
+async def db_setup(pool: Pool, handlers: list):
     new_version = get_new_version_number()
     current_version = 0
 
@@ -41,6 +44,28 @@ async def db_setup(pool: Pool):
         await initialize_db(pool)
 
 
+async def first_setup(pool, handlers):
+    sql = """SELECT s.initialized FROM settings s JOIN (
+                SELECT initialized, MAX(created) AS created
+                FROM settings se
+                GROUP BY initialized
+            ) lastEntry ON s.initialized = lastEntry.initialized AND s.created = lastEntry.created;"""
+
+    try:
+        async with pool.acquire() as con:
+            row = await con.fetchrow(sql)
+    except Exception:
+        logger.critical("Could not retrieve settings from database!", exc_info=1)
+        show_db_error(handlers)
+        return
+
+    if row["initialized"] is False:
+        logger.info("Starting first time setup")
+        handlers.clear()
+        handlers.append((r"/kratos/(.*)", KratosHandler))
+        handlers.append((r"/", SetupHandler))
+
+
 def get_new_version_number():
     version = ""
     last_line = ""
@@ -54,7 +79,7 @@ def get_new_version_number():
     return int(version)
 
 
-async def initialize_db(pool):
+async def initialize_db(pool: Pool, handlers: list):
     result = await initialize_tables(pool)
     if result is True:
         result = await initialize_geography(pool)
@@ -62,9 +87,10 @@ async def initialize_db(pool):
         logger.info("Succesfully initialized new database!")
     else:
         logger.critical("Something went wrong when initializing new database!")
+        show_db_error(handlers)
 
 
-async def initialize_tables(pool) -> bool:
+async def initialize_tables(pool: Pool) -> bool:
     with open('app/database/sql/db.sql', 'r') as sql_file:
         sql = sql_file.read()
         try:
@@ -78,7 +104,7 @@ async def initialize_tables(pool) -> bool:
     return True
 
 
-async def initialize_geography(pool) -> bool:
+async def initialize_geography(pool: Pool) -> bool:
     with open('app/database/sql/geography.sql', 'r') as sql_file:
         sql = sql_file.read()
         try:
@@ -92,7 +118,7 @@ async def initialize_geography(pool) -> bool:
     return True
 
 
-async def upgrade_db(pool, current_version, new_version):
+async def upgrade_db(pool: Pool, current_version: int, new_version: int):
     for version in range(current_version, new_version):
         try:
             with open('app/database/sql/upgrades/' + str(version) + '_to_' + str(version + 1) + '.sql', 'r') as sql_file:
@@ -112,3 +138,8 @@ async def upgrade_db(pool, current_version, new_version):
                 exc_info=1
             )
             break
+
+
+def show_db_error(handlers: list) -> None:
+    handlers.clear()
+    handlers.append((r"/", ErrorDatabase))
