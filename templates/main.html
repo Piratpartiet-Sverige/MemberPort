@@ -3,8 +3,8 @@
 {% block content %}
 <section class="section">
 
-    <div class="notification is-warning" id="onboardingNotification">
-        <button class="delete" onclick="toggleNotification()"></button>
+    <div class="notification is-warning" id="motd">
+        <button class="delete" onclick="toggleNotification('motd')"></button>
         <div class="content">
             <h3 class="title">Välkommen {{ name }}! Ditt medlemsnummer är: #{{ str(number) }}</h3>
             <p>Som ny medlem i Piratpartiet rekommenderar vi att du går igenom den här onboardingen.</p>
@@ -14,85 +14,93 @@
         </div>
     </div>
 
+    <script>
+    function toggleNotification(id) {
+            document.getElementById(id).classList.add('is-hidden');
+    }
+    </script>
+
     <div class="columns">
         <div class="column is-one-fifth">
-            <aside class="menu">
-                <p class="menu-label">
-                    General
-                </p>
-                <ul class="menu-list">
-                    <li><a>Dashboard</a></li>
-                    <li><a>Customers</a></li>
-                </ul>
-            </aside>
+            {% include 'sidemenu.html' %}
         </div>
 
         <div class="column">
-            <div name="testmodal" id="testmodal" class="modal">
-                <div class="modal-background"></div>
-                <div class="modal-card">
-                    <header class="modal-card-head">
-                        <p class="modal-card-title">Modal title</p>
-                        <button class="delete" aria-label="close" onclick="toggleModal2()"></button>
-                    </header>
-                    <section class="modal-card-body">
-                        <!-- Content ... -->
-                    </section>
-                    <footer class="modal-card-foot">
-                        <button class="button is-success">Save changes</button>
-                        <button class="button">Cancel</button>
-                    </footer>
-                </div>
-            </div>
-
-            <div class="card is-fullwidth">
-                <header class="card-header">
-                    <p class="card-header-title">Card #2</p>
-                    <a class="card-header-icon card-toggle" onclick="toggleCard('testcard');toggleCard('testcard2')">
-                        <i class="fa fa-angle-down"></i>
-                    </a>
-                </header>
-                <div class="card-content is-hidden" id="testcard">
+            <div class="columns">
+                <div class="column">
                     <div class="content">
-                        Some more content. Look at all this whitespace. <small>(Unless you are on mobile)</small>
-                        <button class="button" onclick="toggleCard2()">Klicka</button>
+                        <h1 class="title has-text-centered">
+                            Senaste nytt
+                        </h1>
+
+                        <div class="box">
+                        <!--- Here we put a loop getting the last 2 items from pp.se rss feed --->
+
+                        <article class="message is-primary" id="news1">
+                              <div class="message-header">
+                                    <p>Rubrik</p> <!--- Get the <title> of the item --->
+                                    <button class="delete" aria-label="delete" onclick="toggleNotification('news1')"></button>
+                              </div>
+                              <div class="message-body">
+                                  <p>
+                                    Kort beskrivning <!--- Get the <description> of the item --->
+                                  </p>
+                                <button class="button is-info">Läs mer...</button> <!--- Get the <link> of the item --->
+                              </div>
+                        </article>
+
+                        <article class="message is-primary" id="news2">
+                              <div class="message-header">
+                                    <p>Rubrik</p> <!--- Get the <title> of the item --->
+                                    <button class="delete" aria-label="delete" onclick="toggleNotification('news2')"></button>
+                              </div>
+                              <div class="message-body">
+                                  <p>
+                                    Kort beskrivning <!--- Get the <description> of the item --->
+                                  </p>
+                                <button class="button is-info">Läs mer...</button> <!--- Get the <link> of the item --->
+                              </div>
+                        </article>
+
+                        <!--------------------------------------------------------------------------->
+
+                        </div>
+
                     </div>
+
+                    <div class="content">
+                        <h1 class="title has-text-centered">
+                            Kalender
+                        </h1>
+                        <!--- The idea is to embed our calendar here --->
+
+                        <div class="box">
+                            <figure class="image is-16by9">
+                                <iframe class="has-ratio" src="https://en.m.wikipedia.org/wiki/Main_Page" frameborder="0" allowfullscreen></iframe>
+                            </figure>
+                        </div>
+
+                    </div>
+
                 </div>
-                <footer class="card-footer is-hidden" id="testcard2">
-                    <a href="#" class="card-footer-item">Save</a>
-                    <a href="#" class="card-footer-item">Edit</a>
-                    <a href="#" class="card-footer-item">Delete</a>
-                </footer>
             </div>
-
         </div>
+        <div class="column">
+            <!--- Here we embed the party chat --->
+
+            <div class="content">
+                <h1 class="title has-text-centered">
+                    Partichatten
+                </h1>
+            </div>
+            <div class="box">
+                <figure class="image is-4by5">
+                    <iframe class="has-ratio" src="https://chat.piratpartiet.se" frameborder="0" allowfullscreen></iframe>
+                </figure>
+            </div>
+        </div>
+
+
     </div>
 </section>
-
-<section class="section">
-    <div class="container">
-        <button class="button" onclick="toggleModal()">Klicka</button>
-    </div>
-</section>
-
-<script>
-    function toggleModal2() {
-        document.getElementById("testmodal").classList.remove('is-active');
-    }
-</script>
-<script>
-    function toggleModal() {
-        document.getElementById("testmodal").classList.add('is-active');
-    }
-</script>
-<script>
-    function toggleCard(id) {
-        if (document.getElementById(id).classList.contains('is-hidden')) {
-            document.getElementById(id).classList.remove('is-hidden');
-        }
-        else {
-            document.getElementById(id).classList.add('is-hidden');
-        }
-    }
-</script>
 {% end %}
