@@ -1,4 +1,4 @@
-from app.models import Country, Organization, Municipality, organization_to_json, municipality_to_json, user_to_json
+from app.models import Membership, Organization, Municipality, organization_to_json, membership_to_json, municipality_to_json, user_to_json
 from app.test.web_testcase import get_mock_session
 from datetime import datetime
 from unittest import TestCase
@@ -42,23 +42,40 @@ class ModelsTest(TestCase):
         self.assertEqual("true", json["active"])
         self.assertEqual(created.isoformat(' '), json["created"])
 
+    def test_membership_model(self):
+        id = uuid4()
+        created = datetime.utcnow()
+        renewal = datetime(created.year + 1, created.month, created.day)
+        user = get_mock_session().user
+
+        membership = Membership()
+        membership.organization_id = id
+        membership.user_id = user.id
+        membership.created = created
+        membership.renewal = renewal
+
+        json = membership_to_json(membership)
+        self.assertEqual(id.__str__(), json["organization_id"])
+        self.assertEqual(user.id.__str__(), json["user_id"])
+        self.assertEqual(created.isoformat(' '), json["created"])
+        self.assertEqual(renewal.isoformat(' '), json["renewal"])
+
     def test_municipality_model(self):
         id = uuid4()
         created = datetime.utcnow()
         area_id = uuid4()
-        sweden = Country()
-        sweden.name = "Sverige"
+        sweden_id = uuid4()
 
         mun = Municipality()
         mun.id = id
         mun.name = "Lund"
         mun.created = created
-        mun.country = sweden
+        mun.country_id = sweden_id
         mun.area_id = area_id
 
         json = municipality_to_json(mun)
         self.assertEqual(id.__str__(), json["id"])
         self.assertEqual(mun.name, json["name"])
         self.assertEqual(created.isoformat(' '), json["created"])
-        self.assertEqual(mun.country.name, json["country"])
+        self.assertEqual(mun.country_id, json["country_id"])
         self.assertEqual(area_id.__str__(), json["area_id"])

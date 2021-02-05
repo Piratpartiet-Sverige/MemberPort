@@ -80,16 +80,16 @@ def organization_to_json(organization: Organization) -> dict:
 
 
 class Membership:
-    user: User
-    organization: Organization
+    organization_id: UUID
+    user_id: UUID
     created: datetime
     renewal: datetime
 
 
 def membership_to_json(membership: Membership) -> dict:
     return {
-        'organization': organization_to_json(membership.organization),
-        'user': user_to_json(membership.user),
+        'organization_id': membership.organization_id.__str__(),
+        'user_id': membership.user_id.__str__(),
         'created': membership.created.isoformat(' '),
         'renewal': membership.renewal.isoformat(' ')
     }
@@ -128,7 +128,7 @@ class Area:
     id: int
     name: str
     created: datetime
-    country: Country
+    country_id: UUID
     path: str
 
 
@@ -136,7 +136,7 @@ class Municipality:
     id: UUID
     name: str
     created: datetime
-    country: Country
+    country_id: UUID
     area_id: UUID
 
 
@@ -145,6 +145,6 @@ def municipality_to_json(municipality: Municipality) -> dict:
         'id': municipality.id.__str__(),
         'name': municipality.name,
         'created': municipality.created.isoformat(' '),
-        'country': municipality.country.name,
+        'country_id': municipality.country_id,
         'area_id': municipality.area_id.__str__()
     }

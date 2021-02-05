@@ -32,7 +32,7 @@ class MembersDao(MemberOrgDao):
 
         membership = Membership()
         membership.user = user_id
-        membership.organization = await self.get_organization_by_id(organization_id)
+        membership.organization = organization_id
         membership.created = created
         membership.renewal = renewal
 

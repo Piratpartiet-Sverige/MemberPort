@@ -34,7 +34,7 @@ class GeographyDao(BaseDao):
         area.id = area_id
         area.name = name
         area.created = created
-        area.country = await self.get_country_by_id(country_id)
+        area.country_id = country_id
         area.path = path + str(area_id)
 
         return area
@@ -56,7 +56,7 @@ class GeographyDao(BaseDao):
             area.id = row["id"]
             area.name = row["name"]
             area.created = row["created"]
-            area.country = await self.get_country_by_id(country_id)
+            area.country_id = country_id
             area.path = row["path"]
             areas.append(area)
 
@@ -126,7 +126,7 @@ class GeographyDao(BaseDao):
         municipality = Municipality()
         municipality.name = name
         municipality.created = country_id
-        municipality.country = await self.get_country_by_id(country_id)
+        municipality.country_id = country_id
         municipality.area_id = area_id
 
         return municipality
@@ -143,7 +143,7 @@ class GeographyDao(BaseDao):
             municipality.id = municipality_id
             municipality.name = row["name"]
             municipality.created = row["created"]
-            municipality.country = await self.get_country_by_id(row["country"])
+            municipality.country_id = row["country"]
             municipality.area_id = row["area"]
         else:
             return None
@@ -162,7 +162,7 @@ class GeographyDao(BaseDao):
             municipality.id = row["id"]
             municipality.name = name
             municipality.created = row["created"]
-            municipality.country = await self.get_country_by_id(row["country"])
+            municipality.country_id = row["country"]
             municipality.area_id = row["area"]
         else:
             return None
@@ -176,14 +176,13 @@ class GeographyDao(BaseDao):
             rows = await con.fetch(sql, country_id)
 
         municipalities = []
-        country = await self.get_country_by_id(country_id)
 
         for row in rows:
             municipality = Municipality()
             municipality.id = row["id"]
             municipality.name = row["name"]
             municipality.created = row["created"]
-            municipality.country = country
+            municipality.country_id = country_id
             municipality.area_id = row["area"]
             municipalities.append(municipality)
 
@@ -202,7 +201,7 @@ class GeographyDao(BaseDao):
             municipality.id = row["id"]
             municipality.name = row["name"]
             municipality.created = row["created"]
-            municipality.country = await self.get_country_by_id(row["country"])
+            municipality.country_id = row["country"]
             municipality.area_id = row["area"]
             municipalities.append(municipality)
 
