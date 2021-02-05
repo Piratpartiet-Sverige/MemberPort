@@ -52,7 +52,11 @@ class ProfileHandler(BaseHandler):
         permissions_check = await dao.check_user_admin(self.current_user.user.id)
 
         members_dao = MembersDao(self.db)
-        memberships = await members_dao.get_memberships_for_user(user=self.current_user.user)
+        memberships = await members_dao.get_memberships_for_user(self.current_user.user.id)
+        member_orgs = list()
+
+        for membership in memberships:
+            member_orgs.append(await members_dao.get_organization_by_id(membership.organization_id))
 
         geo_dao = GeographyDao(self.db)
         country = await geo_dao.get_country_by_name(self.current_user.user.country)
@@ -61,7 +65,7 @@ class ProfileHandler(BaseHandler):
         areas = await geo_dao.get_parent_areas_from_municipality(municipality.id)
 
         org_dao = OrganizationsDao(self.db)
-        organizations = await org_dao.get_organizations_in_area(country.id, areas, municipality.id)
+        organizations = await org_dao.get_organizations_in_area(country.id, areas, municipality.id, member_orgs)
 
         if country is not None:
             municipalities = await geo_dao.get_municipalities_by_country(country.id)
@@ -77,6 +81,7 @@ class ProfileHandler(BaseHandler):
             countries=countries,
             municipalities=municipalities,
             memberships=memberships,
+            member_orgs=member_orgs,
             organizations=organizations
         )
 

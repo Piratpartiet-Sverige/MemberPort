@@ -40,17 +40,7 @@ async function sendMunicipalityRequest() {
     return response;
 }
 
-function joinOrganization(user_id = "") {
-    sendMembershipRequest(user_id)
-        .then(response => response.json())
-        .then(response => {
-
-        });
-}
-
-async function sendMembershipRequest(user_id) {
-    var org_id = document.getElementById("joinOrganization").value;
-
+async function sendMembershipRequest(user_id, org_id) {
     var data = {
         "organization": org_id,
         "user": user_id

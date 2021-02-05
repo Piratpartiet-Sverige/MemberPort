@@ -7,7 +7,7 @@ from uuid import UUID
 from asyncpg import Connection
 from asyncpg.exceptions import UniqueViolationError
 
-from app.models import User, Membership
+from app.models import Membership
 from app.database.dao.member_org import MemberOrgDao
 
 
@@ -31,8 +31,8 @@ class MembersDao(MemberOrgDao):
             return None
 
         membership = Membership()
-        membership.user = user_id
-        membership.organization = organization_id
+        membership.user_id = user_id
+        membership.organization_id = organization_id
         membership.created = created
         membership.renewal = renewal
 
@@ -114,12 +114,12 @@ class MembersDao(MemberOrgDao):
 
         return row["members"]
 
-    async def get_memberships_for_user(self, user: User) -> list:
+    async def get_memberships_for_user(self, user_id: UUID) -> list:
         sql = "SELECT \"organization\", created, renewal FROM memberships WHERE \"user\" = $1"
 
         try:
             async with self.pool.acquire() as con:  # type: Connection
-                rows = await con.fetch(sql, user.id)
+                rows = await con.fetch(sql, user_id)
         except Exception:
             logger.error("An error occured when trying to retrieve memberships for an user!", stack_info=True)
             return list()
@@ -131,8 +131,8 @@ class MembersDao(MemberOrgDao):
 
         for row in rows:
             membership = Membership()
-            membership.user = user
-            membership.organization = await self.get_organization_by_id(row["organization"])
+            membership.user_id = user_id
+            membership.organization_id = row["organization"]
             membership.created = row["created"]
             membership.renewal = row["renewal"]
             memberships.append(membership)

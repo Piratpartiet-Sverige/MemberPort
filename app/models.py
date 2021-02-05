@@ -68,6 +68,12 @@ class Organization:
     active: bool
     created: datetime
 
+    def __eq__(self, other):
+        return self.id == other.id
+
+    def __hash__(self):
+        return hash(self.id)
+
 
 def organization_to_json(organization: Organization) -> dict:
     return {
