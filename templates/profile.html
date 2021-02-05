@@ -256,7 +256,7 @@
                 <div class="columns">
                     <div class="column is-one-quarter">
                         <div class="select is-pulled-right">
-                            <select>
+                            <select id="joinOrganization">
                                 <option selected="selected" disabled="disabled">Föreningar du kan gå med i</option>
                                 {% for organization in organizations %}
                                 <option value="{{ organization.id }}">{{ organization.name }}</option>
@@ -266,7 +266,7 @@
                     </div>
 
                     <div class="column">
-                        <button class="button is-success is-pulled-left">Gå med i vald förening</button>
+                        <button onclick="joinOrganization('{{ current_user.user.id }}');" class="button is-success is-pulled-left">Gå med i vald förening</button>
                     </div>
                 </div>
 
@@ -315,5 +315,6 @@
 </section>
 {% end %}
 {% block scripts %}
+<script src="{{ static_url('js/api.js') }}"></script>
 <script src="{{ static_url('js/profile.js') }}"></script>
 {% end %}

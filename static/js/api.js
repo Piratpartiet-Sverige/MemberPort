@@ -1,3 +1,7 @@
+function convertDictToBody(dict) {
+    return Object.keys(dict).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(dict[key])).join('&');
+}
+
 function updateMunicipalities() {
     sendMunicipalityRequest()
         .then(response => response.json())
@@ -29,6 +33,40 @@ async function sendMunicipalityRequest() {
           'Content-Type': 'application/json',
           'X-XSRFToken': document.getElementsByName("_xsrf")[0].value
         },
+        redirect: 'error',
+        referrerPolicy: 'same-origin'
+    });
+
+    return response;
+}
+
+function joinOrganization(user_id = "") {
+    sendMembershipRequest(user_id)
+        .then(response => response.json())
+        .then(response => {
+
+        });
+}
+
+async function sendMembershipRequest(user_id) {
+    var org_id = document.getElementById("joinOrganization").value;
+
+    var data = {
+        "organization": org_id,
+        "user": user_id
+    }
+
+    data = convertDictToBody(data);
+
+    const response = await fetch("/api/membership", {
+        method: 'POST',
+        cache: 'no-cache',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-XSRFToken': document.getElementsByName("_xsrf")[0].value
+        },
+        body: data,
         redirect: 'error',
         referrerPolicy: 'same-origin'
     });

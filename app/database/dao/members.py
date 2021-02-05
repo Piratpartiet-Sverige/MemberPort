@@ -36,7 +36,7 @@ class MembersDao(MemberOrgDao):
         membership.created = created
         membership.renewal = renewal
 
-        return True
+        return membership
 
     async def update_membership(self, user_id: UUID, organization_id: UUID,
                                 created: Union[datetime, None] = None, renewal: Union[datetime, None] = None) -> bool:
