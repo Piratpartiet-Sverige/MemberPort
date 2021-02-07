@@ -22,11 +22,20 @@ CREATE TABLE users
 
 CREATE TABLE memberships
 (
+    id             UUID UNIQUE NOT NULL,
     "organization" UUID REFERENCES organizations(id),
     "user"         UUID REFERENCES users(kratos_id),
     created        TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     renewal        TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     PRIMARY KEY ("organization", "user")
+);
+
+CREATE TABLE ended_memberships
+(
+    id             UUID PRIMARY KEY,
+    "organization" UUID REFERENCES organizations(id),
+    reason         TEXT NOT NULL,
+    ended          TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
 CREATE TABLE roles

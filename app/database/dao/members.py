@@ -2,7 +2,7 @@ from app.logger import logger
 
 from datetime import datetime
 from typing import Union
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from asyncpg import Connection
 from asyncpg.exceptions import UniqueViolationError
@@ -13,14 +13,15 @@ from app.database.dao.member_org import MemberOrgDao
 
 class MembersDao(MemberOrgDao):
     async def create_membership(self, user_id: UUID, organization_id: UUID) -> Union[Membership, None]:
-        sql = "INSERT INTO memberships (\"user\", \"organization\", created, renewal) VALUES ($1, $2, $3, $4);"
+        sql = "INSERT INTO memberships (id, \"user\", \"organization\", created, renewal) VALUES ($1, $2, $3, $4, $5);"
 
+        membership_id = uuid4()
         created = datetime.utcnow()
         renewal = datetime(created.year + 1, created.month, created.day)
 
         try:
             async with self.pool.acquire() as con:  # type: Connection
-                await con.execute(sql, user_id, organization_id, created, renewal)
+                await con.execute(sql, membership_id, user_id, organization_id, created, renewal)
         except UniqueViolationError as exc:
             logger.debug(exc.__str__())
             logger.warning("Tried to create membership with user ID: " + str(user_id) +
@@ -31,10 +32,30 @@ class MembersDao(MemberOrgDao):
             return None
 
         membership = Membership()
+        membership.id = membership_id
         membership.user_id = user_id
         membership.organization_id = organization_id
         membership.created = created
         membership.renewal = renewal
+
+        return membership
+
+    async def get_membership_by_id(self, membership_id: UUID) -> Union[UUID, None]:
+        sql = 'SELECT "organization", "user", created, renewal FROM memberships WHERE id = $1;'
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                row = await con.fetchrow(sql, membership_id)
+        except Exception:
+            logger.error("An error occured when trying to retrieve membership!", stack_info=True)
+            return None
+
+        membership = Membership()
+        membership.id = membership_id
+        membership.organization_id = row["organization"]
+        membership.user_id = row["organization"]
+        membership.created = row["created"]
+        membership.renewal = row["renewal"]
 
         return membership
 
@@ -91,11 +112,24 @@ class MembersDao(MemberOrgDao):
 
         return sql
 
-    async def remove_membership(self, user_id: UUID, organization_id: UUID) -> bool:
+    async def remove_membership(self, user_id: UUID, organization_id: UUID, reason: Union[str, None]) -> bool:
         sql = 'DELETE FROM memberships WHERE "user" = $1 AND "organization" = $2;'
         try:
             async with self.pool.acquire() as con:  # type: Connection
                 await con.execute(sql, user_id, organization_id)
+        except Exception:
+            logger.error("An error occured when trying to delete a membership!", stack_info=True)
+            return False
+
+        sql = 'INSERT INTO ended_memberships (id, "organization", reason, ended) VALUES ($1, $2, $3, $4);'
+
+        id = uuid4()
+        ended = datetime.utcnow()
+        reason = "" if reason is None else reason
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                await con.execute(sql, id, organization_id, reason, ended)
         except Exception:
             logger.error("An error occured when trying to delete a membership!", stack_info=True)
             return False
@@ -115,7 +149,7 @@ class MembersDao(MemberOrgDao):
         return row["members"]
 
     async def get_memberships_for_user(self, user_id: UUID) -> list:
-        sql = "SELECT \"organization\", created, renewal FROM memberships WHERE \"user\" = $1"
+        sql = "SELECT id, \"organization\", created, renewal FROM memberships WHERE \"user\" = $1"
 
         try:
             async with self.pool.acquire() as con:  # type: Connection
@@ -131,6 +165,7 @@ class MembersDao(MemberOrgDao):
 
         for row in rows:
             membership = Membership()
+            membership.id = row["id"]
             membership.user_id = user_id
             membership.organization_id = row["organization"]
             membership.created = row["created"]

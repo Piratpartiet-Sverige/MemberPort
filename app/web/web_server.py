@@ -92,6 +92,7 @@ def configure_application(options: WebAppOptions):
         (r"/admin/roles", RolesHandler),
         (r"/api/member", APIMemberHandler),
         (r"/api/membership", APIMemberShipHandler),
+        (r"/api/membership/(?P<id>[^\/]+)", APIMemberShipHandler),
         (r"/api/geography/municipalities", APIMunicipalitiesHandler),
         (r"/api/geography/postal_code/(?P<postal_code>[^\/]+)", APIPostalCodeHandler),
         (r"/api/organization", APIOrganizationHandler),

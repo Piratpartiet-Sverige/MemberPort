@@ -139,7 +139,7 @@ class BaseHandler(RequestHandler):
 
         if status_code >= 400:
             self.write({'success': False, 'reason': message, 'data': json_data})
-        else:
+        elif status_code != 204:
             self.write({'success': True, 'reason': message, 'data': json_data})
 
     def write_error(self, status_code: int, error_message: str = "", **kwargs: any) -> None:

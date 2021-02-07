@@ -44,18 +44,21 @@ class ModelsTest(TestCase):
 
     def test_membership_model(self):
         id = uuid4()
+        org_id = uuid4()
         created = datetime.utcnow()
         renewal = datetime(created.year + 1, created.month, created.day)
         user = get_mock_session().user
 
         membership = Membership()
-        membership.organization_id = id
+        membership.id = id
+        membership.organization_id = org_id
         membership.user_id = user.id
         membership.created = created
         membership.renewal = renewal
 
         json = membership_to_json(membership)
-        self.assertEqual(id.__str__(), json["organization_id"])
+        self.assertEqual(id.__str__(), json["id"])
+        self.assertEqual(org_id.__str__(), json["organization_id"])
         self.assertEqual(user.id.__str__(), json["user_id"])
         self.assertEqual(created.isoformat(' '), json["created"])
         self.assertEqual(renewal.isoformat(' '), json["renewal"])

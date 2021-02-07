@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from tornado.testing import AsyncHTTPTestCase
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 from app.models import Session, User
 from app.web.web_server import WebAppOptions, configure_application
@@ -25,7 +25,7 @@ def get_mock_session():
     session.expires_at = datetime.utcnow() + timedelta(days=1)
 
     user = User()
-    user.id = uuid4()
+    user.id = UUID('94983a62-8b07-4446-9753-8ba3a80d6000')
     user.name.first = "Barbro"
     user.name.last = "Pirat"
     user.email = "barbro.pirat@piratpartiet.se"

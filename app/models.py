@@ -86,6 +86,7 @@ def organization_to_json(organization: Organization) -> dict:
 
 
 class Membership:
+    id: UUID
     organization_id: UUID
     user_id: UUID
     created: datetime
@@ -94,6 +95,7 @@ class Membership:
 
 def membership_to_json(membership: Membership) -> dict:
     return {
+        'id': membership.id.__str__(),
         'organization_id': membership.organization_id.__str__(),
         'user_id': membership.user_id.__str__(),
         'created': membership.created.isoformat(' '),
