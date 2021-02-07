@@ -22,7 +22,7 @@ async def db_setup(pool: Pool, handlers: list):
 
         if row["version"] is None:
             logger.info("No version info in database found, initializing new database")
-            await initialize_db(pool)
+            await initialize_db(pool, handlers)
         else:
             current_version = row["version"]
             if new_version > current_version:
@@ -41,7 +41,7 @@ async def db_setup(pool: Pool, handlers: list):
                 logger.info("No action required for database")
     except UndefinedTableError:
         logger.info("No version info in database found, initializing new database")
-        await initialize_db(pool)
+        await initialize_db(pool, handlers)
 
 
 async def first_setup(pool, handlers):
