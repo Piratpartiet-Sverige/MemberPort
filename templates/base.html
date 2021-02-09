@@ -16,20 +16,19 @@
     {% block body %}
     <nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
-            <a class="navbar-item" href="https://piratpartiet.se">
-                <img src="https://mediawiki.piratpartiet.se/images/thumb/a/a8/Vitt_segel.svg/800px-Vitt_segel.svg.png"
+            <a class="navbar-item" href="/">
+                <img src="{{ static_url('img/vitt_segel.png') }}"
                     width="28" height="28">
             </a>
-    
             <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
-                data-target="navbarBasicExample">
+                data-target="mainNavbar">
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
             </a>
         </div>
     
-        <div id="navbarBasicExample" class="navbar-menu">
+        <div id="mainNavbar" class="navbar-menu">
             <div class="navbar-start">
                 <a href="/" class="navbar-item">
                     <span class="icon">
