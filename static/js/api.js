@@ -63,3 +63,32 @@ async function sendMembershipRequest(user_id, org_id) {
 
     return response;
 }
+
+async function sendEndMembershipRequest(membership_id, reason) {
+    var data = null;
+
+    if (reason != undefined && reason != null && reason !== "") {
+        data = {
+            "reason": reason
+        }
+    
+        data = convertDictToBody(data);
+    }
+
+    console.log(data);
+
+    const response = await fetch("/api/membership/" + membership_id, {
+        method: 'DELETE',
+        cache: 'no-cache',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-XSRFToken': document.getElementsByName("_xsrf")[0].value
+        },
+        body: data,
+        redirect: 'error',
+        referrerPolicy: 'same-origin'
+    });
+
+    return response;
+}
