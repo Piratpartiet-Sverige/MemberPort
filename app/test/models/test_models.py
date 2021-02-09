@@ -22,7 +22,7 @@ class ModelsTest(TestCase):
         self.assertEqual(user.municipality, json["municipality"])
         self.assertEqual(user.country, json["country"])
         self.assertEqual("true", json["verified"])
-        self.assertEqual(user.created.isoformat(' '), json["created"])
+        self.assertEqual(user.created.isoformat(' ', 'seconds'), json["created"])
 
     def test_organization_model(self):
         id = uuid4()
@@ -40,7 +40,7 @@ class ModelsTest(TestCase):
         self.assertEqual(org.name, json["name"])
         self.assertEqual(org.description, json["description"])
         self.assertEqual("true", json["active"])
-        self.assertEqual(created.isoformat(' '), json["created"])
+        self.assertEqual(created.isoformat(' ', 'seconds'), json["created"])
 
     def test_membership_model(self):
         id = uuid4()
@@ -60,8 +60,8 @@ class ModelsTest(TestCase):
         self.assertEqual(id.__str__(), json["id"])
         self.assertEqual(org_id.__str__(), json["organization_id"])
         self.assertEqual(user.id.__str__(), json["user_id"])
-        self.assertEqual(created.isoformat(' '), json["created"])
-        self.assertEqual(renewal.isoformat(' '), json["renewal"])
+        self.assertEqual(created.isoformat(' ', 'seconds'), json["created"])
+        self.assertEqual(renewal.isoformat(' ', 'seconds'), json["renewal"])
 
     def test_municipality_model(self):
         id = uuid4()
@@ -79,6 +79,6 @@ class ModelsTest(TestCase):
         json = municipality_to_json(mun)
         self.assertEqual(id.__str__(), json["id"])
         self.assertEqual(mun.name, json["name"])
-        self.assertEqual(created.isoformat(' '), json["created"])
+        self.assertEqual(created.isoformat(' ', 'seconds'), json["created"])
         self.assertEqual(mun.country_id, json["country_id"])
         self.assertEqual(area_id.__str__(), json["area_id"])

@@ -57,7 +57,7 @@ def user_to_json(user: User) -> dict:
         'municipality': user.municipality,
         'country': user.country,
         'verified': user.verified.__str__().lower(),
-        'created': user.created.isoformat(' ')
+        'created': user.created.isoformat(' ', 'seconds')
     }
 
 
@@ -81,7 +81,7 @@ def organization_to_json(organization: Organization) -> dict:
         'name': organization.name,
         'description': organization.description,
         'active': organization.active.__str__().lower(),
-        'created': organization.created.isoformat(' ')
+        'created': organization.created.isoformat(' ', 'seconds')
     }
 
 
@@ -98,8 +98,8 @@ def membership_to_json(membership: Membership) -> dict:
         'id': membership.id.__str__(),
         'organization_id': membership.organization_id.__str__(),
         'user_id': membership.user_id.__str__(),
-        'created': membership.created.isoformat(' '),
-        'renewal': membership.renewal.isoformat(' ')
+        'created': membership.created.isoformat(' ', 'seconds'),
+        'renewal': membership.renewal.isoformat(' ', 'seconds')
     }
 
 
@@ -152,7 +152,7 @@ def municipality_to_json(municipality: Municipality) -> dict:
     return {
         'id': municipality.id.__str__(),
         'name': municipality.name,
-        'created': municipality.created.isoformat(' '),
+        'created': municipality.created.isoformat(' ', 'seconds'),
         'country_id': municipality.country_id,
         'area_id': municipality.area_id.__str__()
     }

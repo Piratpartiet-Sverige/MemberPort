@@ -1,6 +1,7 @@
 import tornado.web
 
 from app.database.dao.members import MembersDao
+from app.logger import logger
 from app.models import membership_to_json
 from app.web.handlers.base import BaseHandler
 
@@ -38,7 +39,11 @@ class APIMemberShipHandler(BaseHandler):
         membership = await dao.get_membership_by_id(membership_id)
 
         if membership is None or membership.user_id.int != self.current_user.user.id.int:
-            return self.respond("MEMBERSHIP WITH SPECIFIED ID NOT FOUND", 403)
+            if membership.user_id.int != self.current_user.user.id.int:
+                logger.warning("Member " + self.current_user.user.id.__str__() + " tried to end a membership for another user, "
+                               + self.current_user.user.id.__str__() + ", with no permission to do so.")
+
+            return self.respond("MEMBERSHIP WITH SPECIFIED ID NOT FOUND", 404)
 
         await dao.remove_membership(membership.user_id, membership.organization_id, reason)
 

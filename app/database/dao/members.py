@@ -53,7 +53,7 @@ class MembersDao(MemberOrgDao):
         membership = Membership()
         membership.id = membership_id
         membership.organization_id = row["organization"]
-        membership.user_id = row["organization"]
+        membership.user_id = row["user"]
         membership.created = row["created"]
         membership.renewal = row["renewal"]
 
