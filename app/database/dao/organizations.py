@@ -139,7 +139,8 @@ class OrganizationsDao(MemberOrgDao):
 
         return organizations
 
-    async def get_organizations_in_area(self, country_id: UUID, areas: list, municipality_id: UUID) -> list:
+    async def get_organizations_in_area(self, country_id: UUID, areas: list, municipality_id: UUID,
+                                        filter: Union[list, None] = None) -> list:
         sql = """SELECT o.id, o.name, o.description, o.active, o.created FROM organization_country
                  INNER JOIN organizations AS o ON organization_country.organization = o.id WHERE country = $1;"""
         try:
@@ -172,6 +173,9 @@ class OrganizationsDao(MemberOrgDao):
             logger.debug(exc.__str__())
 
         self.convert_rows_to_organizations(organizations, rows)
+
+        if filter is not None:
+            organizations = list(set(organizations) - set(filter))
 
         return organizations
 

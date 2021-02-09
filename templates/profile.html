@@ -25,19 +25,22 @@
                 </aside>
             </div>
             <div class="column">
-                <div name="testmodal" id="testmodal" class="modal">
+                <div id="reason" class="modal">
                     <div class="modal-background"></div>
                     <div class="modal-card">
                         <header class="modal-card-head">
-                            <p class="modal-card-title">Modal title</p>
-                            <button class="delete" aria-label="close" onclick="toggleModal2()"></button>
+                            <p class="modal-card-title">Avsluta medlemskap</p>
+                            <button class="delete" aria-label="close" onclick="toggleModal('reason')"></button>
                         </header>
                         <section class="modal-card-body">
-                            <!-- Content ... -->
+                            <div class="content">
+                                <p><b>Anledning varför du vill avsluta ditt medlemskap</b></p>
+                            </div>
+                            <textarea name="reason" class="textarea" placeholder="e.g. Jag avslutar mitt medlemskap på grund av att..."></textarea>
                         </section>
                         <footer class="modal-card-foot">
-                            <button class="button is-success">Save changes</button>
-                            <button class="button">Cancel</button>
+                            <button id="endMembershipButton" class="button is-danger" onclick="endMembership()">Avsluta medlemskap</button>
+                            <button class="button is-success" onclick="toggleModal('reason')">Avbryt</button>
                         </footer>
                     </div>
                 </div>
@@ -147,11 +150,11 @@
                     </form>
                     <br>
                     <div id="successNotification" class="notification is-success {{ "" if success else "is-hidden" }}">
-                        <button type="button" class="delete" onclick="hide('successNotification');"></button>
+                        <button type="button" class="delete" onclick="hideNotification('successNotification');"></button>
                         <p id="successText">Ändringar sparade!</p>
                     </div>
                     <div id="errorNotification" class="notification is-danger {{ "is-hidden" if error == "" else "" }}">
-                        <button type="button" class="delete" onclick="hide('errorNotification');"></button>
+                        <button type="button" class="delete" onclick="hideNotification('errorNotification');"></button>
                         <p id="errorText">{{ error }}</p>
                     </div>
                 </div>
@@ -222,12 +225,7 @@
                 </table>
 
                 <div class="content">
-                    <p><br></p>
-                </div>
-
-                <div class="content">
-                    <a id="medlemskap"></a>
-                    <h1>Hantera medlemskap</h1>
+                    <h1 id="medlemskap">Hantera medlemskap</h1>
                 </div>
 
                 <table class="table is-striped is-hoverable">
@@ -240,14 +238,14 @@
                             <th>Avsluta?</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {% for membership in memberships %}
-                        <tr>
-                            <th>{{ membership.organization.name }}</th>
-                            <td>{{ membership.created }}</td>
-                            <td>{{ membership.renewal }}</td>
-                            <td><button class="button is-success">Förnya</button></td>
-                            <td><button class="button is-danger">Avsluta</button></td>
+                    <tbody id="memberships">
+                        {% for i, membership in enumerate(memberships, start=0) %}
+                        <tr is="membership-row"
+                            id="{{ membership.id }}"
+                            created="{{ membership.created.isoformat(' ', 'seconds') }}"
+                            renewal="{{ membership.renewal.isoformat(' ', 'seconds') }}"
+                            org-name="{{ member_orgs[i].name }}"
+                        >
                         </tr>
                         {% end %}
                     </tbody>
@@ -256,7 +254,7 @@
                 <div class="columns">
                     <div class="column is-one-quarter">
                         <div class="select is-pulled-right">
-                            <select>
+                            <select id="joinOrganization" onchange="enableJoinButton();">
                                 <option selected="selected" disabled="disabled">Föreningar du kan gå med i</option>
                                 {% for organization in organizations %}
                                 <option value="{{ organization.id }}">{{ organization.name }}</option>
@@ -264,14 +262,14 @@
                             </select>
                         </div>
                     </div>
-
                     <div class="column">
-                        <button class="button is-success is-pulled-left">Gå med i vald förening</button>
+                        <button id="joinButton" onclick="joinOrganization('{{ current_user.user.id }}');" class="button is-success is-pulled-left">Gå med i vald förening</button>
                     </div>
                 </div>
 
-                <div class="content">
-                    <p><br></p>
+                <div id="joinNotification" class="notification is-success is-hidden">
+                    <button type="button" class="delete" onclick="hideNotification('joinNotification');"></button>
+                    <p id="joinText">Ändringar sparade!</p>
                 </div>
 
                 <div class="content">
@@ -315,5 +313,6 @@
 </section>
 {% end %}
 {% block scripts %}
+<script src="{{ static_url('js/api.js') }}"></script>
 <script src="{{ static_url('js/profile.js') }}"></script>
 {% end %}

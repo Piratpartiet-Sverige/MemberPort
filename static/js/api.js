@@ -1,3 +1,7 @@
+function convertDictToBody(dict) {
+    return Object.keys(dict).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(dict[key])).join('&');
+}
+
 function updateMunicipalities() {
     sendMunicipalityRequest()
         .then(response => response.json())
@@ -29,6 +33,59 @@ async function sendMunicipalityRequest() {
           'Content-Type': 'application/json',
           'X-XSRFToken': document.getElementsByName("_xsrf")[0].value
         },
+        redirect: 'error',
+        referrerPolicy: 'same-origin'
+    });
+
+    return response;
+}
+
+async function sendMembershipRequest(user_id, org_id) {
+    var data = {
+        "organization": org_id,
+        "user": user_id
+    }
+
+    data = convertDictToBody(data);
+
+    const response = await fetch("/api/membership", {
+        method: 'POST',
+        cache: 'no-cache',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-XSRFToken': document.getElementsByName("_xsrf")[0].value
+        },
+        body: data,
+        redirect: 'error',
+        referrerPolicy: 'same-origin'
+    });
+
+    return response;
+}
+
+async function sendEndMembershipRequest(membership_id, reason) {
+    var data = null;
+
+    if (reason != undefined && reason != null && reason !== "") {
+        data = {
+            "reason": reason
+        }
+    
+        data = convertDictToBody(data);
+    }
+
+    console.log(data);
+
+    const response = await fetch("/api/membership/" + membership_id, {
+        method: 'DELETE',
+        cache: 'no-cache',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-XSRFToken': document.getElementsByName("_xsrf")[0].value
+        },
+        body: data,
         redirect: 'error',
         referrerPolicy: 'same-origin'
     });
