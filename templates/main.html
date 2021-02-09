@@ -74,7 +74,7 @@
         }
     }
     {% if feed_url != "" %}
-    const RSS_URL = 'https://piratpartiet.se/feed/';
+    const RSS_URL = '{{ feed_url }}';
 
     fetch(RSS_URL)
         .then(response => response.text())
