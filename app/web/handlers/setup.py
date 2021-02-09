@@ -21,6 +21,7 @@ class SetupHandler(BaseHandler):
 
         org_name = self.get_argument("org.name")
         org_description = self.get_argument("org.description")
+        feed_url = self.get_argument("feed_url")
 
         countries = list()
         countries.append(UUID('00000000-0000-0000-0000-000000000000'))
@@ -35,6 +36,11 @@ class SetupHandler(BaseHandler):
 
         if result is False:
             return self.respond("Something went wrong when setting default organization", 500)
+
+        result = await settings_dao.set_feed_url(feed_url)
+
+        if result is False:
+            return self.respond("Something went wrong when setting the feed url", 500)
 
         await settings_dao.set_initialized(True)
 

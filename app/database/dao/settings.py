@@ -22,6 +22,32 @@ class SettingsDao(BaseDao):
 
         return initialized
 
+    async def get_feed_url(self) -> str:
+        sql = """SELECT s.feed_url FROM settings s JOIN (
+            SELECT feed_url, MAX(created) AS created
+            FROM settings se
+            GROUP BY feed_url
+        ) lastEntry ON s.feed_url = lastEntry.feed_url AND s.created = lastEntry.created;"""
+
+        async with self.pool.acquire() as con:  # type: Connection
+            row = await con.fetchrow(sql)
+
+        feed_url = row["feed_url"]
+
+        return feed_url
+
+    async def set_feed_url(self, url: str) -> bool:
+        sql = 'UPDATE settings SET feed_url = $1;'
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                await con.execute(sql, url)
+        except Exception:
+            logger.error("An error occured when trying to set the feed url!", stack_info=True)
+            return False
+
+        return True
+
     async def set_default_organization(self, org_id: UUID) -> bool:
         sql = 'UPDATE settings SET default_organization = $1;'
 

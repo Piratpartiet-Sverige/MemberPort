@@ -4,7 +4,7 @@
 <section class="section">
 
     <div class="notification is-warning" id="onboardingNotification">
-        <button class="delete" onclick="toggleNotification()"></button>
+        <button class="delete" onclick="toggleNotification('onboardingNotification')"></button>
         <div class="content">
             <h3 class="title">Välkommen {{ name }}! Ditt medlemsnummer är: #{{ str(number) }}</h3>
             <p>Som ny medlem i Piratpartiet rekommenderar vi att du går igenom den här onboardingen.</p>
@@ -16,83 +16,88 @@
 
     <div class="columns">
         <div class="column is-one-fifth">
-            <aside class="menu">
-                <p class="menu-label">
-                    General
-                </p>
-                <ul class="menu-list">
-                    <li><a>Dashboard</a></li>
-                    <li><a>Customers</a></li>
-                </ul>
-            </aside>
+            {% include 'menu.html' %}
         </div>
-
         <div class="column">
-            <div name="testmodal" id="testmodal" class="modal">
-                <div class="modal-background"></div>
-                <div class="modal-card">
-                    <header class="modal-card-head">
-                        <p class="modal-card-title">Modal title</p>
-                        <button class="delete" aria-label="close" onclick="toggleModal2()"></button>
-                    </header>
-                    <section class="modal-card-body">
-                        <!-- Content ... -->
-                    </section>
-                    <footer class="modal-card-foot">
-                        <button class="button is-success">Save changes</button>
-                        <button class="button">Cancel</button>
-                    </footer>
+            {% if feed_url != "" %}
+            <div class="content">
+                <h1 class="title has-text-centered">
+                    Senaste nytt
+                </h1>
+                <div class="box">
+                    <article class="message is-primary" id="news1">
+                        <div class="message-header">
+                            <p id="news1-title">Rubrik</p>
+                            <button class="delete" aria-label="delete" onclick="toggleNotification('news1')"></button>
+                        </div>
+                        <div class="message-body">
+                            <p id="news1-description">
+                                Kort beskrivning
+                            </p>
+                            <a target="_blank" rel="noopener noreferrer" id="news1-link"><button class="button is-info">Läs mer...</button></a>
+                        </div>
+                    </article>
+                    <article class="message is-primary" id="news2">
+                        <div class="message-header">
+                            <p id="news2-title">Rubrik</p>
+                            <button class="delete" aria-label="delete" onclick="toggleNotification('news2')"></button>
+                        </div>
+                        <div class="message-body">
+                            <p id="news2-description">
+                                Kort beskrivning
+                            </p>
+                            <a target="_blank" rel="noopener noreferrer" id="news2-link"><button class="button is-info">Läs mer...</button></a>
+                        </div>
+                    </article>
                 </div>
             </div>
-
-            <div class="card is-fullwidth">
-                <header class="card-header">
-                    <p class="card-header-title">Card #2</p>
-                    <a class="card-header-icon card-toggle" onclick="toggleCard('testcard');toggleCard('testcard2')">
-                        <i class="fa fa-angle-down"></i>
-                    </a>
-                </header>
-                <div class="card-content is-hidden" id="testcard">
-                    <div class="content">
-                        Some more content. Look at all this whitespace. <small>(Unless you are on mobile)</small>
-                        <button class="button" onclick="toggleCard2()">Klicka</button>
-                    </div>
-                </div>
-                <footer class="card-footer is-hidden" id="testcard2">
-                    <a href="#" class="card-footer-item">Save</a>
-                    <a href="#" class="card-footer-item">Edit</a>
-                    <a href="#" class="card-footer-item">Delete</a>
-                </footer>
+            {% end %}
+            <div class="content">
+                <h1 class="title has-text-centered">
+                    Kalender
+                </h1>
+                <!--- The idea is to embed our calendar here --->
             </div>
-
         </div>
     </div>
 </section>
+{% end %}
 
-<section class="section">
-    <div class="container">
-        <button class="button" onclick="toggleModal()">Klicka</button>
-    </div>
-</section>
-
+{% block scripts %}
 <script>
-    function toggleModal2() {
-        document.getElementById("testmodal").classList.remove('is-active');
-    }
-</script>
-<script>
-    function toggleModal() {
-        document.getElementById("testmodal").classList.add('is-active');
-    }
-</script>
-<script>
-    function toggleCard(id) {
-        if (document.getElementById(id).classList.contains('is-hidden')) {
-            document.getElementById(id).classList.remove('is-hidden');
-        }
-        else {
-            document.getElementById(id).classList.add('is-hidden');
+    function toggleNotification(id) {
+        let notification = document.getElementById(id);
+        if (notification.classList.contains('is-hidden')) {
+            notification.classList.remove('is-hidden');
+        } else {
+            notification.classList.add('is-hidden');
         }
     }
+    {% if feed_url != "" %}
+    const RSS_URL = 'https://piratpartiet.se/feed/';
+
+    fetch(RSS_URL)
+        .then(response => response.text())
+        .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
+        .then(data => {
+            const items = data.querySelectorAll("item");
+
+            if (items.length >= 1) {
+                document.getElementById('news1-title').textContent = items[0].querySelector("title").textContent;
+                document.getElementById('news1-link').setAttribute("href", items[0].querySelector("link").innerHTML);
+                document.getElementById('news1-description').textContent = items[0].querySelector("description").textContent;
+            } else {
+                document.getElementById('news1').remove();
+            }
+
+            if (items.length >= 2) {
+                document.getElementById('news2-title').textContent = items[1].querySelector("title").textContent;
+                document.getElementById('news2-link').setAttribute("href", items[1].querySelector("link").innerHTML);
+                document.getElementById('news2-description').textContent = items[1].querySelector("description").textContent;
+            } else {
+                document.getElementById('news2').remove();
+            }
+        });
+    {% end %}
 </script>
 {% end %}
