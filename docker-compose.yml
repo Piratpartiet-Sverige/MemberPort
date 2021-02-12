@@ -68,6 +68,20 @@ services:
     networks:
       - intranet
 
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    volumes:
+      -
+        type: bind
+        source: ./db_data
+        target: /var/lib/rabbitmq
+    ports:
+      - "4369:4369"
+      - "5672:5672"
+      - "8080:15672"
+    networks:
+      - intranet
+
   pirate-kratos:
     depends_on:
       - pirate-kratos-migrate
