@@ -80,16 +80,39 @@ class SignUpHandler(BaseHandler):
 
         dao = GeographyDao(self.db)
         countries = await dao.get_countries()
-        municipalities = await dao.get_municipalities_by_country(countries[0].id)
+        placeholders={
+            "password": "Lösenord",
+            "traits.name.first": "Förnamn",
+            "traits.name.last": "Efternamn",
+            "traits.postal_address.street": "Gatuadress",
+            "traits.postal_address.postal_code": "Postnummer",
+            "traits.postal_address.city": "Stad",
+            "traits.phone": "Telefonnummer",
+            "traits.email": "E-post"
+        }
+
+        positions = {
+            "csrf_token": 0,
+            "traits.name.first": 1,
+            "traits.name.last": 2,
+            "traits.email": 3,
+            "traits.phone": 4,
+            "password": 5,
+            "traits.postal_address.street": 6,
+            "traits.postal_address.postal_code": 7,
+            "traits.postal_address.city": 8,
+            "traits.municipality": 9,
+            "traits.country": 10
+        }
 
         self.render(
             "sign-up.html",
             flow=flow,
             csrf_token=csrf_token,
             error=error,
-            inputs=inputs,
-            municipalities=municipalities,
-            countries=countries
+            inputs=sorted(inputs, key=lambda field: positions[field.name]),
+            countries=countries,
+            placeholders=placeholders
         )
 
 

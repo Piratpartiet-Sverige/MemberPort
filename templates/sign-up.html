@@ -20,70 +20,55 @@
                         </figure>
                         {% module xsrf_form_html() %}
                         <form action="/kratos/self-service/registration/methods/password?flow={{ flow }}" method="post">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                            <div class="field">
-                                <div class="control">
-                                    <input name="traits.name.first" class="input is-large" type="text" placeholder="Förnamn" />
-                                </div>
-                            </div>
-                            <div class="field">
-                                <div class="control">
-                                    <input name="traits.name.last" class="input is-large" type="text" placeholder="Efternamn" />
-                                </div>
-                            </div>
-                            <div class="field">
-                                <div class="control">
-                                    <input name="traits.email" class="input is-large" type="email" placeholder="E-post" />
-                                </div>
-                            </div>
-                            <div class="field">
-                                <div class="control">
-                                    <input name="traits.phone" class="input is-large" type="tel" placeholder="Telefonnummer" />
-                                </div>
-                            </div>
-                            <div class="field">
-                                <div class="control">
-                                    <input name="password" class="input is-large" type="password" placeholder="Lösenord" />
-                                </div>
-                            </div>
-                            <div class="field">
-                                <div class="control">
-                                    <input name="traits.postal_address.street" class="input is-large" type="text" placeholder="Gatuadress" />
-                                </div>
-                            </div>
-                            <div class="field">
-                                <div class="control">
-                                    <input name="traits.postal_address.postal_code" class="input is-large" type="text" placeholder="Postnummer" />
-                                </div>
-                            </div>
-                            <div class="field">
-                                <div class="control">
-                                    <input name="traits.postal_address.city" class="input is-large" type="text" placeholder="Postort" />
-                                </div>
-                            </div>
-                            <div class="field">
-                                <div class="control">
-                                    <div class="select is-large" style="width: 100%;">
-                                        <select id="traits.municipality" name="traits.municipality" style="width: 100%;">
-                                            <option disabled selected value>Välj din kommun</option>
-                                            {% for municipality in municipalities %}
-                                            <option value="{{ municipality.name }}">{{ municipality.name }}</option>
-                                            {% end %}
-                                        </select>
+                            {% for input in inputs %}
+                            {% if input.type == 'hidden' %}
+                                <input name="{{ input.name }}" type="hidden" value="{{ input.value }}" />
+                            {% elif input.name == 'traits.municipality' %}
+                                <div class="field">
+                                    <div class="control">
+                                        <div class="select is-large" style="width: 100%;">
+                                            <select 
+                                                id="{{ input.name }}"
+                                                name="{{ input.name }}"
+                                                style="width: 100%;"
+                                                data-value="{{ input.value }}">
+                                                <option disabled selected value>Välj din kommun</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="field">
-                                <div class="control">
-                                    <div class="select is-large">
-                                        <select id="traits.country" name="traits.country" value="Sverige" onchange="updateMunicipalities()">
-                                            {% for country in countries %}
-                                            <option value="{{ country.name }}">{{ country.name }}</option>
-                                            {% end %}
-                                        </select>
+                            {% elif input.name == 'traits.country' %}
+                                <div class="field">
+                                    <div class="control">
+                                        <div class="select is-large">
+                                            <select
+                                                id="{{ input.name }}"
+                                                name="{{ input.name }}"
+                                                onchange="updateMunicipalities()">
+                                                {% for country in countries %}
+                                                <option
+                                                    value="{{ country.name }}"
+                                                    {{ 'selected' if input.value == country.name else '' }}
+                                                    >{{ country.name }}</option>
+                                                {% end %}
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            {% else %}
+                                <div class="field">
+                                    <div class="control">
+                                        <input
+                                            name="{{ input.name }}"
+                                            class="input is-large"
+                                            type="{{ input.type }}"
+                                            placeholder="{{ placeholders[input.name] }}"
+                                            value="{{ input.value if input.value != None else '' }}"
+                                            />
+                                    </div>
+                                </div>
+                            {% end %}
+                        {% end %}
                             <button type="submit" class="button is-block is-info is-large is-fullwidth">
                                 Sign up
                             </button>
@@ -104,4 +89,5 @@
     </section>
 </body>
 <script src="{{ static_url('js/api.js') }}"></script>
+<script src="{{ static_url('js/sign-up.js') }}"></script>
 </html>

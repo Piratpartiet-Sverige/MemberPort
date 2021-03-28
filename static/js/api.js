@@ -12,10 +12,13 @@ function updateMunicipalities() {
                 municipalities.removeChild(municipalities.firstChild);
             }
 
+            var selectedValue = municipalities.dataset.value
+
             var newHTML = "<option disabled selected value>Välj din kommun</option>";
 
             for (const [id, municipality] of Object.entries(response.data)) {
-                newHTML += "<option value=\"" + municipality.name + "\">" + municipality.name + "</option>\n";
+                var selectedStr = selectedValue === municipality.name ? ' selected' : ''
+                newHTML += "<option value=\"" + municipality.name + "\" " + selectedStr + ">" + municipality.name + "</option>\n";
             }
 
             municipalities.innerHTML = newHTML;
