@@ -1,0 +1,22 @@
+{
+  "name": "memberport",
+  "version": "1.0.0",
+  "description": "A membership management system, written in Python with the [Tornado web-framework](https://www.tornadoweb.org/en/stable/) and [ORY Kratos](https://www.ory.sh/kratos) as the authentication and identification handler.",
+  "main": "",
+  "scripts": {
+    "watch": "npx webpack watch",
+    "build": "npx webpack"
+  },
+  "devDependencies": {
+    "awesome-typescript-loader": "^5.2.1",
+    "bulma": "^0.9.2",
+    "css-loader": "^5.2.0",
+    "mini-css-extract-plugin": "^1.4.0",
+    "node-sass": "^5.0.0",
+    "sass-loader": "^11.0.1",
+    "typescript": "^3.9.9",
+    "webpack": "^5.28.0",
+    "webpack-cli": "^4.6.0",
+    "webpack-dev-server": "^3.11.2"
+  }
+}
