@@ -12,3 +12,5 @@ app/plugins/*
 scc.exe
 .vscode/settings.json
 node_modules
+*bundle.js*
+*bundle.css*

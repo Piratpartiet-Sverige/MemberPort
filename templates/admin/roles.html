@@ -1,8 +1,5 @@
 {% extends "../base.html" %}
 {% block head %}
-<script src="{{ static_url('js/ag-grid-community.min.noStyle.js') }}"></script>
-<link rel="stylesheet" href="{{ static_url('css/ag-grid.css') }}">
-<link rel="stylesheet" href="{{ static_url('css/ag-theme-alpine.css') }}">
 {% end %}
 {% block content %}
 <div class="section">
@@ -12,7 +9,7 @@
     <div id="myGrid" style="width: 100%; height: 80vh;" class="ag-theme-alpine"></div>
     <br>
     {% module xsrf_form_html() %}
-    <button onclick="saveRoles();" class="button is-success" style="margin-bottom: 1rem;">Spara</button>
+    <button id="save-roles" class="button is-success" style="margin-bottom: 1rem;">Spara</button>
     <div id="successNotification" class="notification is-success is-hidden">
         <button type="button" class="delete" onclick="hide('successNotification');"></button>
         <p id="successText"></p>
@@ -26,10 +23,9 @@
 {% end %}
 
 {% block scripts %}
-<script src="{{ static_url('js/checkbox-renderer.js') }}"></script>
 <script type="text/javascript" charset="utf-8">
     // specify the columns
-    var columnDefs = [
+    var __GRID_DATA_COLUMNS__ = [
         {
             headerName: "ID",
             field: "id",
@@ -50,7 +46,7 @@
     ];
 
     // specify the data
-    var rowData = [
+    var __GRID_DATA_ROWS__ = [
         {% for role in roles %}
         {
             id: "{{ role.id }}",
@@ -64,81 +60,6 @@
         },
         {% end %}
     ];
-
-    // let the grid know which columns and what data to use
-    var gridOptions = {
-        columnDefs: columnDefs,
-        rowData: rowData,
-        components: {
-            checkboxRenderer: CheckboxRenderer
-        }
-    };
-
-    // lookup the container we want the Grid to use
-    var eGridDiv = document.querySelector('#myGrid');
-
-    // create the grid passing in the div to use together with the columns & data we want to use
-    new agGrid.Grid(eGridDiv, gridOptions);
-
-    async function sendRequest() {
-        let permissions = [];
-        for (let index = 2; index < columnDefs.length; index++) {
-            permissions.push(columnDefs[index].field);
-        }
-
-        let rolesData = {}; 
-
-        gridOptions.api.forEachNode((node, index) => {
-            rolesData[node.data.id] = {};
-            for (let i = 0; i < permissions.length; i++) {
-                rolesData[node.data.id][permissions[i]] = node.data[permissions[i]];
-            }
-        });
-
-        const response = await fetch("/admin/roles", {
-            method: 'PUT',
-            mode: 'cors',
-            cache: 'no-cache',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-XSRFToken': document.getElementsByName("_xsrf")[0].value
-            },
-            redirect: 'follow', // manual, *follow, error
-            referrerPolicy: 'same-origin',
-            body: JSON.stringify(rolesData)
-        });
-
-        return response;
-    }
-
-    function show(ID) {
-        document.getElementById(ID).classList.remove('is-hidden');
-    }
-
-    function hide(ID) {
-        document.getElementById(ID).classList.add('is-hidden');
-    }
-
-    function saveRoles() {
-        sendRequest()
-                .then(response => {
-                    if (response.ok) {
-                        hide("errorNotification");
-                        var successElement = document.getElementById("successText");
-                        successElement.innerHTML = "Ändringar sparade";
-                        show("successNotification");
-                    } else {
-                        response.json().then(response => {
-                            if (response.error.code >= 400) {
-                                hide("successNotification");
-                                var errorElement = document.getElementById("errorText");
-                                errorElement.innerHTML = response.error.message;
-                                show("errorNotification");
-                            }
-                        });
-                    }
-                });
-    }
 </script>
+<script src="{{ static_url('roles.bundle.js') }}"></script>
 {% end %}

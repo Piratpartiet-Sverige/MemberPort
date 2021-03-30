@@ -1,8 +1,22 @@
 {% extends "../base.html" %}
 {% block head %}
-<script src="{{ static_url('js/ag-grid-community.min.noStyle.js') }}"></script>
-<link rel="stylesheet" href="{{ static_url('css/ag-grid.css') }}">
-<link rel="stylesheet" href="{{ static_url('css/ag-theme-alpine.css') }}">
+<script type="text/javascript">
+    var __GRID_DATA__ = [
+    {% for member in members %}
+    {
+        number: "{{ member.traits['member_number'] }}",
+        name: "{{ member.traits['name']['first'] + " " + member.traits['name']['last'] }}",
+        email: "{{ member.traits['email'] }}",
+        phone: "070000000",
+        postal_code: "{{ member.traits['postal_address']['postal_code'] }}",
+        city: "{{ member.traits['postal_address']['city'] }}",
+        street: "{{ member.traits['postal_address']['street'] }}",
+        country: "{{ member.traits['country'] }}"
+    },
+    {% end %}
+];
+</script>
+<script src="{{ static_url('members.bundle.js') }}"></script>
 {% end %}
 {% block content %}
 <div class="section">
@@ -21,46 +35,5 @@
 {% end %}
 
 {% block scripts %}
-<script type="text/javascript" charset="utf-8">
-    // specify the columns
-    var columnDefs = [
-        { headerName: "Medlemsnummer", field: "number" },
-        { headerName: "Namn", field: "name" },
-        { headerName: "E-mail", field: "email" },
-        { headerName: "Telefon", field: "phone" },
-        { headerName: "Postkod", field: "postal_code" },
-        { headerName: "Stad", field: "city" },
-        { headerName: "Adress", field: "street" },
-        { headerName: "Land", field: "country" },
-    ];
 
-    // specify the data
-    var rowData = [
-        {% for member in members %}
-        {
-            number: "{{ member.traits['member_number'] }}",
-            name: "{{ member.traits['name']['first'] + " " + member.traits['name']['last'] }}",
-            email: "{{ member.traits['email'] }}",
-            phone: "070000000",
-            postal_code: "{{ member.traits['postal_address']['postal_code'] }}",
-            city: "{{ member.traits['postal_address']['city'] }}",
-            street: "{{ member.traits['postal_address']['street'] }}",
-            country: "{{ member.traits['country'] }}"
-        },
-        {% end %}
-    ];
-
-    // let the grid know which columns and what data to use
-    var gridOptions = {
-        columnDefs: columnDefs,
-        rowData: rowData
-    };
-
-    // lookup the container we want the Grid to use
-    var eGridDiv = document.querySelector('#myGrid');
-
-    // create the grid passing in the div to use together with the columns & data we want to use
-    new agGrid.Grid(eGridDiv, gridOptions);
-
-</script>
 {% end %}

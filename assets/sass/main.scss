@@ -9,3 +9,7 @@
 @import "bulma/sass/layout/_all.sass";
 @import "bulma/sass/grid/_all.sass";
 @import "bulma/sass/helpers/_all.sass";
+
+// ag-grid
+@import '@ag-grid-community/core/dist/styles/ag-grid.scss';
+@import '@ag-grid-community/core/dist/styles/ag-theme-alpine/sass/ag-theme-alpine.scss';

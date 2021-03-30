@@ -4,7 +4,7 @@
   "description": "A membership management system, written in Python with the [Tornado web-framework](https://www.tornadoweb.org/en/stable/) and [ORY Kratos](https://www.ory.sh/kratos) as the authentication and identification handler.",
   "main": "",
   "scripts": {
-    "watch": "npx webpack watch",
+    "watch": "npx webpack watch --mode development",
     "build": "npx webpack"
   },
   "devDependencies": {
@@ -14,9 +14,13 @@
     "mini-css-extract-plugin": "^1.4.0",
     "node-sass": "^5.0.0",
     "sass-loader": "^11.0.1",
+    "ts-loader": "^8.1.0",
     "typescript": "^3.9.9",
     "webpack": "^5.28.0",
     "webpack-cli": "^4.6.0",
     "webpack-dev-server": "^3.11.2"
+  },
+  "dependencies": {
+    "@ag-grid-community/all-modules": "^25.1.0"
   }
 }

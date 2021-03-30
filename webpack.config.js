@@ -1,16 +1,48 @@
 const path = require('path')
+const fs = require('fs')
 const MiniCSSExtractPlugin = require('mini-css-extract-plugin')
 
 const isDev = process.env.NODE_ENV === 'development'
 
+const tsRegex = /\.tsx?$/
+const assetRegex = /\.(png|jpg|gif|eot|svg|ttf|woff|woff2|otf)$/
+
+function walk (dir) {
+  let results = []
+  const list = fs.readdirSync(dir)
+  list.forEach(function (file) {
+    file = path.join(dir, file)
+    const stat = fs.statSync(file)
+    if (stat && stat.isDirectory()) results = results.concat(walk(file))
+    else results.push(file)
+  })
+  return results.map((file) => `./${file}`)
+}
+
+function dirname (file) {
+  const relative = path.relative('./assets/ts/entrypoints', file)
+  const ext = path.extname(file)
+
+  return relative.replace(ext, '')
+}
+
+const entryPoints = walk('./assets/ts/entrypoints').reduce((acc, cur) => {
+  const ext = path.extname(cur)
+  const directory = dirname(cur)
+
+  if (tsRegex.test(ext) ||assetRegex.test(ext)) {
+    acc[directory] ? acc[directory].push(cur) : acc[directory] = [ cur ]
+  }
+
+  return acc
+}, {})
+
 module.exports = {
   mode: 'production',
-  entry: {
-    client: ['./assets/ts/app.ts']
-  },
+  entry: entryPoints,
   output: {
     filename: '[name].bundle.js',
-    path: path.join(__dirname, '/static/js')
+    path: path.join(__dirname, 'static')
   },
 
   // Enable sourcemaps for debugging webpack's output.
@@ -27,13 +59,10 @@ module.exports = {
         test: /\.tsx?$/,
         use: [
           {
-            loader: 'awesome-typescript-loader',
-            options: {
-              useCache: true,
-              silent: true
-            }
+            loader: 'ts-loader'
           }
-        ]
+        ],
+        exclude: /node_modules/
       },
       {
         test: /\.(sa|sc|c)ss$/,
@@ -55,8 +84,7 @@ module.exports = {
   },
   plugins: [
     new MiniCSSExtractPlugin({
-      //filename: 'css/[name].[contenthash].bundle.css'
-      filename: '../css/[name].bundle.css'
+      filename: 'css/[name].bundle.css'
     })
   ]
 }
