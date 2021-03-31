@@ -80,7 +80,7 @@ class SignUpHandler(BaseHandler):
 
         dao = GeographyDao(self.db)
         countries = await dao.get_countries()
-        placeholders={
+        placeholders = {
             "password": "Lösenord",
             "traits.name.first": "Förnamn",
             "traits.name.last": "Efternamn",

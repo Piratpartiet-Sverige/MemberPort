@@ -80,5 +80,5 @@ class ModelsTest(TestCase):
         self.assertEqual(id.__str__(), json["id"])
         self.assertEqual(mun.name, json["name"])
         self.assertEqual(created.isoformat(' ', 'seconds'), json["created"])
-        self.assertEqual(mun.country_id, json["country_id"])
+        self.assertEqual(mun.country_id.__str__(), json["country_id"])
         self.assertEqual(area_id.__str__(), json["area_id"])
