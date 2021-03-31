@@ -153,6 +153,6 @@ def municipality_to_json(municipality: Municipality) -> dict:
         'id': municipality.id.__str__(),
         'name': municipality.name,
         'created': municipality.created.isoformat(' ', 'seconds'),
-        'country_id': municipality.country_id,
+        'country_id': municipality.country_id.__str__(),
         'area_id': municipality.area_id.__str__()
     }
