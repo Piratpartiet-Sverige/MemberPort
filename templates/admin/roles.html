@@ -25,7 +25,7 @@
 {% block scripts %}
 <script type="text/javascript" charset="utf-8">
     // specify the columns
-    var __GRID_DATA_COLUMNS__ = [
+    var _GRID_DATA_COLUMNS_ = [
         {
             headerName: "ID",
             field: "id",
@@ -46,7 +46,7 @@
     ];
 
     // specify the data
-    var __GRID_DATA_ROWS__ = [
+    var _GRID_DATA_ROWS_ = [
         {% for role in roles %}
         {
             id: "{{ role.id }}",

@@ -7,3 +7,4 @@ exclude =
     static
     venv
     v2
+    node_modules

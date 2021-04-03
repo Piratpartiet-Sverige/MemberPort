@@ -1,5 +1,5 @@
-export function afterPageLoad() {
-  return new Promise<void>((resolve) => {
+export async function afterPageLoad (): Promise<void> {
+  return await new Promise<void>((resolve) => {
     if (document.readyState !== 'loading') {
       resolve()
     } else {
