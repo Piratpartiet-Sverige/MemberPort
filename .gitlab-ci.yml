@@ -28,15 +28,20 @@ test:
     - pip install flake8 flake8-bandit
     - flake8 --statistics
 
-# bandit-run:
-#  script:
-#    - pip install bandit
-#    - bandit -r app
+bandit-run:
+  image: python:3.7-alpine
+  before_script:
+    - python -V
+    - python -m venv venv
+    - source venv/bin/activate
+  script:
+    - pip install bandit
+    - bandit -r app
 
 unit-tests:
   image: python:3.8-alpine
   before_script:
-    - python -V  # Print out python version for debugging
+    - python -V
     - python -m venv venv
     - source venv/bin/activate
   script:
