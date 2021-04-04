@@ -45,6 +45,10 @@ By default MemberPort should be available on `http://127.0.0.1:8888/`.
 
 The Tornado server will restart automatically with debug mode on when a change to a source file is detected.
 
+### Assets
+
+Webpack is used to bundle Javascript and Sass files. Install nodejs and run `npm i` when setting up the project. To compile the assets on every file change run `npm run watch`.
+
 ### Unit tests
 
 You can run tests with this command:

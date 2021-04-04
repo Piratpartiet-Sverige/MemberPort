@@ -1,9 +1,4 @@
 {% extends "../base.html" %}
-{% block head %}
-<script src="{{ static_url('js/ag-grid-community.min.noStyle.js') }}"></script>
-<link rel="stylesheet" href="{{ static_url('css/ag-grid.css') }}">
-<link rel="stylesheet" href="{{ static_url('css/ag-theme-alpine.css') }}">
-{% end %}
 {% block content %}
 {% module xsrf_form_html() %}
 <div class="section">
@@ -22,95 +17,21 @@
 </div>
 {% end %}
 {% block scripts %}
-<script src="{{ static_url('js/checkbox-renderer.js') }}"></script>
-<script src="{{ static_url('js/button-renderer.js') }}"></script>
-<script type="text/javascript" charset="utf-8">
-    async function deleteData(url = '', data = {}) {
-        const response = await fetch(url, {
-            method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
-            mode: 'cors', // no-cors, *cors, same-origin
-            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-            credentials: 'same-origin', // include, *same-origin, omit
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer',
-            body: data
-        });
-        return await response.json(); // parses JSON response into native JavaScript objects
-    }
-
-    // specify the columns
-    var columnDefs = [
-        { headerName: "Namn", field: "name" },
-        { headerName: "Beskrivning", field: "description" },
-        { headerName: "Aktiv", field: "active", cellRenderer: 'checkboxRenderer' },
-        { headerName: "Ändra", field: "edit", cellRenderer: 'buttonRenderer' },
-        { headerName: "Ta bort", field: "delete", cellRenderer: 'buttonRenderer' }
-    ]
-
-    // specify the data
-    var rowData = [
+<script type="text/javascript">
+// specify the data
+var _GRID_DATA_= [
         {% for organization in organizations %}
         {
+            id: "{{ organization.id }}",
             name: "{{ organization.name }}",
             description: "{{ organization.description }}",
             active: {
                 checked: {{ "true" if organization.active else "false"}},
                 disabled: true
-            },
-            edit: {
-                label: "Ändra",
-                onClick: () => { window.location.href = 'edit-organization?id={{ organization.id }}' }
-            },
-            delete: {
-                label: "Ta bort",
-                onClick: () => {
-                    const result = confirm("Är du säker på att du vill ta bort {{ organization.name}}")
-                    if (result) {
-                        const details = {
-                            '_xsrf': document.getElementsByName("_xsrf")[0].value
-                        }
-
-                        const formBody = Object.keys(details).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(details[key])).join('&')
-
-                        fetch('/api/organization/{{ organization.id }}', {
-                            method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
-                            mode: 'cors', // no-cors, *cors, same-origin
-                            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-                            credentials: 'same-origin', // include, *same-origin, omit
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                            },
-                            redirect: 'follow',
-                            referrerPolicy: 'no-referrer',
-                            body: formBody
-                        })
-                        .then(response => {
-                            if (response.status === 203) { location.reload(true) }
-                        })
-                    }
-                }
             }
         },
         {% end %}
-    ];
+    ];</script>
+<script src="{{ static_url('organizations.bundle.js') }}"></script>
 
-    // let the grid know which columns and what data to use
-    var gridOptions = {
-        columnDefs: columnDefs,
-        rowData: rowData,
-        components: {
-            buttonRenderer: ButtonRenderer,
-            checkboxRenderer: CheckboxRenderer
-        }
-    };
-
-    // lookup the container we want the Grid to use
-    var eGridDiv = document.querySelector('#organizations');
-
-    // create the grid passing in the div to use together with the columns & data we want to use
-    new agGrid.Grid(eGridDiv, gridOptions)
-</script>
 {% end %}
