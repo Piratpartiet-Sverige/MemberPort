@@ -36,8 +36,8 @@ afterPageLoad().then(() => {
 
 async function sendRequest (): Promise<Response> {
   const permissions: string[] = []
-  for (let index = 2; index < __GRID_DATA_COLUMNS__.length; index++) {
-    permissions.push(__GRID_DATA_COLUMNS__[index].field)
+  for (let index = 2; index < _GRID_DATA_COLUMNS_.length; index++) {
+    permissions.push(_GRID_DATA_COLUMNS_[index].field)
   }
 
   const rolesData: {[key: string]: any} = {}
