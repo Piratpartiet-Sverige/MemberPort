@@ -34,7 +34,7 @@ const rowData = _GRID_DATA_.map((row) => ({
   delete: {
     label: 'Ta bort',
     onClick: () => {
-      const result = confirm('Är du säker på att du vill ta bort {{ organization.name}}')
+      const result = confirm(`Är du säker på att du vill ta bort ${row.name}`)
       if (result) {
         const details: { [key: string]: string } = {
           _xsrf: document.querySelector<HTMLInputElement>('[name=_xsrf]')?.value ?? ''
