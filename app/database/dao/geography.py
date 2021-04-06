@@ -39,6 +39,28 @@ class GeographyDao(BaseDao):
 
         return area
 
+    async def get_area_by_id(self, area_id: UUID) -> Union[Area, None]:
+        sql = 'SELECT name, created, "country", path FROM areas WHERE id = $1;'
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                row = await con.fetchrow(sql, area_id)
+        except Exception:
+            logger.error("An error occured when trying to create new area!", stack_info=True)
+            return None
+
+        area = None
+
+        if row is not None:
+            area = Area()
+            area.id = area_id
+            area.name = row["name"]
+            area.created = row["created"]
+            area.country_id = row["country"]
+            area.path = row["path"]
+
+        return area
+
     async def get_areas_by_country(self, country_id: UUID) -> list:
         sql = 'SELECT id, name, created, path FROM areas WHERE "country" = $1;'
 
@@ -105,16 +127,38 @@ class GeographyDao(BaseDao):
 
         return path
 
-    async def rename_area(self, area_id: UUID, name: str) -> bool:
-        sql = 'UPDATE areas SET name = $2 WHERE id = $1;'
+    async def update_area(self, area_id: UUID, name: Union[str, None], country_id: Union[UUID, None], path: Union[str, None]) -> bool:
+        sql = 'UPDATE areas SET'
+        values_updated = 0
+        arguments = [area_id]
+
+        if name is not None:
+            sql += ' name = $' + str(values_updated + 2)
+            values_updated += 1
+            arguments.append(name)
+        if country_id is not None:
+            if values_updated > 0:
+                sql += ','
+
+            sql += ' "country" = $' + str(values_updated + 2)
+
+            values_updated += 1
+            arguments.append(country_id)
+        if path is not None:
+            if values_updated > 0:
+                sql += ','
+            sql += ' path = $' + str(values_updated + 2)
+            arguments.append(path)
+
+        sql += ' WHERE id = $1;'
 
         try:
             async with self.pool.acquire() as con:  # type: Connection
-                await con.execute(sql, area_id, name)
+                await con.execute(sql, *arguments)
         except Exception:
             logger.error(
-                "Something wen't wrong when trying to update name for area with ID: " + area_id.__str__(),
-                stack_info=True
+                "Something wen't wrong when trying to update area with ID: " + area_id.__str__(),
+                exc_info=True
             )
             return False
 

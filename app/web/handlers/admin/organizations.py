@@ -1,7 +1,6 @@
 import tornado.web
 
 from ory_kratos_client.configuration import Configuration
-from app.logger import logger
 from app.database.dao.organizations import OrganizationsDao
 from app.web.handlers.base import BaseHandler
 
@@ -16,7 +15,5 @@ class OrganizationsHandler(BaseHandler):
 
         configuration = Configuration()
         configuration.host = "http://pirate-kratos:4434"
-
-        logger.debug(organizations)
 
         await self.render("admin/organizations.html", admin=True, title="Organisationer", organizations=organizations)

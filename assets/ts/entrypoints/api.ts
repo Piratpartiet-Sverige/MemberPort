@@ -1,12 +1,19 @@
-function convertDictToBody(dict) {
+interface DataBody {
+    [index: string]: string;
+}
+
+function convertDictToBody(dict: DataBody) {
     return Object.keys(dict).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(dict[key])).join('&');
 }
 
-function updateMunicipalities() {
+export function updateMunicipalities() {
     sendMunicipalityRequest()
         .then(response => response.json())
         .then(response => {
             const municipalities = document.getElementById("traits.municipality");
+            if (municipalities == null) {
+                return;
+            }
 
             while (municipalities.firstChild) {
                 municipalities.removeChild(municipalities.firstChild);
@@ -16,17 +23,18 @@ function updateMunicipalities() {
 
             var newHTML = "<option disabled selected value>Välj din kommun</option>";
 
-            for (const [id, municipality] of Object.entries(response.data)) {
+            for (const [id, municipality] of Object.entries<DataBody>(response.data)) {
                 var selectedStr = selectedValue === municipality.name ? ' selected' : ''
-                newHTML += "<option value=\"" + municipality.name + "\" " + selectedStr + ">" + municipality.name + "</option>\n";
+                newHTML += "<option value=\"" + municipality.name + "\" " + selectedStr + ">" + municipality.name+ "</option>\n";
             }
 
             municipalities.innerHTML = newHTML;
         });
 }
 
-async function sendMunicipalityRequest() {
-    var country = document.getElementById("traits.country");
+export async function sendMunicipalityRequest() {
+    var country = document.getElementById("traits.country") as HTMLInputElement;
+    let xsrf = document.getElementsByName("_xsrf")[0] as HTMLInputElement;
 
     const response = await fetch("/api/geography/municipalities?country=" + country.value, {
         method: 'GET',
@@ -34,7 +42,7 @@ async function sendMunicipalityRequest() {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
-          'X-XSRFToken': document.getElementsByName("_xsrf")[0].value
+          'X-XSRFToken': xsrf.value
         },
         redirect: 'error',
         referrerPolicy: 'same-origin'
@@ -43,13 +51,14 @@ async function sendMunicipalityRequest() {
     return response;
 }
 
-async function sendMembershipRequest(user_id, org_id) {
+export async function sendMembershipRequest(user_id: string, org_id: string) {
     var data = {
         "organization": org_id,
         "user": user_id
     }
 
-    data = convertDictToBody(data);
+    let dataBody = convertDictToBody(data);
+    let xsrf = document.getElementsByName("_xsrf")[0] as HTMLInputElement;
 
     const response = await fetch("/api/membership", {
         method: 'POST',
@@ -57,9 +66,9 @@ async function sendMembershipRequest(user_id, org_id) {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          'X-XSRFToken': document.getElementsByName("_xsrf")[0].value
+          'X-XSRFToken': xsrf.value
         },
-        body: data,
+        body: dataBody,
         redirect: 'error',
         referrerPolicy: 'same-origin'
     });
@@ -67,7 +76,7 @@ async function sendMembershipRequest(user_id, org_id) {
     return response;
 }
 
-async function sendEndMembershipRequest(membership_id, reason) {
+export async function sendEndMembershipRequest(membership_id: string, reason: string) {
     var data = null;
 
     if (reason != undefined && reason != null && reason !== "") {
@@ -78,7 +87,7 @@ async function sendEndMembershipRequest(membership_id, reason) {
         data = convertDictToBody(data);
     }
 
-    console.log(data);
+    let xsrf = document.getElementsByName("_xsrf")[0] as HTMLInputElement;
 
     const response = await fetch("/api/membership/" + membership_id, {
         method: 'DELETE',
@@ -86,7 +95,7 @@ async function sendEndMembershipRequest(membership_id, reason) {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          'X-XSRFToken': document.getElementsByName("_xsrf")[0].value
+          'X-XSRFToken': xsrf.value
         },
         body: data,
         redirect: 'error',
@@ -96,12 +105,13 @@ async function sendEndMembershipRequest(membership_id, reason) {
     return response;
 }
 
-async function sendUpdateCountryDataRequest(country_id, name) {
+export async function sendUpdateCountryDataRequest(country_id: string, name: string): Promise<Response> {
     var data = {
         "name": name
     }
     
-    data = convertDictToBody(data);
+    let dataBody = convertDictToBody(data);
+    let xsrf = document.getElementsByName("_xsrf")[0] as HTMLInputElement;
 
     const response = await fetch("/api/geography/country/" + country_id, {
         method: 'PUT',
@@ -109,9 +119,9 @@ async function sendUpdateCountryDataRequest(country_id, name) {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          'X-XSRFToken': document.getElementsByName("_xsrf")[0].value
+          'X-XSRFToken': xsrf.value
         },
-        body: data,
+        body: dataBody,
         redirect: 'error',
         referrerPolicy: 'same-origin'
     });
@@ -119,12 +129,12 @@ async function sendUpdateCountryDataRequest(country_id, name) {
     return response;
 }
 
-async function sendUpdateAreaDataRequest(area_id, name, country_id, path) {
-    var data = {};
+export async function sendUpdateAreaDataRequest(area_id: string, name: string|null, country_id: string|null, path: string|null): Promise<Response> {
+    let data: DataBody;
 
-    if (area_id !== null && area_id !== undefined) {
-        data["area_id"] = area_id;
-    }
+    data = {
+        "area_id": area_id
+    };
 
     if (name !== null && name !== undefined) {
         data["name"] = name;
@@ -138,11 +148,8 @@ async function sendUpdateAreaDataRequest(area_id, name, country_id, path) {
         data["path"] = path;
     }
 
-    if (Object.keys(data).length === 0) {
-        return;
-    }
-
-    data = convertDictToBody(data);
+    let dataBody = convertDictToBody(data);
+    let xsrf = document.getElementsByName("_xsrf")[0] as HTMLInputElement;
 
     const response = await fetch("/api/geography/area/" + area_id, {
         method: 'PUT',
@@ -150,9 +157,9 @@ async function sendUpdateAreaDataRequest(area_id, name, country_id, path) {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          'X-XSRFToken': document.getElementsByName("_xsrf")[0].value
+          'X-XSRFToken': xsrf.value
         },
-        body: data,
+        body: dataBody,
         redirect: 'error',
         referrerPolicy: 'same-origin'
     });
@@ -160,14 +167,27 @@ async function sendUpdateAreaDataRequest(area_id, name, country_id, path) {
     return response;
 }
 
-async function sendUpdateMunicipalityDataRequest(municipality_id, name, country_id, area_id) {
-    var data = {
-        "name": name,
-        "country_id": country_id,
-        "area_id": area_id
+export async function sendUpdateMunicipalityDataRequest(municipality_id: string, name: string|null, country_id: string|null, area_id: string|null): Promise<Response> {
+    let data: DataBody;
+
+    data = {
+        "municipality_id": municipality_id
+    };
+
+    if (name !== null && name !== undefined) {
+        data["name"] = name;
     }
 
-    data = convertDictToBody(data);
+    if (country_id !== null && country_id !== undefined) {
+        data["country_id"] = country_id;
+    }
+
+    if (area_id !== null && area_id !== undefined) {
+        data["area_id"] = area_id;
+    }
+
+    let dataBody = convertDictToBody(data);
+    let xsrf = document.getElementsByName("_xsrf")[0] as HTMLInputElement;
 
     const response = await fetch("/api/geography/municipality/" + municipality_id, {
         method: 'PUT',
@@ -175,9 +195,9 @@ async function sendUpdateMunicipalityDataRequest(municipality_id, name, country_
         credentials: 'include',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          'X-XSRFToken': document.getElementsByName("_xsrf")[0].value
+          'X-XSRFToken': xsrf.value
         },
-        body: data,
+        body: dataBody,
         redirect: 'error',
         referrerPolicy: 'same-origin'
     });

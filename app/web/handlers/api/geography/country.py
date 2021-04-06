@@ -4,11 +4,26 @@ from app.web.handlers.base import BaseHandler
 
 
 class APICountryHandler(BaseHandler):
+    async def get(self, id: str):
+        country_id = self.check_uuid(id)
+
+        if country_id is None:
+            return self.respond("COUNTRY UUID IS MISSING", 400)
+
+        geo_dao = GeographyDao(self.db)
+
+        country = await geo_dao.get_country_by_id(country_id)
+
+        if country is None:
+            return self.respond("COUNTRY WITH SPECIFIED ID NOT FOUND", 404, None)
+
+        return self.respond("RETRIEVED COUNTRY", 200, country_to_json(country))
+
     async def put(self, id: str):
         country_id = self.check_uuid(id)
 
         if country_id is None:
-            return self.respond("NOT A VALID COUNTRY ID", 400)
+            return self.respond("COUNTRY UUID IS MISSING", 400)
 
         name = self.get_body_argument("name")
 

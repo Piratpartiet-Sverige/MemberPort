@@ -1,4 +1,7 @@
 {% extends "../base.html" %}
+{% block head %}
+<link rel="stylesheet" href="{{ static_url('css/geography.css') }}">
+{% end %}
 {% block content %}
 <section class="section">
     <div class="container">
@@ -15,7 +18,7 @@
                 </div>
             </div>
             <div class="column">
-                <button onclick="saveGeography();" class="button is-success">Spara</button>
+                <button id="saveButton" class="button is-success">Spara</button>
             </div>
             {% module xsrf_form_html() %}
         </div>
@@ -26,7 +29,7 @@
             <div class="modal-card">
                 <header class="modal-card-head">
                     <p class="modal-card-title">Ta bort geografi</p>
-                    <button onclick="closeDeleteModal();" class="delete" aria-label="close"></button>
+                    <button id="cancelDeleteSmall" class="delete" aria-label="close"></button>
                 </header>
                 <section class="modal-card-body">
                     <p id="deleteText">
@@ -34,9 +37,9 @@
                     </p>
                 </section>
                 <footer class="modal-card-foot">
-                    <button id="deleteNodeButton" class="button is-danger" onclick="deleteNode();closeDeleteModal();">Ta
+                    <button id="deleteNodeButton" class="button is-danger">Ta
                         bort</button>
-                    <button class="button" onclick="closeDeleteModal();">Avbryt</button>
+                    <button id="cancelDelete" class="button">Avbryt</button>
                 </footer>
             </div>
         </div>
@@ -45,15 +48,14 @@
             <div class="modal-card">
                 <header class="modal-card-head">
                     <p class="modal-card-title">Byt namn</p>
-                    <button onclick="closeEditModal();" class="delete" aria-label="close"></button>
+                    <button id="cancelEditSmall" class="delete" aria-label="close"></button>
                 </header>
                 <section class="modal-card-body">
                     <input class="input" id="newName" type="text" value="" placeholder="Namn">
                 </section>
                 <footer class="modal-card-foot">
-                    <button id="editNameButton" class="button is-success"
-                        onclick="changeNodeName();closeEditModal();">Ok</button>
-                    <button class="button" onclick="closeEditModal();">Avbryt</button>
+                    <button id="editNameButton" class="button is-success">Ok</button>
+                    <button id="cancelEdit" class="button">Avbryt</button>
                 </footer>
             </div>
         </div>
@@ -62,11 +64,9 @@
 {% end %}
 
 {% block scripts %}
-<script src="{{ static_url('js/api.js') }}"></script>
-<script src="{{ static_url('js/geography.js') }}"></script>
 <script>
-    var selectedCountryID = "";
-    var parentID = "";
+    let geodata = {};
+    let selectedCountryID = "";
 
     geodata["{{ selected_country.id }}"] = {
         name: "{{ selected_country.name }}",
@@ -74,7 +74,6 @@
     };
 
     selectedCountryID = "{{ selected_country.id }}";
-    addCountry("{{ selected_country.id }}", "{{ selected_country.name }}");
 
     {% for area in areas %}
     geodata["{{ area.id }}"] = {
@@ -82,20 +81,15 @@
         id: "{{ area.id }}",
         path: "{{ area.path }}"
     };
-    parentID = getParentID("{{ area.id }}", "{{ area.path }}", selectedCountryID);
-    addArea("{{ area.id }}", "{{ area.name }}", parentID);
     {% end %}
+
     {% for municipality in municipalities %}
     geodata["{{ municipality.id }}"] = {
         name: "{{ municipality.name }}",
         id: "{{ municipality.id }}",
         area: "{{ municipality.area_id }}"
     };
-    parentID = "{{ municipality.area_id }}";
-    if (parentID === "") {
-        parentID = selectedCountryID;
-    }
-    addMunicipality("{{ municipality.id }}", "{{ municipality.name }}", parentID);
     {% end %}
 </script>
+<script src="{{ static_url('geography.bundle.js') }}"></script>
 {% end %}
