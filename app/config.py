@@ -60,7 +60,6 @@ class Config:
         add_section_attribute("PostgreSQL", "password", "")
 
         add_section("TaskQueue")
-        add_section_attribute("TaskQueue", "backend_url", "")
         add_section_attribute("TaskQueue", "broker_url", "")
 
         add_section("Email")

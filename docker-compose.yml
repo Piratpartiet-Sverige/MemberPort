@@ -68,6 +68,46 @@ services:
     networks:
       - intranet
 
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      -
+        type: bind
+        source: ./config
+        target: /app/config
+      -
+        type: bind
+        source: ./app
+        target: /app/app
+    command: celery -A app.queue worker --loglevel=DEBUG
+    depends_on:
+      - member-port
+      - rabbitmq
+    networks:
+      - intranet
+
+  beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      -
+        type: bind
+        source: ./config
+        target: /app/config
+      -
+        type: bind
+        source: ./app
+        target: /app/app
+    command: celery -A app.queue beat --loglevel=DEBUG
+    depends_on:
+      - member-port
+      - rabbitmq
+    networks:
+      - intranet
+
   rabbitmq:
     image: rabbitmq:3-management-alpine
     volumes:
