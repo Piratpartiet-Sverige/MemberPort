@@ -68,6 +68,61 @@ services:
     networks:
       - intranet
 
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      -
+        type: bind
+        source: ./config
+        target: /app/config
+      -
+        type: bind
+        source: ./app
+        target: /app/app
+    command: celery -A app.queue worker --loglevel=INFO
+    depends_on:
+      - member-port
+      - rabbitmq
+    networks:
+      - intranet
+
+  beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      -
+        type: bind
+        source: ./config
+        target: /app/config
+      -
+        type: bind
+        source: ./app
+        target: /app/app
+    command: celery -A app.queue beat --loglevel=INFO
+    depends_on:
+      - member-port
+      - rabbitmq
+    networks:
+      - intranet
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    volumes:
+      -
+        type: volume
+        source: rabbitmq
+        target: /var/lib/rabbitmq
+        read_only: false
+    ports:
+      - "4369:4369"
+      - "5672:5672"
+      - "8080:15672"
+    networks:
+      - intranet
+
   pirate-kratos:
     depends_on:
       - pirate-kratos-migrate
@@ -106,5 +161,6 @@ networks:
   intranet:
 
 volumes:
+  rabbitmq:
   kratos-sqlite:
   postgres:
