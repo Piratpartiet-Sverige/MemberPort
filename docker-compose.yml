@@ -81,7 +81,7 @@ services:
         type: bind
         source: ./app
         target: /app/app
-    command: celery -A app.queue worker --loglevel=DEBUG
+    command: celery -A app.queue worker --loglevel=INFO
     depends_on:
       - member-port
       - rabbitmq
@@ -101,7 +101,7 @@ services:
         type: bind
         source: ./app
         target: /app/app
-    command: celery -A app.queue beat --loglevel=DEBUG
+    command: celery -A app.queue beat --loglevel=INFO
     depends_on:
       - member-port
       - rabbitmq
@@ -112,9 +112,10 @@ services:
     image: rabbitmq:3-management-alpine
     volumes:
       -
-        type: bind
-        source: ./db_data
+        type: volume
+        source: rabbitmq
         target: /var/lib/rabbitmq
+        read_only: false
     ports:
       - "4369:4369"
       - "5672:5672"
@@ -160,5 +161,6 @@ networks:
   intranet:
 
 volumes:
+  rabbitmq:
   kratos-sqlite:
   postgres:

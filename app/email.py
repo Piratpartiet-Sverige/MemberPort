@@ -5,7 +5,7 @@ from email.message import EmailMessage
 from app.config import Config
 
 
-async def send_email(to: str, subject: str, message: str, send_verification: bool = False, verify_link: str = ""):
+def send_email(to: str, subject: str, message: str, send_verification: bool = False, verify_link: str = ""):
     config = Config.get_config()
 
     username = config.get("Email", "username")
@@ -37,11 +37,15 @@ async def send_email(to: str, subject: str, message: str, send_verification: boo
 
     logger.debug("SMTP Server: " + smtp_server)
     logger.debug("SMTP Port: " + smtp_port.__str__())
-    logger.debug("SMTP Username: " + username.__str__())
+    logger.debug("SMTP Username: " + username)
 
     try:
-        s = smtplib.SMTP(smtp_server, smtp_port)
+        s = smtplib.SMTP_SSL(smtp_server, smtp_port, timeout=10)
         s.login(username, password)
+        s.send_message(msg)
+        s.quit()
+    except smtplib.SMTPNotSupportedError as e:
+        logger.warning("No login required to the SMTP server, " + e.__str__())
         s.send_message(msg)
         s.quit()
     except Exception as e:
