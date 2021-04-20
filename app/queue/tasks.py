@@ -3,7 +3,6 @@ import asyncio
 from .celery import app, options, admin
 from app.database.dao.members import MembersDao
 from app.email import send_email
-from app.logger import logger
 from app.web.web_server import init_db
 from celery.exceptions import Reject
 from celery.schedules import crontab
@@ -18,7 +17,6 @@ def setup_periodic_tasks(sender, **kwargs):
 
 
 async def remove_expired_memberships() -> int:
-    logger.critical(options.db_hostname)
     db = await init_db(options)
 
     dao = MembersDao(db)
