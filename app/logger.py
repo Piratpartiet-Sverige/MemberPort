@@ -26,3 +26,18 @@ def setup_logger(debug: bool):
         logger.setLevel(logging.DEBUG)
     else:
         logger.setLevel(logging.INFO)
+
+
+def setup_logger_worker(debug: bool):
+    formatter = logging.Formatter(
+        "[%(levelname)1.1s %(asctime)s %(module)s:%(lineno)d] %(message)s"
+    )
+
+    file_handler = logging.handlers.RotatingFileHandler("server-worker.log", maxBytes=1000000, backupCount=10)
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+
+    if debug is True:
+        logger.setLevel(logging.DEBUG)
+    else:
+        logger.setLevel(logging.INFO)

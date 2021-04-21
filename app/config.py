@@ -59,7 +59,11 @@ class Config:
         add_section_attribute("PostgreSQL", "username", "")
         add_section_attribute("PostgreSQL", "password", "")
 
+        add_section("TaskQueue")
+        add_section_attribute("TaskQueue", "broker_url", "")
+
         add_section("Email")
+        add_section_attribute("Email", "admin", "")
         add_section_attribute("Email", "username", "")
         add_section_attribute("Email", "password", "")
         add_section_attribute("Email", "from", "")

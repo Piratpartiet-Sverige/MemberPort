@@ -173,3 +173,27 @@ class MembersDao(MemberOrgDao):
             memberships.append(membership)
 
         return memberships
+
+    async def count_expired_memberships(self) -> int:
+        sql = "SELECT COUNT(\"id\") FROM memberships WHERE renewal < $1;"
+        current_date = datetime.utcnow()
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                count = await con.fetchval(sql, current_date)
+        except Exception:
+            logger.critical("An error occured when trying to count expired memberships!")
+            return 0
+
+        return count
+
+    async def remove_expired_memberships(self):
+        sql = "DELETE FROM memberships WHERE renewal < $1;"
+        current_date = datetime.utcnow()
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                await con.execute(sql, current_date)
+        except Exception:
+            logger.critical("An error occured when trying to delete expired memberships!")
+            raise

@@ -1,7 +1,7 @@
 # This file is a template, and might need editing before it works on your project.
 # Official language image. Look for the different tagged releases at:
 # https://hub.docker.com/r/library/python/tags/
-image: python:3.8-alpine
+
 
 # Change pip's cache directory to be inside the project directory since we can
 # only cache local items.
@@ -18,22 +18,32 @@ cache:
     - .cache/pip
     - venv/
 
-before_script:
-  - python -V  # Print out python version for debugging
-  - python -m venv venv
-  - source venv/bin/activate
-
 test:
+  image: python:3.8-alpine
+  before_script:
+    - python -V  # Print out python version for debugging
+    - python -m venv venv
+    - source venv/bin/activate
   script:
     - pip install flake8 flake8-bandit
     - flake8 --statistics
 
-# bandit-run:
-#  script:
-#    - pip install bandit
-#    - bandit -r app
+bandit-run:
+  image: python:3.7-alpine
+  before_script:
+    - python -V
+    - python -m venv venv
+    - source venv/bin/activate
+  script:
+    - pip install bandit
+    - bandit -r app
 
 unit-tests:
+  image: python:3.8-alpine
+  before_script:
+    - python -V
+    - python -m venv venv
+    - source venv/bin/activate
   script:
     - apk add alpine-sdk libffi-dev
     - pip install -r requirements.txt
@@ -59,3 +69,9 @@ unit-tests:
 #       - public
 #   only:
 #     - master
+
+lint:frontend:
+  image: node:15.13.0
+  script:
+    - npm install
+    - npm run lint
