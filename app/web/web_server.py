@@ -13,6 +13,7 @@ from app.plugins.plugin import get_available_plugins, load_plugins
 from app.web.handlers.admin.add_member import AddMemberHandler
 from app.web.handlers.admin.geography import GeographyHandler
 from app.web.handlers.admin.members import MembersHandler
+from app.web.handlers.admin.edit_member import EditMemberHandler
 from app.web.handlers.admin.organizations import OrganizationsHandler
 from app.web.handlers.admin.add_organization import AddOrganizationHandler
 from app.web.handlers.admin.edit_organization import EditOrganizationHandler
@@ -86,6 +87,7 @@ def configure_application(options: WebAppOptions):
         (r"/admin/add-member", AddMemberHandler),
         (r"/admin/geography", GeographyHandler),
         (r"/admin/members", MembersHandler),
+        (r"/admin/edit-member", EditMemberHandler),
         (r"/admin/organizations", OrganizationsHandler),
         (r"/admin/add-organization", AddOrganizationHandler),
         (r"/admin/edit-organization", EditOrganizationHandler),

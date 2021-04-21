@@ -9,4 +9,4 @@ class AddMemberHandler(BaseHandler):
     async def get(self):
         dao = OrganizationsDao(self.db)
         organizations = await dao.get_organizations("", "name", False)
-        await self.render("admin/add-member.html", admin=True, title="Add member", organizations=organizations)
+        await self.render("admin/members/add-member.html", admin=True, title="Add member", organizations=organizations)

@@ -1,0 +1,86 @@
+{% extends "../../base.html" %}
+{% block content %}
+<div class="section">
+  <h1 class="title">Edit {{ name }}</h1>
+  {% module xsrf_form_html() %}
+  <div class="field">
+      <div class="label">Name</div>
+      <div class="control">
+          <input class="input" name="name" type="text" placeholder="Name">
+      </div>
+  </div>
+  <div class="field">
+    <div class="label">Gata</div>
+    <div class="control">
+        <input class="input" name="name" type="text" placeholder="Name">
+    </div>
+  </div>
+  <div class="field">
+    <div class="label">Postadress</div>
+    <div class="control">
+        <input class="input" name="name" type="text" placeholder="Name">
+    </div>
+  </div>
+  <div class="field">
+    <div class="label">Stad</div>
+    <div class="control">
+        <input class="input" name="name" type="text" placeholder="Name">
+    </div>
+  </div>
+  <div class="field">
+    <div class="label">Kommun</div>
+    <div class="control">
+        <input class="input" name="name" type="text" placeholder="Name">
+    </div>
+  </div>
+  <div class="field">
+      <div class="label">E-mail</div>
+      <div class="control">
+          <input class="input" name="email" type="email" placeholder="E-mail">
+      </div>
+  </div>
+  <div class="field">
+      <div class="label">Telefonnummer</div>
+      <div class="control">
+          <input class="input" name="phone" type="tel" placeholder="Phone">
+      </div>
+  </div>
+  {% for organization in organizations %}
+  <div class="field">
+      <label class="checkbox">
+      <input type="checkbox">
+      {{ organization.name }}
+      </label>
+  </div>
+  {% end %}
+  <div class="field">
+      <div class="control">
+          <button type="submit" class="button is-link">Submit</button>
+      </div>
+  </div>
+
+  <h2 class="title">Roller</h2>
+  {% for role in roles %}
+  <div class="field">
+      <label class="checkbox">
+      <input type="checkbox">
+      {{ role.name }}
+      </label>
+  </div>
+  {% end %}
+  <h2 class="title">Utskick</h2>
+
+  <h2 class="title">Återställ lösenord</h2>
+  <p>
+    Klicka på följande knapp för att återställa denna medlems lösenord, ett mail kommer
+    skickas till medlemmen med vidare instruktioner för återställning av lösenord.
+  </p>
+  <button class="button is-primary">Återställ lösenord</button>
+
+  <h2 class="title">Ta bort {{ name }}</h2>
+  <p>
+    Ta bort all information som rör {{ name }}, <strong>observera att detta ej kan ångras.</strong>
+  </p>
+  <button class="button is-danger">Ta bort</button>
+</div>
+{% end %}

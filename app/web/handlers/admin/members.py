@@ -37,4 +37,4 @@ class MembersHandler(BaseHandler):
 
         logger.debug(members)
 
-        await self.render("admin/members.html", admin=True, title="Members", members=members, organizations=organizations)
+        await self.render("admin/members/members.html", admin=True, title="Members", members=members, organizations=organizations)
