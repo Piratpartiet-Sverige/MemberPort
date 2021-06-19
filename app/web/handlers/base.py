@@ -1,5 +1,4 @@
 import json
-
 from typing import Union
 from uuid import UUID
 
@@ -25,7 +24,7 @@ class BaseHandler(RequestHandler):
         """
         Do not call manually. This runs on every request before get/post/etc.
         """
-        self._current_user = await self.get_current_user()
+        self._current_user = await self.get_current_user_http()
 
     def is_authenticated(self) -> bool:
         """
@@ -35,8 +34,69 @@ class BaseHandler(RequestHandler):
         """
         return self.current_user is not None
 
+    async def get_current_user_http(self) -> Union[Session, None]:
+        """
+        Do not use this method to get the current user session, use the property `self.current_user` instead.
+        """
+        session_hash = self.session_hash
+
+        if session_hash is None:
+            return None
+
+        logger.debug(session_hash)
+        kratos_host_user = "http://pirate-kratos:4433/sessions/whoami"
+        kratos_host_logout = "http://pirate-kratos:4433/self-service/logout/browser"
+        http_client = AsyncHTTPClient()
+        http_request_user = HTTPRequest(url=kratos_host_user, headers={"Cookie": session_hash})
+        http_request_logout = HTTPRequest(url=kratos_host_logout, headers={"Cookie": session_hash})
+
+        try:
+            response_user = await http_client.fetch(http_request_user)
+            response_logout = await http_client.fetch(http_request_logout)
+
+            api_response = json.loads(response_user.body)
+            api_response_logout = json.loads(response_logout.body)
+        except Exception as e:
+            logger.error("Error when retrieving session: %s" % e)
+            return None
+        else:
+            session = Session()
+            session.id = UUID(api_response["id"])
+            session.hash = session_hash
+            session.issued_at = api_response["issued_at"]
+            session.expires_at = api_response["expires_at"]
+
+            user = User()
+            user.id = UUID(api_response["identity"]["id"])
+            user.name.first = api_response["identity"]["traits"]["name"]["first"]
+            user.name.last = api_response["identity"]["traits"]["name"]["last"]
+            user.email = api_response["identity"]["traits"]["email"]
+            user.phone = api_response["identity"]["traits"]["phone"]  # Ory does not yet support phone numbers
+            user.postal_address.street = api_response["identity"]["traits"]["postal_address"]["street"]
+            user.postal_address.postal_code = api_response["identity"]["traits"]["postal_address"]["postal_code"]
+            user.postal_address.city = api_response["identity"]["traits"]["postal_address"]["city"]
+            user.municipality = api_response["identity"]["traits"]["municipality"]
+            user.country = api_response["identity"]["traits"]["country"]
+            user.verified = api_response["identity"]["verifiable_addresses"][0]["verified"]
+            dao = UsersDao(self.db)
+            user_info = await dao.get_user_info(user.id)
+
+            if user_info is not None:
+                user.created = user_info["created"]
+                user.number = user_info["member_number"]
+            else:
+                user.created = None
+                user.number = None
+
+            session.user = user
+            session.logout_url = api_response_logout["logout_url"]
+            logger.debug("Session user: " + str(user.id))
+
+        return session
+
     async def get_current_user(self) -> Union[Session, None]:
         """
+        Ory SDK currently has a bug that makes it unusable, see [ory/sdk#65](https://github.com/ory/sdk/issues/65)
         Do not use this method to get the current user session, use the property `self.current_user` instead.
         """
         session_hash = self.session_hash

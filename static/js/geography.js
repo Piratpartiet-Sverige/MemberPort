@@ -1,7 +1,55 @@
 var geodata = {};
-var changedGeoData = {};
-var newGeoData = {};
-var deletedGeoData = [];
+let listOfCommands = [];
+
+function createEnum(values) {
+    const enumObject = {};
+
+    for (const val of values) {
+        enumObject[val] = val;
+    }
+
+    return Object.freeze(enumObject);
+}
+
+const GEO_TYPES = createEnum(['COUNTRY', 'AREA', 'MUNICIPALITY']);
+const GEO_ACTIONS = createEnum(['RENAME', 'MOVE', 'CREATE', 'DELETE']);
+
+function saveGeography() {
+    for (index in listOfCommands) {
+        let command = listOfCommands[index];
+
+        switch (command.action) {
+            case GEO_ACTIONS.RENAME:
+                if (command.type === GEO_TYPES.COUNTRY) {
+                    renameCountry(command);
+                } else if (command.type === GEO_TYPES.AREA) {
+                    renameArea(command);
+                } else if (command.type === GEO_TYPES.MUNICIPALITY) {
+                    renameMunicipality(command);
+                }
+
+                break;
+            case GEO_ACTIONS.MOVE:
+                break;
+            case GEO_ACTIONS.CREATE:
+                break;
+            case GEO_ACTIONS.DELETE:
+                break;
+        }
+    }
+}
+
+function renameCountry(command) {
+    sendUpdateCountryDataRequest(command.id, command.newName);
+}
+
+function renameArea(command) {
+    console.log("STUB");
+}
+
+function renameMunicipality(command) {
+    console.log("STUB");
+}
 
 function addArea(id, name, parent) {
     var parent = document.getElementById(parent);
@@ -223,18 +271,37 @@ function changeNodeName(id) {
     var nameBox = node.getElementsByClassName("content")[0];
     nameBox.innerText = newName;
     geodata[id].name = newName;
-    recordChangedValue(id, "name", newName);
+
+    let command = {};
+    command["id"] = id;
+    command["type"] = getNodeType(id);
+    command["action"] = GEO_ACTIONS.RENAME;
+    command["newName"] = newName;
+
+    var indexRemove = -1;
+
+    for (var i = 0; i < listOfCommands.length; i++) {
+        if (listOfCommands[i].id === command.id && listOfCommands[i].action === GEO_ACTIONS.RENAME) {
+            indexRemove = i;
+            break;
+        }
+    }
+
+    if (indexRemove !== -1) {
+        listOfCommands.splice(indexRemove, 1);
+    }
+
+    listOfCommands.push(command);
 }
 
-function recordChangedValue(id, key, value) {
-    i
-    if (changedGeoData[id] === undefined) {
-        changedGeoData[id] = {};
-        changedGeoData[id][key] = value;
+function getNodeType(id) {
+    if (geodata[id]["path"] !== undefined) {
+        return GEO_TYPES.AREA;
+    } else if (geodata[id]["area"] !== undefined) {
+        return GEO_TYPES.MUNICIPALITY;
     } else {
-        changedGeoData[id][key] = value;
+        return GEO_TYPES.COUNTRY;
     }
-    console.log(changedGeoData);
 }
 
 function getParentID(id, path, fallbackID) {

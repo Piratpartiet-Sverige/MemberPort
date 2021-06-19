@@ -1,0 +1,26 @@
+from app.database.dao.geography import GeographyDao
+from app.models import country_to_json
+from app.web.handlers.base import BaseHandler
+
+
+class APICountryHandler(BaseHandler):
+    async def put(self, id: str):
+        country_id = self.check_uuid(id)
+
+        if country_id is None:
+            return self.respond("NOT A VALID COUNTRY ID", 400)
+
+        name = self.get_body_argument("name")
+
+        if name == "":
+            return self.respond("NOT A VALID NAME", 400)
+
+        geo_dao = GeographyDao(self.db)
+
+        result = await geo_dao.rename_country(country_id, name)
+        if result is False:
+            self.respond("ERROR OCCURRED WHEN TRYING TO UPDATE COUNTRY", 500)
+
+        country = await geo_dao.get_country_by_id(country_id)
+
+        return self.respond("COUNTRY UPDATED", 200, country_to_json(country))

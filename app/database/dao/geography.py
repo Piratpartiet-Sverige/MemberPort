@@ -105,6 +105,21 @@ class GeographyDao(BaseDao):
 
         return path
 
+    async def rename_area(self, area_id: UUID, name: str) -> bool:
+        sql = 'UPDATE areas SET name = $2 WHERE id = $1;'
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                await con.execute(sql, area_id, name)
+        except Exception:
+            logger.error(
+                "Something wen't wrong when trying to update name for area with ID: " + area_id.__str__(),
+                stack_info=True
+            )
+            return False
+
+        return True
+
     async def create_municipality(self, name: str, country_id: UUID, area_id: UUID) -> Union[Municipality, None]:
         sql = 'INSERT INTO municipalities (id, name, created, "country", "area") VALUES ($1, $2, $3, $4, $5);'
         created = datetime.utcnow()
@@ -207,6 +222,21 @@ class GeographyDao(BaseDao):
 
         return municipalities
 
+    async def rename_municipality(self, municipality_id: UUID, name: str) -> bool:
+        sql = 'UPDATE municipalities SET name = $2 WHERE id = $1;'
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                await con.execute(sql, municipality_id, name)
+        except Exception:
+            logger.error(
+                "Something wen't wrong when trying to update name for municipality with ID: " + municipality_id.__str__(),
+                stack_info=True
+            )
+            return False
+
+        return True
+
     async def create_country(self, name: str) -> Union[Country, None]:
         sql = 'INSERT INTO countries (id, name, created) VALUES ($1, $2, $3);'
         created = datetime.utcnow()
@@ -299,3 +329,15 @@ class GeographyDao(BaseDao):
             countries.append(country)
 
         return countries
+
+    async def rename_country(self, country_id: UUID, name: str) -> bool:
+        sql = 'UPDATE countries SET name = $2 WHERE id = $1;'
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                await con.execute(sql, country_id, name)
+        except Exception:
+            logger.error("Something wen't wrong when trying to update name for country with ID: " + country_id.__str__(), stack_info=True)
+            return False
+
+        return True

@@ -3,6 +3,8 @@ import tornado.web
 from app.database.dao.geography import GeographyDao
 from app.web.handlers.base import BaseHandler
 
+from uuid import UUID
+
 
 class GeographyHandler(BaseHandler):
     @tornado.web.authenticated
@@ -14,8 +16,9 @@ class GeographyHandler(BaseHandler):
 
         dao = GeographyDao(self.db)
         countries = await dao.get_countries()
-        municipalities = await dao.get_municipalities_by_country(countries[0].id)
-        areas = await dao.get_areas_by_country(countries[0].id)
+        selected_country = await dao.get_country_by_id(UUID('00000000-0000-0000-0000-000000000000'))
+        municipalities = await dao.get_municipalities_by_country(selected_country.id)
+        areas = await dao.get_areas_by_country(selected_country.id)
 
         areas = sorted(areas, key=lambda a: a.path.count('.'))
 
@@ -23,6 +26,7 @@ class GeographyHandler(BaseHandler):
             "admin/geography.html",
             admin=permission_check,
             title="Geography",
+            selected_country=selected_country,
             countries=countries,
             municipalities=municipalities,
             areas=areas

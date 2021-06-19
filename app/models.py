@@ -133,6 +133,14 @@ class Country:
     created: datetime
 
 
+def country_to_json(country: Country):
+    return {
+        'id': country.id.__str__(),
+        'name': country.name.__str__(),
+        'created': country.created.isoformat(' ', 'seconds')
+    }
+
+
 class Area:
     id: int
     name: str
