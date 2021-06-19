@@ -46,7 +46,7 @@ class Config:
 
         add_section("WebServer")
         add_section_attribute("WebServer", "cookie_secret", sha256(str(time()).encode("utf8")).hexdigest())
-        add_section_attribute("WebServer", "url", "http://localhost:8888")
+        add_section_attribute("WebServer", "url", "http://127.0.0.1:8888")
         add_section_attribute("WebServer", "port", "8888")
         add_section_attribute("WebServer", "https", "off")
         add_section_attribute("WebServer", "certs", "/etc/pki/CA/certs/cert.crt")

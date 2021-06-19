@@ -1,6 +1,7 @@
 import tornado.web
 import ory_kratos_client
 
+from ory_kratos_client.api import v0alpha2_api
 from ory_kratos_client.rest import ApiException
 from ory_kratos_client.configuration import Configuration
 
@@ -9,6 +10,7 @@ from app.database.dao.members import MembersDao
 from app.database.dao.organizations import OrganizationsDao
 from app.database.dao.users import UsersDao
 from app.logger import logger
+from app.models import ui_placeholders, ui_positions
 from app.web.handlers.base import BaseHandler
 
 
@@ -18,35 +20,39 @@ class ProfileHandler(BaseHandler):
         flow = self.get_argument("flow", default="")
 
         if (flow == ""):
-            return self.redirect("http://127.0.0.1:8888/kratos/self-service/settings/browser")
+            return self.redirect("/kratos/self-service/settings/browser")
 
-        configuration = Configuration()
-        configuration.host = "http://pirate-kratos:4433"
+        configuration = Configuration(
+            host="http://pirate-kratos:4433"
+        )
 
-        csrf_token = ""  # noqa: S105 # nosec
-        error = ""
+        cookie = self.request.headers['Cookie']
+        errors = []
+        nodes = []
         action = ""
-        success = False
+        method = ""
+        state = ""
 
-        with ory_kratos_client.ApiClient(configuration, cookie="ory_kratos_session=" + self.session_hash + ";") as api_client:
-            api_instance = ory_kratos_client.PublicApi(api_client)
+        with ory_kratos_client.ApiClient(configuration) as api_client:
+            api_instance = v0alpha2_api.V0alpha2Api(api_client)
             try:
-                api_response = api_instance.get_self_service_settings_flow(flow)
+                api_response = api_instance.get_self_service_settings_flow(flow, cookie=cookie)
 
-                success = True if api_response.state == "success" else False
+                state = api_response.state.value
+                errors = api_response.ui.messages.value if hasattr(api_response.ui, 'messages') else []
+                nodes = api_response.ui.nodes.value
+                action = api_response.ui.action
+                method = api_response.ui.method
 
-                if api_response.methods["profile"].config.messages is not None:
-                    error = api_response.methods["profile"].config.messages[0].text
-                else:
-                    for field in api_response.methods['profile'].config.fields:
-                        if field.messages is not None:
-                            error = field.messages[0].text
-                            break
-
-                action = api_response.methods["profile"].config.action
-                csrf_token = api_response.methods["profile"].config.fields[0].value
+                logger.debug(nodes)
             except ApiException as e:
-                logger.error("Exception when calling PublicApi->get_self_service_settings_flow: %s\n" % e)
+                logger.error("Exception when calling V0alpha2Api->get_self_service_settings_flow: %s\n" % e)
+
+                if e.status == 410:
+                    return self.redirect("/kratos/self-service/settings/browser")
+
+        placeholders = ui_placeholders("Spara")
+        positions = ui_positions()
 
         dao = UsersDao(self.db)
         permissions_check = await dao.check_user_admin(self.current_user.user.id)
@@ -75,9 +81,12 @@ class ProfileHandler(BaseHandler):
             title="Profil",
             admin=permissions_check,
             action=action,
-            success=success,
-            error=error,
-            csrf_token=csrf_token,
+            method=method,
+            state=state,
+            errors=errors,
+            nodes=sorted(nodes, key=lambda node: positions[node.attributes.name]),
+            placeholders=placeholders,
+            positions=positions,
             countries=countries,
             municipalities=municipalities,
             memberships=memberships,

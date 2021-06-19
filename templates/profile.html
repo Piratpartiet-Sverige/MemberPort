@@ -49,25 +49,54 @@
                 </div>
                 <div class="box">
                     {% module xsrf_form_html() %}
-                    <form id="settings" action="{{ action }}" method="post">
-                        <input id="csrf_token" type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <form id="settings" action="{{ action }}" method="{{ method }}">
                         <div class="field">
-                            <label class="label">Förnamn</label>
-                            <div class="field">
-                                <div class="control">
-                                    <input class="input" name="traits.name.first" type="text"
-                                        value="{{ current_user.user.name.first }}" id="traits.name.first">
-                                </div>
-                            </div>
-                            <label class="label">Efternamn</label>
-                            <div class="field">
-                                <div class="control">
-                                    <input class="input" name="traits.name.last" type="text"
-                                        value="{{ current_user.user.name.last }}" id="traits.name.last">
-                                </div>
-                            </div>
+                            {% for node in nodes %}
+                            {% if node.attributes.name == 'csrf_token' %}
+                            <input name="{{ node.attributes.name }}" type="hidden" value="{{ node.attributes.value }}" />
+                            {% elif node.attributes.name == 'traits.municipality' %}
                             <label class="label">
-                                E-post
+                                {{ placeholders[node.attributes.name] }}
+                                <div class="field">
+                                    <div class="control">
+                                        <div class="select" style="width: 100%;">
+                                            <select id="{{ node.attributes.name }}" name="{{ node.attributes.name }}" style="width: 100%;">
+                                                <option disabled value>Välj din kommun</option>
+                                                {% for municipality in municipalities %}
+                                                <option {{ "selected" if node.attributes.value == municipality.name else "" }} value="{{ municipality.name }}">{{ municipality.name }}</option>
+                                                {% end %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                            {% elif node.attributes.name == 'traits.country' %}
+                            <label class="label">
+                                {{ placeholders[node.attributes.name] }}
+                                <div class="field">
+                                    <div class="control">
+                                        <div class="select" style="width: 100%;">
+                                            <select id="{{ node.attributes.name }}" name="{{ node.attributes.name }}" style="width: 100%;" onchange="updateMunicipalities()">
+                                                <option disabled value>Välj ditt land</option>
+                                                {% for country in countries %}
+                                                <option {{ "selected" if node.attributes.value == country.name else "" }} value="{{ country.name }}">{{ country.name }}</option>
+                                                {% end %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                            {% elif node.attributes.name == 'method' and node.group == 'profile' %}
+                            <input name="method" type="hidden" value="{{ node.attributes.value }}"> 
+                            <div class="field">
+                                <div class="control">
+                                    <button type="submit" class="button is-success is-fullwidth">{{ placeholders[node.attributes.name] }}</button>
+                                </div>
+                            </div>
+                            {% elif node.attributes.name != 'password' and node.group == 'profile' %}
+                            <label class="label">
+                                {{ placeholders[node.attributes.name] }}
+                                {% if node.attributes.name == 'traits.email' %}
                                 {% if current_user.user.verified %}
                                 <span class="icon has-text-success">
                                     <i title="Verifierad" class="fas fa-check-square"></i>
@@ -78,85 +107,35 @@
                                 </span>
                                 <a href="/verify">Du kan verifiera din e-post här</a>
                                 {% end %}
+                                {% end %}
                             </label>
                             <div class="field">
                                 <div class="control">
-                                    <input id="traits.email" class="input" name="traits.email" type="email"
-                                        value="{{ current_user.user.email }}">
+                                    <input
+                                        class="input"
+                                        name="{{ node.attributes.name }}"
+                                        type="text"
+                                        value="{{ node.attributes.value if hasattr(node.attributes, 'value') else '' }}"
+                                        id=" {{ node.attributes.name }}">
                                 </div>
                             </div>
-                            <label class="label">Telefonnummer</label>
-                            <div class="field">
-                                <div class="control">
-                                    <input class="input" type="tel" value="{{ current_user.user.phone }}" id="traits.phone">
-                                </div>
-                            </div>
-                            <label class="label">Adress</label>
-                            <div class="field">
-                                <div class="control">
-                                    <input id="traits.postal_address.street" class="input"
-                                        name="traits.postal_address.street" type="text"
-                                        value="{{ current_user.user.postal_address.street }}">
-                                </div>
-                            </div>
-                            <label class="label">Postnummer</label>
-                            <div class="field">
-                                <div class="control">
-                                    <input id="traits.postal_address.postal_code" class="input"
-                                        name="traits.postal_address.postal_code" type="text"
-                                        value="{{ current_user.user.postal_address.postal_code }}">
-                                </div>
-                            </div>
-                            <label class="label">Postort</label>
-                            <div class="field">
-                                <div class="control">
-                                    <input id="traits.postal_address.city" class="input"
-                                        name="traits.postal_address.city" type="text"
-                                        value="{{ current_user.user.postal_address.city }}">
-                                </div>
-                            </div>
-                            <label class="label">Kommun</label>
-                            <div class="field">
-                                <div class="control">
-                                    <div class="select" style="width: 100%;">
-                                        <select id="traits.municipality" name="traits.municipality" style="width: 100%;">
-                                            <option disabled value>Välj din kommun</option>
-                                            {% for municipality in municipalities %}
-                                            <option {{ "selected" if current_user.user.municipality == municipality.name else "" }} value="{{ municipality.name }}">{{ municipality.name }}</option>
-                                            {% end %}
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <label class="label">Land</label>
-                            <div class="field">
-                                <div class="control">
-                                    <div class="select" style="width: 100%;">
-                                        <select id="traits.country" name="traits.country" style="width: 100%;" onchange="updateMunicipalities()">
-                                            <option disabled value>Välj ditt land</option>
-                                            {% for country in countries %}
-                                            <option {{ "selected" if current_user.user.country == country.name else "" }} value="{{ country.name }}">{{ country.name }}</option>
-                                            {% end %}
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="field">
-                                <div class="control">
-                                    <button class="button is-success is-fullwidth">Spara</button>
-                                </div>
-                            </div>
+                            {% end %}
+                            {% end %}
                         </div>
                     </form>
                     <br>
-                    <div id="successNotification" class="notification is-success {{ "" if success else "is-hidden" }}">
+                    <div id="successNotification" class="notification is-success {{ "" if state == "success" else "is-hidden" }}">
                         <button type="button" class="delete" onclick="hideNotification('successNotification');"></button>
                         <p id="successText">Ändringar sparade!</p>
                     </div>
-                    <div id="errorNotification" class="notification is-danger {{ "is-hidden" if error == "" else "" }}">
+                    {% for error in errors %}
+                    {% if error.type == 'error' %}
+                    <div id="errorNotification" class="notification is-danger">
                         <button type="button" class="delete" onclick="hideNotification('errorNotification');"></button>
-                        <p id="errorText">{{ error }}</p>
+                        <p id="errorText">{{ error.text }}</p>
                     </div>
+                    {% end %}
+                    {% end %}
                 </div>
 
                 <div class="content">

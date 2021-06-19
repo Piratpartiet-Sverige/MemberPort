@@ -1,5 +1,6 @@
-asyncpg~=0.23
-tornado~=6.1
-ory-kratos-client==0.5.4a1
-aiosmtplib~=1.1
-celery~=5.1
+asyncpg==0.24
+tornado==6.1
+pytz==2021.3
+ory-kratos-client==0.8.0a2
+aiosmtplib==1.1.6
+celery==5.1.2

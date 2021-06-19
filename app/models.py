@@ -123,6 +123,7 @@ class Session:
     hash: str
     issued_at: datetime
     expires_at: datetime
+    logout_url: str
     last_ip: str
 
 
@@ -155,4 +156,37 @@ def municipality_to_json(municipality: Municipality) -> dict:
         'created': municipality.created.isoformat(' ', 'seconds'),
         'country_id': municipality.country_id.__str__(),
         'area_id': municipality.area_id.__str__()
+    }
+
+
+def ui_placeholders(button_label: str) -> dict:
+    return {
+        "password": "Lösenord",
+        "traits.name.first": "Förnamn",
+        "traits.name.last": "Efternamn",
+        "traits.postal_address.street": "Gatuadress",
+        "traits.postal_address.postal_code": "Postnummer",
+        "traits.postal_address.city": "Stad",
+        "traits.phone": "Telefonnummer",
+        "traits.email": "E-post",
+        "traits.municipality": "Kommun",
+        "traits.country": "Land",
+        "method": button_label
+    }
+
+
+def ui_positions() -> dict:
+    return {
+        "csrf_token": 0,
+        "traits.name.first": 1,
+        "traits.name.last": 2,
+        "traits.email": 3,
+        "traits.phone": 4,
+        "password": 5,
+        "traits.postal_address.street": 6,
+        "traits.postal_address.postal_code": 7,
+        "traits.postal_address.city": 8,
+        "traits.municipality": 9,
+        "traits.country": 10,
+        "method": 11
     }
