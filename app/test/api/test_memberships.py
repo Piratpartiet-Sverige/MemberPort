@@ -1,4 +1,6 @@
-from app.models import Membership, membership_to_json
+import json
+
+from app.models import Membership
 from app.test.web_testcase import WebTestCase, get_mock_session
 from datetime import datetime
 from unittest.mock import patch
@@ -7,6 +9,12 @@ from uuid import UUID
 
 
 class MembershipsTest(WebTestCase):
+    def update_membership_id(self, body):
+        start_index = body.find('{"id": "') + 8
+        end_index = start_index + 36
+        self.membership_id = UUID(body[start_index:end_index])
+        self.membership.id = self.membership_id
+
     def setUp(self):
         created = datetime.utcnow()
 
@@ -29,21 +37,24 @@ class MembershipsTest(WebTestCase):
             "organization": self.org_id.__str__()
         }
 
-        with patch("app.database.dao.members.MembersDao.create_membership", return_value=self.membership) as mock_method:
-            response = self.fetch(
-                '/api/membership',
-                method="POST",
-                body=urlencode(arguments)
-            )
-
-            body = response.body.decode('raw_unicode_escape')
-            mock_method.assert_called_once()
-
-        self.assertEqual(
-            '{"success": true, "reason": "MEMBERSHIP CREATED", "data": ' +
-            membership_to_json(self.membership).__str__().replace("'", "\"") + '}',
-            body
+        response = self.fetch(
+            '/api/membership',
+            method="POST",
+            body=urlencode(arguments)
         )
+
+        body = response.body.decode('raw_unicode_escape')
+        self.update_membership_id(body)
+        json_body = json.loads(body)
+
+        self.assertEqual(json_body["success"], True)
+        self.assertEqual(json_body["reason"], "MEMBERSHIP CREATED")
+        self.assertEqual(json_body["data"]["id"], self.membership_id.__str__())
+        self.assertEqual(json_body["data"]["organization_id"], self.membership.organization_id.__str__())
+        self.assertEqual(json_body["data"]["user_id"], self.membership.user_id.__str__())
+        self.assert_datetime("created", json_body["data"]["created"])
+        self.assert_datetime("renewal", json_body["data"]["renewal"])
+
         self.assertEqual(200, response.code)
 
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
@@ -53,20 +64,18 @@ class MembershipsTest(WebTestCase):
             "organization": self.org_id.__str__()
         }
 
-        with patch("app.database.dao.members.MembersDao.create_membership", return_value=self.membership) as mock_method:
-            response = self.fetch(
-                '/api/membership',
-                method="POST",
-                body=urlencode(arguments)
-            )
-
-            body = response.body.decode('raw_unicode_escape')
-            mock_method.assert_not_called()
-
-        self.assertEqual(
-            '{"success": false, "reason": "ORGANIZATION OR USER NOT SPECIFIED", "data": null}',
-            body
+        response = self.fetch(
+            '/api/membership',
+            method="POST",
+            body=urlencode(arguments)
         )
+
+        body = response.body.decode('raw_unicode_escape')
+        json_body = json.loads(body)
+
+        self.assertEqual(json_body["success"], False)
+        self.assertEqual(json_body["reason"], "ORGANIZATION OR USER NOT SPECIFIED")
+        self.assertEqual(json_body["data"], None)
         self.assertEqual(400, response.code)
 
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
@@ -75,17 +84,19 @@ class MembershipsTest(WebTestCase):
             "reason": "I was not happy :("
         }
 
-        with patch("app.database.dao.members.MembersDao.get_membership_by_id", return_value=self.membership) as get_mock_method:
-            with patch("app.database.dao.members.MembersDao.remove_membership", return_value=True) as remove_mock_method:
-                response = self.fetch(
-                    '/api/membership/' + UUID('f161a1d9-03fc-405a-9f11-90beca8c6fd1').__str__(),
-                    method="DELETE",
-                    body=urlencode(arguments),
-                    allow_nonstandard_methods=True
-                )
+        self.connection.fetchrow.return_value = {
+            "organization": self.membership.organization_id,
+            "user": self.membership.user_id,
+            "created": self.membership.created,
+            "renewal": self.membership.renewal
+        }
 
-                get_mock_method.assert_called_once()
-                remove_mock_method.assert_called_once()
+        response = self.fetch(
+            '/api/membership/' + self.membership_id.__str__(),
+            method="DELETE",
+            body=urlencode(arguments),
+            allow_nonstandard_methods=True
+        )
 
         self.assertEqual("MEMBERSHIP ENDED", response.reason)
         self.assertEqual(204, response.code)

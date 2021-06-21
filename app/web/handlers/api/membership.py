@@ -25,6 +25,9 @@ class APIMemberShipHandler(BaseHandler):
         dao = MembersDao(self.db)
         membership = await dao.create_membership(user_id, org_id)
 
+        if membership is None:
+            return self.respond("SOMETHING WENT WRONG WHEN TRYING TO CREATE NEW MEMBERSHIP", 500)
+
         return self.respond("MEMBERSHIP CREATED", 200, membership_to_json(membership))
 
     @tornado.web.authenticated
@@ -41,7 +44,7 @@ class APIMemberShipHandler(BaseHandler):
         if membership is None or membership.user_id.int != self.current_user.user.id.int:
             if membership.user_id.int != self.current_user.user.id.int:
                 logger.warning("Member " + self.current_user.user.id.__str__() + " tried to end a membership for another user, "
-                               + self.current_user.user.id.__str__() + ", with no permission to do so.")
+                               + membership.user_id.__str__() + ", with no permission to do so.")
 
             return self.respond("MEMBERSHIP WITH SPECIFIED ID NOT FOUND", 404)
 
