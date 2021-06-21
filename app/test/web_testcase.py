@@ -1,4 +1,7 @@
+from asyncpg import Connection
+from asyncpg.pool import Pool
 from datetime import datetime, timedelta
+from unittest.mock import MagicMock, Mock
 from tornado.testing import AsyncHTTPTestCase
 from uuid import UUID, uuid4
 
@@ -6,7 +9,22 @@ from app.models import Session, User
 from app.web.web_server import WebAppOptions, configure_application
 
 
+class MagicMockContext(MagicMock):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *args):
+        return self
+
+
 class WebTestCase(AsyncHTTPTestCase):
+    def __init__(self, methodName: str) -> None:
+        self.connection = MagicMockContext(Connection)
+        super().__init__(methodName=methodName)
+
     def get_app(self):
         options = WebAppOptions()
         options.debug = True
@@ -14,7 +32,18 @@ class WebTestCase(AsyncHTTPTestCase):
         options.test = True
         options.cookie_secret = "ccd70ecea6d9f0833b07688e69bf2368f86f9127de17de102e17788a805afb7f"
 
-        return configure_application(options)
+        app = configure_application(options)
+        app.db = Mock(Pool)
+        app.db.acquire.return_value = self.connection
+
+        return app
+
+    def assert_datetime(self, field_name, datetime_str):
+        try:
+            time_format = "%Y-%m-%d %H:%M:%S"
+            self.assertTrue(isinstance(datetime.strptime(datetime_str, time_format), datetime))
+        except ValueError:
+            self.fail("'" + field_name + "' field was wrong format")
 
 
 def get_mock_session():

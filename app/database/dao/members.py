@@ -28,7 +28,7 @@ class MembersDao(MemberOrgDao):
                            " and organization ID: " + str(organization_id) + " but it already existed")
             return None
         except Exception:
-            logger.error("An error occured when trying to create new membership!", stack_info=True)
+            logger.error("An error occured when trying to create new membership!", exc_info=True)
             return None
 
         membership = Membership()

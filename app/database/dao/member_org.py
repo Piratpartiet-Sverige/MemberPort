@@ -1,9 +1,9 @@
+from asyncpg import Connection
 from app.database.dao.base import BaseDao
-from uuid import UUID
 from app.logger import logger
 from app.models import Organization
+from uuid import UUID
 from typing import Union
-from asyncpg import Connection
 
 
 # Shared methods used by members and organizations daos
