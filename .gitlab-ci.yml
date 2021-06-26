@@ -18,16 +18,6 @@ cache:
     - .cache/pip
     - venv/
 
-test:
-  image: python:3.8-alpine
-  before_script:
-    - python -V  # Print out python version for debugging
-    - python -m venv venv
-    - source venv/bin/activate
-  script:
-    - pip install flake8 flake8-bandit
-    - flake8 --statistics
-
 bandit-run:
   image: python:3.7-alpine
   before_script:
@@ -38,7 +28,7 @@ bandit-run:
     - pip install bandit
     - bandit -r app
 
-unit-tests:
+unittests:
   image: python:3.8-alpine
   before_script:
     - python -V
@@ -48,6 +38,22 @@ unit-tests:
     - apk add alpine-sdk libffi-dev
     - pip install -r requirements.txt
     - python -m app.test.runtests
+
+lint:frontend:
+  image: node:15.13.0
+  script:
+    - npm install
+    - npm run lint
+
+lint:backend:
+  image: python:3.8-alpine
+  before_script:
+    - python -V  # Print out python version for debugging
+    - python -m venv venv
+    - source venv/bin/activate
+  script:
+    - pip install flake8 flake8-bandit
+    - flake8 --statistics
 
 # run:
 #   script:
@@ -69,9 +75,3 @@ unit-tests:
 #       - public
 #   only:
 #     - master
-
-lint:frontend:
-  image: node:15.13.0
-  script:
-    - npm install
-    - npm run lint
