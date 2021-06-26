@@ -1,6 +1,6 @@
 import json
 
-from app.models import Area, Country
+from app.models import Area, Country, Municipality
 from app.test.web_testcase import WebTestCase, get_mock_session
 from datetime import datetime
 from uuid import UUID
@@ -22,12 +22,18 @@ class GeographyTest(WebTestCase):
         self.area.country_id = self.country.id
         self.area.path = "1"
 
+        self.municipality = Municipality()
+        self.municipality.id = UUID('03e3274f-43b4-4a92-8f66-407b3cf55aac')
+        self.municipality.name = "Lund"
+        self.municipality.created = datetime(2020, 1, 2)
+        self.municipality.country_id = self.country.id
+        self.municipality.area_id = self.area.id
+
         return super().setUp()
 
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_retrieve_country(self, get_current_user):
         self.connection.fetchrow.return_value = {
-            "id": self.country.id.__str__(),
             "name": self.country.name,
             "created": self.country.created,
         }
@@ -139,4 +145,68 @@ class GeographyTest(WebTestCase):
         self.assertEqual(json_body["data"]["id"], self.area.id.__str__())
         self.assertEqual(json_body["data"]["name"], new_name)
         self.assert_datetime("created", json_body["data"]["created"])
+        self.assertEqual(200, response.code)
+
+    @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
+    def test_retrieve_municipality(self, get_current_user):
+        self.connection.fetchrow.return_value = {
+            "name": self.municipality.name,
+            "created": self.municipality.created,
+            "country": self.municipality.country_id,
+            "area": self.municipality.area_id
+        }
+
+        response = self.fetch('/api/geography/municipality/' + self.municipality.id.__str__(), method="GET")
+
+        body = response.body.decode('raw_unicode_escape')
+        json_body = json.loads(body)
+
+        self.maxDiff = None
+
+        self.assertEqual(json_body["success"], True)
+        self.assertEqual(json_body["reason"], "RETRIEVED MUNICIPALITY")
+        self.assertEqual(json_body["data"]["id"], self.municipality.id.__str__())
+        self.assertEqual(json_body["data"]["name"], self.municipality.name)
+        self.assert_datetime("created", json_body["data"]["created"])
+        self.assertEqual(json_body["data"]["country_id"], self.municipality.country_id.__str__())
+        self.assertEqual(json_body["data"]["area_id"], self.municipality.area_id.__str__())
+        self.assertEqual(200, response.code)
+
+    @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
+    def test_update_municipality_name(self, get_current_user):
+        new_name = "Luleå"
+        arguments = {
+            "name": new_name
+        }
+
+        # For some reason, headers must be set for PUT requests but not POST
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'Content-Length': len(urlencode(arguments))
+        }
+
+        self.connection.fetchrow.return_value = {
+            "name": new_name,
+            "created": self.municipality.created,
+            "country": self.municipality.country_id,
+            "area": self.municipality.area_id
+        }
+
+        response = self.fetch(
+            '/api/geography/municipality/' + self.municipality.id.__str__(),
+            method="PUT",
+            body=urlencode(arguments),
+            headers=headers
+        )
+
+        body = response.body.decode('raw_unicode_escape')
+        json_body = json.loads(body)
+
+        self.assertEqual(json_body["success"], True)
+        self.assertEqual(json_body["reason"], "MUNICIPALITY UPDATED")
+        self.assertEqual(json_body["data"]["id"], self.municipality.id.__str__())
+        self.assertEqual(json_body["data"]["name"], new_name)
+        self.assert_datetime("created", json_body["data"]["created"])
+        self.assertEqual(json_body["data"]["country_id"], self.municipality.country_id.__str__())
+        self.assertEqual(json_body["data"]["area_id"], self.municipality.area_id.__str__())
         self.assertEqual(200, response.code)
