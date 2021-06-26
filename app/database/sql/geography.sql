@@ -602,83 +602,83 @@ INSERT INTO areas (id, name, "country", created, path)
 VALUES (1, 'Norra distriktet', '00000000-0000-0000-0000-000000000000', localtimestamp, '1');
 
 INSERT INTO areas (id, name, "country", created, path)
-VALUES (6, 'Region Norrbotten', '00000000-0000-0000-0000-000000000000', localtimestamp, '1.6');
+VALUES (6, 'Norrbottens län', '00000000-0000-0000-0000-000000000000', localtimestamp, '1.6');
 
 INSERT INTO areas (id, name, "country", created, path)
-VALUES (7, 'Region Västerbotten', '00000000-0000-0000-0000-000000000000', localtimestamp, '1.7');
+VALUES (7, 'Västerbottens län', '00000000-0000-0000-0000-000000000000', localtimestamp, '1.7');
 
 INSERT INTO areas (id, name, "country", created, path)
-VALUES (8, 'Region Jämtland Härjedalen', '00000000-0000-0000-0000-000000000000', localtimestamp, '1.8');
+VALUES (8, 'Jämtlands län', '00000000-0000-0000-0000-000000000000', localtimestamp, '1.8');
 
 INSERT INTO areas (id, name, "country", created, path)
-VALUES (9, 'Region Västernorrland', '00000000-0000-0000-0000-000000000000', localtimestamp, '1.9');
+VALUES (9, 'Västernorrlands län', '00000000-0000-0000-0000-000000000000', localtimestamp, '1.9');
 
 INSERT INTO areas (id, name, "country", created, path)
-VALUES (10, 'Region Gävleborg', '00000000-0000-0000-0000-000000000000', localtimestamp, '1.10');
+VALUES (10, 'Gävleborgs län', '00000000-0000-0000-0000-000000000000', localtimestamp, '1.10');
 
 INSERT INTO areas (id, name, "country", created, path)
-VALUES (11, 'Region Dalarna', '00000000-0000-0000-0000-000000000000', localtimestamp, '1.11');
+VALUES (11, 'Dalarnas län', '00000000-0000-0000-0000-000000000000', localtimestamp, '1.11');
 
 -- Östra
 INSERT INTO areas (id, name, "country", created, path)
 VALUES (2, 'Östra distriktet', '00000000-0000-0000-0000-000000000000', localtimestamp, '2');
 
 INSERT INTO areas (id, name, "country", created, path)
-VALUES (12, 'Region Uppsala', '00000000-0000-0000-0000-000000000000', localtimestamp, '2.12');
+VALUES (12, 'Uppsala län', '00000000-0000-0000-0000-000000000000', localtimestamp, '2.12');
 
 INSERT INTO areas (id, name, "country", created, path)
-VALUES (13, 'Region Västmanland', '00000000-0000-0000-0000-000000000000', localtimestamp, '2.13');
+VALUES (13, 'Västmanlands län', '00000000-0000-0000-0000-000000000000', localtimestamp, '2.13');
 
 INSERT INTO areas (id, name, "country", created, path)
-VALUES (14, 'Region Örebro', '00000000-0000-0000-0000-000000000000', localtimestamp, '2.14');
+VALUES (14, 'Örebro län', '00000000-0000-0000-0000-000000000000', localtimestamp, '2.14');
 
 INSERT INTO areas (id, name, "country", created, path)
-VALUES (15, 'Region Sörmland', '00000000-0000-0000-0000-000000000000', localtimestamp, '2.15');
+VALUES (15, 'Södermanlands län', '00000000-0000-0000-0000-000000000000', localtimestamp, '2.15');
 
 INSERT INTO areas (id, name, "country", created, path)
-VALUES (16, 'Region Östergötland', '00000000-0000-0000-0000-000000000000', localtimestamp, '2.16');
+VALUES (16, 'Östergötlands län', '00000000-0000-0000-0000-000000000000', localtimestamp, '2.16');
 
 -- Stockholm
 INSERT INTO areas (id, name, "country", created, path)
 VALUES (3, 'Stockholms distriktet', '00000000-0000-0000-0000-000000000000', localtimestamp, '3');
 
 INSERT INTO areas (id, name, "country", created, path)
-VALUES (18, 'Region Stockholm', '00000000-0000-0000-0000-000000000000', localtimestamp, '3.18');
+VALUES (18, 'Stockholms län', '00000000-0000-0000-0000-000000000000', localtimestamp, '3.18');
 
 -- Västra
 INSERT INTO areas (id, name, "country", created, path)
 VALUES (4, 'Västra distriktet', '00000000-0000-0000-0000-000000000000', localtimestamp, '4');
 
 INSERT INTO areas (id, name, "country", created, path)
-VALUES (19, 'Region Värmland', '00000000-0000-0000-0000-000000000000', localtimestamp, '4.19');
+VALUES (19, 'Värmlands län', '00000000-0000-0000-0000-000000000000', localtimestamp, '4.19');
 
 INSERT INTO areas (id, name, "country", created, path)
-VALUES (20, 'Västra Götalandsregionen', '00000000-0000-0000-0000-000000000000', localtimestamp, '4.20');
+VALUES (20, 'Västra Götalands län', '00000000-0000-0000-0000-000000000000', localtimestamp, '4.20');
 
 INSERT INTO areas (id, name, "country", created, path)
-VALUES (21, 'Region Halland', '00000000-0000-0000-0000-000000000000', localtimestamp, '4.21');
+VALUES (21, 'Hallands län', '00000000-0000-0000-0000-000000000000', localtimestamp, '4.21');
 
 -- Södra
 INSERT INTO areas (id, name, "country", created, path)
 VALUES (5, 'Södra distriktet', '00000000-0000-0000-0000-000000000000', localtimestamp, '5');
 
 INSERT INTO areas (id, name, "country", created, path)
-VALUES (17, 'Region Blekinge', '00000000-0000-0000-0000-000000000000', localtimestamp, '5.17');
+VALUES (17, 'Blekinge län', '00000000-0000-0000-0000-000000000000', localtimestamp, '5.17');
 
 INSERT INTO areas (id, name, "country", created, path)
-VALUES (22, 'Region Skåne', '00000000-0000-0000-0000-000000000000', localtimestamp, '5.22');
+VALUES (22, 'Skåne län', '00000000-0000-0000-0000-000000000000', localtimestamp, '5.22');
 
 INSERT INTO areas (id, name, "country", created, path)
-VALUES (23, 'Region Jönköpings län', '00000000-0000-0000-0000-000000000000', localtimestamp, '5.23');
+VALUES (23, 'Jönköpings län', '00000000-0000-0000-0000-000000000000', localtimestamp, '5.23');
 
 INSERT INTO areas (id, name, "country", created, path)
-VALUES (24, 'Region Kronoberg', '00000000-0000-0000-0000-000000000000', localtimestamp, '5.24');
+VALUES (24, 'Kronobergs län', '00000000-0000-0000-0000-000000000000', localtimestamp, '5.24');
 
 INSERT INTO areas (id, name, "country", created, path)
-VALUES (25, 'Region Kalmar', '00000000-0000-0000-0000-000000000000', localtimestamp, '5.25');
+VALUES (25, 'Kalmar län', '00000000-0000-0000-0000-000000000000', localtimestamp, '5.25');
 
 INSERT INTO areas (id, name, "country", created, path)
-VALUES (26, 'Region Gotland', '00000000-0000-0000-0000-000000000000', localtimestamp, '5.26');
+VALUES (26, 'Gotlands län', '00000000-0000-0000-0000-000000000000', localtimestamp, '5.26');
 
 -- Municipalities
 INSERT INTO municipalities (id, name, created, "country", "area")
