@@ -1,206 +1,207 @@
 interface DataBody {
-    [index: string]: string;
+  [index: string]: string
 }
 
-function convertDictToBody(dict: DataBody) {
-    return Object.keys(dict).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(dict[key])).join('&');
+function convertDictToBody (dict: DataBody): string {
+  return Object.keys(dict).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(dict[key])).join('&')
 }
 
-export function updateMunicipalities() {
-    sendMunicipalityRequest()
-        .then(response => response.json())
-        .then(response => {
-            const municipalities = document.getElementById("traits.municipality");
-            if (municipalities == null) {
-                return;
-            }
+export function updateMunicipalities (): void {
+  sendMunicipalityRequest()
+    .then(async (response: Response) => {
+      return await response.json()
+    })
+    .then((response: { [name: string]: any }) => {
+      const municipalities = document.getElementById('traits.municipality')
+      if (municipalities == null) {
+        return
+      }
 
-            while (municipalities.firstChild) {
-                municipalities.removeChild(municipalities.firstChild);
-            }
+      while (municipalities.firstChild != null) {
+        municipalities.removeChild(municipalities.firstChild)
+      }
 
-            var selectedValue = municipalities.dataset.value
+      const selectedValue = municipalities.dataset.value
 
-            var newHTML = "<option disabled selected value>Välj din kommun</option>";
+      let newHTML = '<option disabled selected value>Välj din kommun</option>'
 
-            for (const [id, municipality] of Object.entries<DataBody>(response.data)) {
-                var selectedStr = selectedValue === municipality.name ? ' selected' : ''
-                newHTML += "<option value=\"" + municipality.name + "\" " + selectedStr + ">" + municipality.name+ "</option>\n";
-            }
+      for (const [id, municipality] of Object.entries<DataBody>(response.data)) {
+        const selectedStr = selectedValue === municipality.name ? ' selected' : ''
+        newHTML += '<option value="' + municipality.name + '" ' + selectedStr + '>' + municipality.name + '</option>\n'
+      }
 
-            municipalities.innerHTML = newHTML;
-        });
+      municipalities.innerHTML = newHTML
+    })
+    .catch((error: string) => {
+      console.error(error)
+    })
 }
 
-export async function sendMunicipalityRequest() {
-    var country = document.getElementById("traits.country") as HTMLInputElement;
-    let xsrf = document.getElementsByName("_xsrf")[0] as HTMLInputElement;
+export async function sendMunicipalityRequest (): Promise<Response> {
+  const country = document.getElementById('traits.country') as HTMLInputElement
+  const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
 
-    const response = await fetch("/api/geography/municipalities?country=" + country.value, {
-        method: 'GET',
-        cache: 'no-cache',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-XSRFToken': xsrf.value
-        },
-        redirect: 'error',
-        referrerPolicy: 'same-origin'
-    });
+  const response = await fetch('/api/geography/municipalities?country=' + country.value, {
+    method: 'GET',
+    cache: 'no-cache',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-XSRFToken': xsrf.value
+    },
+    redirect: 'error',
+    referrerPolicy: 'same-origin'
+  })
 
-    return response;
+  return response
 }
 
-export async function sendMembershipRequest(user_id: string, org_id: string) {
-    var data = {
-        "organization": org_id,
-        "user": user_id
-    }
+export async function sendMembershipRequest (userID: string, orgID: string): Promise<Response> {
+  const data = {
+    organization: orgID,
+    user: userID
+  }
 
-    let dataBody = convertDictToBody(data);
-    let xsrf = document.getElementsByName("_xsrf")[0] as HTMLInputElement;
+  const dataBody = convertDictToBody(data)
+  const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
 
-    const response = await fetch("/api/membership", {
-        method: 'POST',
-        cache: 'no-cache',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'X-XSRFToken': xsrf.value
-        },
-        body: dataBody,
-        redirect: 'error',
-        referrerPolicy: 'same-origin'
-    });
+  const response = await fetch('/api/membership', {
+    method: 'POST',
+    cache: 'no-cache',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-XSRFToken': xsrf.value
+    },
+    body: dataBody,
+    redirect: 'error',
+    referrerPolicy: 'same-origin'
+  })
 
-    return response;
+  return response
 }
 
-export async function sendEndMembershipRequest(membership_id: string, reason: string) {
-    var data = null;
+export async function sendEndMembershipRequest (membershipID: string, reason: string): Promise<Response> {
+  let data = null
 
-    if (reason != undefined && reason != null && reason !== "") {
-        data = {
-            "reason": reason
-        }
-    
-        data = convertDictToBody(data);
-    }
-
-    let xsrf = document.getElementsByName("_xsrf")[0] as HTMLInputElement;
-
-    const response = await fetch("/api/membership/" + membership_id, {
-        method: 'DELETE',
-        cache: 'no-cache',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'X-XSRFToken': xsrf.value
-        },
-        body: data,
-        redirect: 'error',
-        referrerPolicy: 'same-origin'
-    });
-
-    return response;
-}
-
-export async function sendUpdateCountryDataRequest(country_id: string, name: string): Promise<Response> {
-    var data = {
-        "name": name
-    }
-    
-    let dataBody = convertDictToBody(data);
-    let xsrf = document.getElementsByName("_xsrf")[0] as HTMLInputElement;
-
-    const response = await fetch("/api/geography/country/" + country_id, {
-        method: 'PUT',
-        cache: 'no-cache',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'X-XSRFToken': xsrf.value
-        },
-        body: dataBody,
-        redirect: 'error',
-        referrerPolicy: 'same-origin'
-    });
-
-    return response;
-}
-
-export async function sendUpdateAreaDataRequest(area_id: string, name: string|null, country_id: string|null, path: string|null): Promise<Response> {
-    let data: DataBody;
-
+  if (reason !== undefined && reason != null && reason !== '') {
     data = {
-        "area_id": area_id
-    };
-
-    if (name !== null && name !== undefined) {
-        data["name"] = name;
+      reason: reason
     }
 
-    if (country_id !== null && country_id !== undefined) {
-        data["country_id"] = country_id;
-    }
+    data = convertDictToBody(data)
+  }
 
-    if (path !== null && path !== undefined) {
-        data["path"] = path;
-    }
+  const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
 
-    let dataBody = convertDictToBody(data);
-    let xsrf = document.getElementsByName("_xsrf")[0] as HTMLInputElement;
+  const response = await fetch('/api/membership/' + membershipID, {
+    method: 'DELETE',
+    cache: 'no-cache',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-XSRFToken': xsrf.value
+    },
+    body: data,
+    redirect: 'error',
+    referrerPolicy: 'same-origin'
+  })
 
-    const response = await fetch("/api/geography/area/" + area_id, {
-        method: 'PUT',
-        cache: 'no-cache',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'X-XSRFToken': xsrf.value
-        },
-        body: dataBody,
-        redirect: 'error',
-        referrerPolicy: 'same-origin'
-    });
-
-    return response;
+  return response
 }
 
-export async function sendUpdateMunicipalityDataRequest(municipality_id: string, name: string|null, country_id: string|null, area_id: string|null): Promise<Response> {
-    let data: DataBody;
+export async function sendUpdateCountryDataRequest (countryID: string, name: string): Promise<Response> {
+  const data = {
+    name: name
+  }
 
-    data = {
-        "municipality_id": municipality_id
-    };
+  const dataBody = convertDictToBody(data)
+  const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
 
-    if (name !== null && name !== undefined) {
-        data["name"] = name;
-    }
+  const response = await fetch('/api/geography/country/' + countryID, {
+    method: 'PUT',
+    cache: 'no-cache',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-XSRFToken': xsrf.value
+    },
+    body: dataBody,
+    redirect: 'error',
+    referrerPolicy: 'same-origin'
+  })
 
-    if (country_id !== null && country_id !== undefined) {
-        data["country_id"] = country_id;
-    }
+  return response
+}
 
-    if (area_id !== null && area_id !== undefined) {
-        data["area_id"] = area_id;
-    }
+export async function sendUpdateAreaDataRequest (areaID: string, name: string | null, countryID: string | null, path: string | null): Promise<Response> {
+  const data: DataBody = {
+    area_id: areaID
+  }
 
-    let dataBody = convertDictToBody(data);
-    let xsrf = document.getElementsByName("_xsrf")[0] as HTMLInputElement;
+  if (name !== null && name !== undefined) {
+    data.name = name
+  }
 
-    const response = await fetch("/api/geography/municipality/" + municipality_id, {
-        method: 'PUT',
-        cache: 'no-cache',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'X-XSRFToken': xsrf.value
-        },
-        body: dataBody,
-        redirect: 'error',
-        referrerPolicy: 'same-origin'
-    });
+  if (countryID !== null && countryID !== undefined) {
+    data.country_id = countryID
+  }
 
-    return response;
+  if (path !== null && path !== undefined) {
+    data.path = path
+  }
+
+  const dataBody = convertDictToBody(data)
+  const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
+
+  const response = await fetch('/api/geography/area/' + areaID, {
+    method: 'PUT',
+    cache: 'no-cache',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-XSRFToken': xsrf.value
+    },
+    body: dataBody,
+    redirect: 'error',
+    referrerPolicy: 'same-origin'
+  })
+
+  return response
+}
+
+export async function sendUpdateMunicipalityDataRequest (municipalityID: string, name: string | null, countryID: string | null, areaID: string | null): Promise<Response> {
+  const data: DataBody = {
+    municipality_id: municipalityID
+  }
+
+  if (name !== null && name !== undefined) {
+    data.name = name
+  }
+
+  if (countryID !== null && countryID !== undefined) {
+    data.country_id = countryID
+  }
+
+  if (areaID !== null && areaID !== undefined) {
+    data.area_id = areaID
+  }
+
+  const dataBody = convertDictToBody(data)
+  const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
+
+  const response = await fetch('/api/geography/municipality/' + municipalityID, {
+    method: 'PUT',
+    cache: 'no-cache',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-XSRFToken': xsrf.value
+    },
+    body: dataBody,
+    redirect: 'error',
+    referrerPolicy: 'same-origin'
+  })
+
+  return response
 }
