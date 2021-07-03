@@ -45,3 +45,20 @@ class APIAreaHandler(BaseHandler):
         area = await geo_dao.get_area_by_id(area_id)
 
         return self.respond("AREA UPDATED", 200, area_to_json(area))
+
+    async def delete(self, id: str):
+        if id is None or id == "":
+            return self.respond("AREA UUID IS MISSING", 400)
+
+        try:
+            area_id = int(id)
+        except Exception:
+            return self.respond("NOT A VALID AREA ID", 400)
+
+        geo_dao = GeographyDao(self.db)
+
+        result = await geo_dao.delete_area(area_id)
+        if result is False:
+            return self.respond("COULD NOT DELETE AREA! ORGANIZATION COULD BE ACTIVE IN AREA", 403)
+
+        return self.respond("AREA DELETED", 200, None)

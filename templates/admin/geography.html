@@ -6,22 +6,17 @@
 <section class="section">
     <div class="container">
         <h1 class="title">Geografi</h1>
-        <div class="columns">
-            <div class="column">
-                <div class="select">
-                    <select id="country" name="country">
-                        <option disabled selected value>Välj land</option>
-                        {% for country in countries %}
-                        <option {{ "selected" if country.id.int == selected_country.id.int else "" }} value="{{ country.id }}">{{ country.name }}</option>
-                        {% end %}
-                    </select>
-                </div>
-            </div>
-            <div class="column">
-                <button id="saveButton" class="button is-success">Spara</button>
-            </div>
-            {% module xsrf_form_html() %}
+        <div class="select">
+            <select id="country" name="country">
+                <option disabled selected value>Välj land</option>
+                {% for country in countries %}
+                <option {{ "selected" if country.id.int == selected_country.id.int else "" }} value="{{ country.id }}">{{ country.name }}</option>
+                {% end %}
+            </select>
         </div>
+        {% module xsrf_form_html() %}
+        <br>
+        <br>
         <div id="tree">
         </div>
         <div id="deleteModal" class="modal">

@@ -1,4 +1,4 @@
-import { sendUpdateCountryDataRequest, sendUpdateAreaDataRequest, sendUpdateMunicipalityDataRequest } from './api'
+import { sendUpdateCountryDataRequest, sendUpdateAreaDataRequest, sendUpdateMunicipalityDataRequest, sendDeleteCountryRequest, sendDeleteAreaRequest, sendDeleteMunicipalityRequest } from './api'
 import { afterPageLoad } from '../utils/after-page-load'
 
 class GeoData {
@@ -17,7 +17,6 @@ class GeoData {
 
 declare let geodata: { [id: string]: GeoData }
 declare let selectedCountryID: string
-let listOfCommands: GeoCommand[] = []
 
 enum GEO_TYPES {
   COUNTRY,
@@ -25,108 +24,144 @@ enum GEO_TYPES {
   MUNICIPALITY,
 }
 
-enum GEO_ACTIONS {
-  RENAME,
-  MOVE,
-  CREATE,
-  DELETE,
-}
-
-class GeoCommand {
-  constructor (id: string, newName: string, action: GEO_ACTIONS, type: GEO_TYPES) {
-    this.id = id
-    this.newName = newName
-    this.action = action
-    this.type = type
-  }
-
-  action: GEO_ACTIONS
-  type: GEO_TYPES
-  id: string
-  newName: string
-}
-
-function saveGeography (): void {
-  if (listOfCommands.length === 0) {
-    console.log('No changes detected')
-    createMessage('Inga ändringar upptäcktes', 'is-info')
-    return
-  }
-
-  for (let index = 0; index < listOfCommands.length; index++) {
-    const command = listOfCommands[index]
-
-    switch (command.action) {
-      case GEO_ACTIONS.RENAME:
-        if (command.type === GEO_TYPES.COUNTRY) {
-          renameCountry(command)
-        } else if (command.type === GEO_TYPES.AREA) {
-          renameArea(command)
-        } else if (command.type === GEO_TYPES.MUNICIPALITY) {
-          renameMunicipality(command)
-        }
-
-        break
-      case GEO_ACTIONS.MOVE:
-        break
-      case GEO_ACTIONS.CREATE:
-        break
-      case GEO_ACTIONS.DELETE:
-        break
-    }
-  }
-
-  listOfCommands = []
-}
-
-function renameCountry (command: GeoCommand): void {
-  sendUpdateCountryDataRequest(command.id, command.newName)
+function renameCountry (id: string, newName: string): void {
+  sendUpdateCountryDataRequest(id, newName)
     .then(async (response: Response) => {
       return await response.json()
     })
     .then((data: { [name: string]: any }) => {
       if (data.success === false) {
         throw new Error(data.reason)
+      } else if (!changeNodeName(id, newName)) {
+        throw new Error('NODE NOT FOUND')
       }
 
-      createMessage('Ändrat namn på landet till: ' + command.newName, 'is-success')
+      createMessage('Ändrat namn på landet till: ' + newName, 'is-success')
     }).catch((error: string) => {
       console.error('Error:', error)
       createMessage('Någonting gick fel när namnet på landet skulle uppdateras', 'is-danger')
     })
 }
 
-function renameArea (command: GeoCommand): void {
-  sendUpdateAreaDataRequest(command.id, command.newName, null, null)
+function renameArea (id: string, newName: string): void {
+  sendUpdateAreaDataRequest(id, newName, null, null)
     .then(async function (response: Response) {
       return await response.json()
     })
     .then(function (data: { [name: string]: any }) {
       if (data.success === false) {
         throw new Error(data.reason)
+      } else if (!changeNodeName(id, newName)) {
+        throw new Error('NODE NOT FOUND')
       }
 
-      createMessage('Ändrat namn på området till: ' + command.newName, 'is-success')
+      createMessage('Ändrat namn på området till: ' + newName, 'is-success')
     }).catch((error: string) => {
       console.error('Error:', error)
       createMessage('Någonting gick fel när namnet på området skulle uppdateras', 'is-danger')
     })
 }
 
-function renameMunicipality (command: GeoCommand): void {
-  sendUpdateMunicipalityDataRequest(command.id, command.newName, null, null)
+function renameMunicipality (id: string, newName: string): void {
+  sendUpdateMunicipalityDataRequest(id, newName, null, null)
     .then(async function (response: Response) {
       return await response.json()
     })
     .then(function (data: { [name: string]: any }) {
       if (data.success === false) {
         throw new Error(data.reason)
+      } else if (!changeNodeName(id, newName)) {
+        throw new Error('NODE NOT FOUND')
       }
 
-      createMessage('Ändrat namn på kommunen till: ' + command.newName, 'is-success')
+      createMessage('Ändrat namn på kommunen till: ' + newName, 'is-success')
     }).catch((error: string) => {
       console.error('Error:', error)
       createMessage('Någonting gick fel när namnet på kommunen skulle uppdateras', 'is-danger')
+    })
+}
+
+function deleteCountry (id: string, name: string): void {
+  sendDeleteCountryRequest(id)
+    .then(async function (response: Response) {
+      if (response.status === 403) {
+        throw new Error('ORGANIZATION ACTIVE')
+      }
+
+      return await response.json()
+    })
+    .then(function (data: { [name: string]: any }) {
+      if (data.success === false) {
+        throw new Error(data.reason)
+      } else if (!deleteNode(id)) {
+        throw new Error('NODE NOT FOUND')
+      }
+
+      createMessage('Raderat landet: ' + name, 'is-success')
+    }).catch((error: Error) => {
+      console.error('Error:', error)
+
+      if (error.message === 'ORGANIZATION ACTIVE') {
+        createMessage('Kan inte ta bort landet om det finns en organisation kvar i den', 'is-danger')
+      } else {
+        createMessage('Någonting gick fel när landet skulle raderas', 'is-danger')
+      }
+    })
+}
+
+function deleteArea (id: string, name: string): void {
+  sendDeleteAreaRequest(id)
+    .then(async function (response: Response) {
+      if (response.status === 403) {
+        throw new Error('ORGANIZATION ACTIVE')
+      }
+
+      return await response.json()
+    })
+    .then(function (data: { [name: string]: any }) {
+      if (data.success === false) {
+        throw new Error(data.reason)
+      } else if (!deleteNode(id)) {
+        throw new Error('NODE NOT FOUND')
+      }
+
+      createMessage('Raderat området: ' + name, 'is-success')
+    }).catch((error: Error) => {
+      console.error('Error:', error)
+
+      if (error.message === 'ORGANIZATION ACTIVE') {
+        createMessage('Kan inte ta bort området om det finns en organisation kvar i den', 'is-danger')
+      } else {
+        createMessage('Någonting gick fel när området skulle raderas', 'is-danger')
+      }
+    })
+}
+
+function deleteMunicipality (id: string, name: string): void {
+  sendDeleteMunicipalityRequest(id)
+    .then(async function (response: Response) {
+      if (response.status === 403) {
+        throw new Error('ORGANIZATION ACTIVE')
+      }
+
+      return await response.json()
+    })
+    .then(function (data: { [name: string]: any }) {
+      if (data.success === false) {
+        throw new Error(data.reason)
+      } else if (!deleteNode(id)) {
+        throw new Error('NODE NOT FOUND')
+      }
+
+      createMessage('Raderat kommunen: ' + name, 'is-success')
+    }).catch((error: Error) => {
+      console.error('Error:', error)
+
+      if (error.message === 'ORGANIZATION ACTIVE') {
+        createMessage('Kan inte ta bort kommunen om det finns en organisation kvar i den', 'is-danger')
+      } else {
+        createMessage('Någonting gick fel när kommunen skulle raderas', 'is-danger')
+      }
     })
 }
 
@@ -425,12 +460,28 @@ function onDrop (ev: DragEvent): void {
   }
 }
 
-function deleteNode (id: string): void {
+function sendDeleteNodeRequest (id: string): void {
+  const nodeType = getNodeType(id)
+  const name = geodata[id].name
+
+  if (nodeType === GEO_TYPES.COUNTRY) {
+    deleteCountry(id, name)
+  } else if (nodeType === GEO_TYPES.AREA) {
+    deleteArea(id, name)
+  } else if (nodeType === GEO_TYPES.MUNICIPALITY) {
+    deleteMunicipality(id, name)
+  }
+}
+
+function deleteNode (id: string): boolean {
   const node = document.getElementById(id)
 
   if (node !== null) {
     node.remove()
+    return true
   }
+
+  return false
 }
 
 function closeDeleteModal (): void {
@@ -449,12 +500,12 @@ function openDeleteModal (id: string): void {
 
   const deleteText = document.getElementById('deleteText')
   if (deleteText !== null) {
-    deleteText.innerText = 'Är du säker på att du vill ta bort ' + geodata[id].name + ' och alla områden och kommuner som tillhör det?'
+    deleteText.innerText = 'Är du säker på att du vill ta bort ' + geodata[id].name + ' och alla områden och kommuner som tillhör det? Detta går inte att ångra!'
   }
 
   const deleteNodeButton = document.getElementById('deleteNodeButton')
   if (deleteNodeButton !== null) {
-    deleteNodeButton.onclick = () => { deleteNode(id); closeDeleteModal() }
+    deleteNodeButton.onclick = () => { sendDeleteNodeRequest(id); closeDeleteModal() }
   }
 }
 
@@ -474,7 +525,7 @@ function openEditModal (id: string): void {
 
   const editNameButton = document.getElementById('editNameButton')
   if (editNameButton !== null) {
-    editNameButton.onclick = () => { changeNodeName(geodata[id].id); closeEditModal() }
+    editNameButton.onclick = () => { sendChangeNameRequest(geodata[id].id); closeEditModal() }
   }
 
   const newNameInput = document.getElementById('newName') as HTMLInputElement
@@ -483,7 +534,7 @@ function openEditModal (id: string): void {
   }
 }
 
-function changeNodeName (id: string): void {
+function sendChangeNameRequest (id: string): void {
   const node = document.getElementById(id)
   const newNameInput = document.getElementById('newName') as HTMLInputElement
 
@@ -493,25 +544,29 @@ function changeNodeName (id: string): void {
 
   const newName = newNameInput.value
 
-  const nameBox = node.getElementsByClassName('content')[0] as HTMLElement
-  nameBox.innerText = newName
+  const nodeType = getNodeType(id)
   geodata[id].name = newName
 
-  const command = new GeoCommand(id, newName, GEO_ACTIONS.RENAME, getNodeType(id))
-  let indexRemove = -1
+  if (nodeType === GEO_TYPES.COUNTRY) {
+    renameCountry(id, newName)
+  } else if (nodeType === GEO_TYPES.AREA) {
+    renameArea(id, newName)
+  } else if (nodeType === GEO_TYPES.MUNICIPALITY) {
+    renameMunicipality(id, newName)
+  }
+}
 
-  for (let i = 0; i < listOfCommands.length; i++) {
-    if (listOfCommands[i].id === command.id && listOfCommands[i].action === GEO_ACTIONS.RENAME) {
-      indexRemove = i
-      break
-    }
+function changeNodeName (id: string, newName: string): boolean {
+  const node = document.getElementById(id)
+
+  if (node === null) {
+    return false
   }
 
-  if (indexRemove !== -1) {
-    listOfCommands.splice(indexRemove, 1)
-  }
-
-  listOfCommands.push(command)
+  geodata[id].name = newName
+  const nameBox = node.getElementsByClassName('content')[0] as HTMLElement
+  nameBox.innerText = newName
+  return true
 }
 
 function getNodeType (id: string): GEO_TYPES {
@@ -561,11 +616,6 @@ afterPageLoad().then(() => {
 
       addMunicipality(data.id, data.name, parentID)
     }
-  }
-
-  const saveButton = document.getElementById('saveButton')
-  if (saveButton !== null) {
-    saveButton.onclick = () => { saveGeography() }
   }
 
   const cancelDeleteSmall = document.getElementById('cancelDeleteSmall')

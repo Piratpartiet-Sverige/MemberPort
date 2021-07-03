@@ -39,3 +39,17 @@ class APIMunicipalityHandler(BaseHandler):
         municipality = await geo_dao.get_municipality_by_id(municipality_id)
 
         return self.respond("MUNICIPALITY UPDATED", 200, municipality_to_json(municipality))
+
+    async def delete(self, id: str):
+        municipality_id = self.check_uuid(id)
+
+        if municipality_id is None:
+            return self.respond("MUNICIPALITY UUID IS MISSING", 400)
+
+        geo_dao = GeographyDao(self.db)
+
+        result = await geo_dao.delete_municipality(municipality_id)
+        if result is False:
+            return self.respond("COULD NOT DELETE MUNICIPALITY! ORGANIZATION COULD BE ACTIVE IN MUNICIPALITY", 403)
+
+        return self.respond("MUNICIPALITY DELETED", 200, None)

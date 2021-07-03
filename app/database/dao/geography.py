@@ -39,6 +39,23 @@ class GeographyDao(BaseDao):
 
         return area
 
+    async def delete_area(self, area_id: UUID) -> bool:
+        sql_municipality = """
+            DELETE FROM municipalities WHERE "area" IN (SELECT id FROM areas WHERE path <@ (SELECT path FROM areas WHERE id = $1));
+        """
+        sql_area = 'DELETE FROM areas WHERE path <@ (SELECT path FROM areas WHERE id = $1);'
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                async with con.transaction():
+                    await con.execute(sql_municipality, area_id)
+                    await con.execute(sql_area, area_id)
+        except Exception:
+            logger.error("An error occured when trying to delete an area!", exc_info=True)
+            return False
+
+        return True
+
     async def get_area_by_id(self, area_id: UUID) -> Union[Area, None]:
         sql = 'SELECT name, created, "country", path FROM areas WHERE id = $1;'
 
@@ -190,6 +207,18 @@ class GeographyDao(BaseDao):
 
         return municipality
 
+    async def delete_municipality(self, municipality_id: UUID) -> bool:
+        sql = 'DELETE FROM municipalities WHERE id = $1;'
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                await con.execute(sql, municipality_id)
+        except Exception:
+            logger.error("An error occured when trying to delete a municipality!", exc_info=True)
+            return False
+
+        return True
+
     async def get_municipality_by_id(self, municipality_id: UUID) -> Union[Municipality, None]:
         sql = 'SELECT name, created, "country", "area" FROM municipalities WHERE id = $1;'
 
@@ -305,6 +334,23 @@ class GeographyDao(BaseDao):
         country.created = created
 
         return country
+
+    async def delete_country(self, country_id: UUID) -> bool:
+        sql_area = 'DELETE FROM areas WHERE "country" = $1;'
+        sql_municipality = 'DELETE FROM municipalities WHERE "country" = $1;'
+        sql = 'DELETE FROM countries WHERE id = $1;'
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                async with con.transaction():
+                    await con.execute(sql_municipality, country_id)
+                    await con.execute(sql_area, country_id)
+                    await con.execute(sql, country_id)
+        except Exception:
+            logger.error("An error occured when trying to delete a country!", exc_info=True)
+            return False
+
+        return True
 
     async def get_country_by_id(self, country_id: UUID) -> Union[Country, None]:
         sql = 'SELECT name, created FROM countries WHERE id = $1;'

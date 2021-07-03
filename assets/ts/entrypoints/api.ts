@@ -205,3 +205,60 @@ export async function sendUpdateMunicipalityDataRequest (municipalityID: string,
 
   return response
 }
+
+export async function sendDeleteCountryRequest (countryID: string): Promise<Response> {
+  const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
+
+  const response = await fetch('/api/geography/country/' + countryID, {
+    method: 'DELETE',
+    cache: 'no-cache',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-XSRFToken': xsrf.value
+    },
+    body: null,
+    redirect: 'error',
+    referrerPolicy: 'same-origin'
+  })
+
+  return response
+}
+
+export async function sendDeleteAreaRequest (areaID: string): Promise<Response> {
+  const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
+
+  const response = await fetch('/api/geography/area/' + areaID, {
+    method: 'DELETE',
+    cache: 'no-cache',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-XSRFToken': xsrf.value
+    },
+    body: null,
+    redirect: 'error',
+    referrerPolicy: 'same-origin'
+  })
+
+  return response
+}
+
+export async function sendDeleteMunicipalityRequest (municipalityID: string): Promise<Response> {
+  const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
+
+  const response = await fetch('/api/geography/municipality/' + municipalityID, {
+    method: 'DELETE',
+    cache: 'no-cache',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-XSRFToken': xsrf.value
+    },
+    body: null,
+    redirect: 'error',
+    referrerPolicy: 'same-origin'
+  })
+
+  return response
+}

@@ -39,3 +39,17 @@ class APICountryHandler(BaseHandler):
         country = await geo_dao.get_country_by_id(country_id)
 
         return self.respond("COUNTRY UPDATED", 200, country_to_json(country))
+
+    async def delete(self, id: str):
+        country_id = self.check_uuid(id)
+
+        if country_id is None:
+            return self.respond("MUNICIPALITY UUID IS MISSING", 400)
+
+        geo_dao = GeographyDao(self.db)
+
+        result = await geo_dao.delete_country(country_id)
+        if result is False:
+            return self.respond("COULD NOT DELETE COUNTRY! ORGANIZATION COULD BE ACTIVE IN COUNTRY", 403)
+
+        return self.respond("COUNTRY DELETED", 200, None)
