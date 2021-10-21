@@ -1,15 +1,18 @@
+import '../../sass/geography.scss'
 import { sendUpdateCountryDataRequest, sendUpdateAreaDataRequest, sendUpdateMunicipalityDataRequest, sendDeleteCountryRequest, sendDeleteAreaRequest, sendDeleteMunicipalityRequest } from './api'
 import { afterPageLoad } from '../utils/after-page-load'
 
 class GeoData {
   id: string
   name: string
+  type: GEO_TYPES
   path: string | undefined
   area: string | undefined
 
-  constructor (id: string, name: string, path: string | undefined, area: string | undefined) {
+  constructor (id: string, name: string, type: GEO_TYPES, path: string | undefined, area: string | undefined) {
     this.id = id
     this.name = name
+    this.type = type
     this.path = path
     this.area = area
   }
@@ -18,10 +21,13 @@ class GeoData {
 declare let geodata: { [id: string]: GeoData }
 declare let selectedCountryID: string
 
+let selectedNode: HTMLDivElement | undefined
+let moveMode = false
+
 enum GEO_TYPES {
-  COUNTRY,
-  AREA,
-  MUNICIPALITY,
+  COUNTRY = 'COUNTRY',
+  AREA = 'AREA',
+  MUNICIPALITY = 'MUNICIPALITY',
 }
 
 function renameCountry (id: string, newName: string): void {
@@ -189,7 +195,7 @@ function createMessage (message: string, type: string): void {
 
 function addArea (id: string, name: string, parent: string): void {
   const parentElement = document.getElementById(parent)
-  const area = createArea(id, name, true, true, 'fa-layer-group')
+  const area = createArea(id, name, 'fa-layer-group')
 
   if (parentElement != null) {
     parentElement.appendChild(area)
@@ -198,41 +204,37 @@ function addArea (id: string, name: string, parent: string): void {
 
 function addMunicipality (id: string, name: string, parent: string): void {
   const parentElement = document.getElementById(parent)
-  const area = createArea(id, name, false, true, 'fa-home')
+  const municipality = createArea(id, name, 'fa-home')
 
   if (parentElement != null) {
-    parentElement.appendChild(area)
+    parentElement.appendChild(municipality)
   }
 }
 
 function addCountry (id: string, name: string): void {
   const tree = document.getElementById('tree')
-  const country = createArea(id, name, true, false, 'fa-flag')
+  const country = createArea(id, name, 'fa-flag')
+  country.classList.add('country')
 
   if (tree != null) {
     tree.appendChild(country)
   }
 }
 
-function createArea (id: string, name: string, hasDropzone: boolean, draggable: boolean, icon: string): HTMLDivElement {
+function createArea (id: string, name: string, icon: string): HTMLDivElement {
   const area = document.createElement('div')
   area.id = id
-  area.draggable = draggable
-
-  if (draggable) {
-    area.ondragstart = (event) => { startDrag(event) }
-    area.ondragend = (event) => { stopDrag(event) }
-  }
 
   area.classList.add('node')
 
   const nameBox = createNameBox(id, name, icon)
-  area.appendChild(nameBox)
 
-  if (hasDropzone) {
-    const dropzone = createDropZone()
-    area.appendChild(dropzone)
-  }
+  nameBox.addEventListener('click', function (event: Event) {
+    selectAndMoveNode(this)
+    event.stopPropagation()
+  })
+
+  area.appendChild(nameBox)
 
   return area
 }
@@ -317,22 +319,127 @@ function createNameBox (id: string, name: string, icon: string): HTMLDivElement 
   return nameBox
 }
 
-function createDropZone (): HTMLDivElement {
-  const dropzone = document.createElement('div')
-  dropzone.ondrop = (event) => { onDrop(event) }
-  dropzone.ondragover = (event) => { allowDrop(event) }
-  dropzone.classList.add('dropzone')
-  dropzone.classList.add('is-hidden')
-  dropzone.innerHTML = '<span class="icon is-large"><i class="fas fa-plus"></i></span>'
+function selectAndMoveNode (target: HTMLDivElement | undefined): void {
+  if (selectedNode === target) {
+    return
+  }
 
-  return dropzone
+  if (selectedNode !== undefined) {
+    selectedNode.classList.remove('selected')
+  }
+
+  if (target === undefined) {
+    selectedNode = undefined
+  }
+
+  if (!moveMode) {
+    selectedNode = undefined
+    return
+  }
+
+  if (target !== undefined && selectedNode === undefined) {
+    const targetParent = target.parentElement as HTMLElement
+
+    if (geodata[targetParent.id].type !== GEO_TYPES.COUNTRY) {
+      selectedNode = target
+      selectedNode.classList.add('selected')
+    }
+  } else if (target !== undefined && selectedNode !== undefined) {
+    const newParent = target.parentElement as HTMLElement
+    const selectedArea = selectedNode.parentElement as HTMLElement
+
+    if ((geodata[newParent.id].type === GEO_TYPES.AREA || geodata[newParent.id].type === GEO_TYPES.COUNTRY) && selectedArea.parentElement !== newParent) {
+      if (geodata[selectedArea.id].type === GEO_TYPES.AREA) {
+        moveArea(selectedArea, newParent)
+      } else {
+        moveMunicipality(selectedArea, newParent)
+      }
+
+      selectedNode = undefined
+    } else if (geodata[newParent.id].type === GEO_TYPES.COUNTRY) {
+      selectedNode.classList.add('selected')
+    } else {
+      selectedNode = target
+      selectedNode.classList.add('selected')
+    }
+  }
 }
 
-function allowDrop (ev: Event): void {
-  ev.preventDefault()
+function moveArea (area: HTMLElement, parent: HTMLElement): void {
+  const children = area.getElementsByClassName('node')
+  const path = geodata[area.id].path as string
+
+  for (let index = 0; index < children.length; index++) {
+    const child = children.item(index) as Element
+
+    /* Don't allow area to be moved to an area under it */
+    if (child.id === parent.id) {
+      return
+    }
+  }
+
+  if (geodata[parent.id].type === GEO_TYPES.MUNICIPALITY) {
+    return
+  } else if (geodata[parent.id].type === GEO_TYPES.COUNTRY) {
+    /* No need to update if the current path is already on the top-level */
+    if (path === area.id) {
+      return
+    }
+
+    /* Update all child nodes */
+    for (let index = 0; index < children.length; index++) {
+      const child = children.item(index) as Element
+
+      if (geodata[child.id].type === GEO_TYPES.MUNICIPALITY || geodata[child.id].path === undefined) {
+        continue
+      }
+
+      const childPath = geodata[child.id].path?.slice(path.length + 1) as string
+      geodata[child.id].path = area.id + '.' + childPath
+      console.log(geodata[child.id].path)
+    }
+
+    geodata[area.id].path = area.id
+  } else if (geodata[parent.id].type === GEO_TYPES.AREA) {
+    const parentPath = geodata[parent.id].path as string
+    const newPath = parentPath + '.' + area.id
+
+    /* Update all child nodes */
+    for (let index = 0; index < children.length; index++) {
+      const child = children.item(index) as Element
+
+      if (geodata[child.id].type === GEO_TYPES.MUNICIPALITY) {
+        continue
+      }
+
+      const childPath = geodata[child.id].path?.slice(path.length + 1) as string
+      geodata[child.id].path = newPath + '.' + childPath
+      console.log(geodata[child.id].path)
+    }
+
+    geodata[area.id].path = newPath
+  }
+
+  parent.appendChild(area)
+}
+
+function moveMunicipality (municipality: HTMLElement, parent: HTMLElement): void {
+  if (geodata[parent.id].type === GEO_TYPES.MUNICIPALITY) {
+    return
+  } else if (geodata[parent.id].type === GEO_TYPES.COUNTRY) {
+    geodata[municipality.id].area = undefined
+  } else if (geodata[parent.id].type === GEO_TYPES.AREA) {
+    geodata[municipality.id].area = parent.id
+  }
+
+  parent.appendChild(municipality)
 }
 
 function expandList (id: string): void {
+  if (moveMode) {
+    return
+  }
+
   const root = document.getElementById(id)
 
   if (root === null) {
@@ -365,6 +472,10 @@ function expandList (id: string): void {
 }
 
 function shrinkList (id: string): void {
+  if (moveMode) {
+    return
+  }
+
   const root = document.getElementById(id)
 
   if (root === null) {
@@ -392,70 +503,6 @@ function shrinkList (id: string): void {
       if (button !== null) {
         button.onclick = () => { expandList(id) }
       }
-    }
-  }
-}
-
-function startDrag (ev: DragEvent): void {
-  if (ev.dataTransfer !== null && ev.target !== null) {
-    const targetElement = ev.target as Element
-    ev.dataTransfer.setData('text', targetElement.id)
-    showDropZones(targetElement)
-  }
-}
-
-function showDropZones (draggedNode: Element): void {
-  const dropzones = document.getElementsByClassName('dropzone')
-  for (let i = 0; i < dropzones.length; i++) {
-    dropzones[i].classList.remove('is-hidden')
-  }
-
-  const childDropzones = draggedNode.getElementsByClassName('dropzone')
-  for (let i = 0; i < childDropzones.length; i++) {
-    childDropzones[i].classList.add('is-hidden')
-  }
-
-  const parent = draggedNode.parentElement
-
-  if (parent !== null) {
-    const parentDropzone = parent.getElementsByClassName('dropzone')[0]
-    parentDropzone.classList.add('is-hidden')
-  }
-}
-
-function hideDropZones (): void {
-  const elements = document.getElementsByClassName('dropzone')
-  for (let i = 0; i < elements.length; i++) {
-    elements[i].classList.add('is-hidden')
-  }
-}
-
-function stopDrag (ev: Event): void {
-  hideDropZones()
-}
-
-function onDrop (ev: DragEvent): void {
-  ev.preventDefault()
-
-  let data = ''
-
-  if (ev.dataTransfer !== null) {
-    data = ev.dataTransfer.getData('text')
-  }
-
-  const target = ev.target
-
-  if (target !== null) {
-    let node = target as HTMLElement
-
-    while (!node.classList.contains('dropzone') && node.parentElement !== null) {
-      node = node.parentElement
-    }
-
-    const movedNode = document.getElementById(data)
-
-    if (movedNode !== null) {
-      node.insertAdjacentElement('afterend', movedNode)
     }
   }
 }
@@ -596,6 +643,39 @@ function getParentID (id: string, path: string, fallbackID: string): string {
   return parentID
 }
 
+function toggleMoveMode (cancel: boolean): void {
+  if (cancel) {
+    location.reload()
+  }
+
+  const tree = document.getElementById('tree') as HTMLElement
+  const moveButton = document.getElementById('moveButton') as HTMLButtonElement
+  const cancelMoveButton = document.getElementById('cancelMoveButton') as HTMLButtonElement
+
+  if (moveMode) {
+    moveButton.classList.remove('is-success')
+    tree.classList.remove('warning')
+    selectAndMoveNode(undefined)
+    moveButton.classList.add('is-link')
+
+    const text = moveButton.children[1] as HTMLSpanElement
+    text.textContent = 'Flytta runt områden'
+
+    cancelMoveButton.style.display = 'none'
+  } else {
+    moveButton.classList.remove('is-link')
+    tree.classList.add('warning')
+    moveButton.classList.add('is-success')
+
+    const text = moveButton.children[1] as HTMLSpanElement
+    text.textContent = 'Bekräfta flytt'
+
+    cancelMoveButton.style.display = ''
+  }
+
+  moveMode = !moveMode
+}
+
 afterPageLoad().then(() => {
   addCountry(selectedCountryID, geodata[selectedCountryID].name)
   let parentID = ''
@@ -604,10 +684,10 @@ afterPageLoad().then(() => {
     const data = geodata[id]
 
     // Check if this is an area
-    if (data.path !== undefined) {
+    if (data.type === GEO_TYPES.AREA && data.path !== undefined) {
       parentID = getParentID(data.id, data.path, selectedCountryID)
       addArea(data.id, data.name, parentID)
-    } else if (data.area !== undefined) { // Municipality
+    } else if (data.type === GEO_TYPES.MUNICIPALITY && data.area !== undefined) { // Municipality
       parentID = data.area
 
       if (parentID === '') {
@@ -638,13 +718,32 @@ afterPageLoad().then(() => {
     cancelEdit.onclick = () => { closeEditModal() }
   }
 
+  const moveButton = document.getElementById('moveButton')
+  if (moveButton !== null) {
+    moveButton.addEventListener('click', function () {
+      toggleMoveMode(false)
+    })
+  }
+
+  const cancelMoveButton = document.getElementById('cancelMoveButton')
+  if (cancelMoveButton !== null) {
+    cancelMoveButton.addEventListener('click', function () {
+      toggleMoveMode(true)
+    })
+  }
+
+  const country = document.getElementById('country')
   const newName = document.getElementById('newName') as HTMLInputElement
+  const section = document.getElementsByClassName('section')[0] as HTMLElement
+  section.addEventListener('click', function () {
+    selectAndMoveNode(undefined)
+  })
 
   if (newName !== null) {
     newName.oninput = function (event: Event) {
       const e = event as InputEvent
 
-      if (e.data !== null && !(/^[a-zA-ZåäöÅÄÖ]+$/.test(e.data))) {
+      if (e.data !== null && !(/^[a-z A-ZåäöÅÄÖ]+$/.test(e.data))) {
         newName.value = newName.value.slice(0, -e.data.length)
       }
     }

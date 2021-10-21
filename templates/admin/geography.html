@@ -1,6 +1,6 @@
 {% extends "../base.html" %}
 {% block head %}
-<link rel="stylesheet" href="{{ static_url('css/geography.css') }}">
+<link rel="stylesheet" href="{{ static_url('css/geography.bundle.css') }}">
 {% end %}
 {% block content %}
 <section class="section">
@@ -14,6 +14,14 @@
                 {% end %}
             </select>
         </div>
+        <button id="moveButton" type="button" class="button is-link">
+            <span class="icon"><i class="fas fa-arrows-alt" aria-hidden="true"></i></span>
+            <span>Flytta runt områden</span>
+        </button>
+        <button id="cancelMoveButton" type="button" class="button is-danger" style="display: none;">
+            <span class="icon"><i class="fas fa-ban" aria-hidden="true"></i></span>
+            <span>Avbryt</span>
+        </button>
         {% module xsrf_form_html() %}
         <br>
         <br>
@@ -65,7 +73,8 @@
 
     geodata["{{ selected_country.id }}"] = {
         name: "{{ selected_country.name }}",
-        id: "{{ selected_country.id }}"
+        id: "{{ selected_country.id }}",
+        type: "COUNTRY"
     };
 
     selectedCountryID = "{{ selected_country.id }}";
@@ -74,6 +83,7 @@
     geodata["{{ area.id }}"] = {
         name: "{{ area.name }}",
         id: "{{ area.id }}",
+        type: "AREA",
         path: "{{ area.path }}"
     };
     {% end %}
@@ -82,6 +92,7 @@
     geodata["{{ municipality.id }}"] = {
         name: "{{ municipality.name }}",
         id: "{{ municipality.id }}",
+        type: "MUNICIPALITY",
         area: "{{ municipality.area_id }}"
     };
     {% end %}

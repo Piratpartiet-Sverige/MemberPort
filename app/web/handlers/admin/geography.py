@@ -16,7 +16,7 @@ class GeographyHandler(BaseHandler):
 
         dao = GeographyDao(self.db)
         countries = await dao.get_countries()
-        selected_country = await dao.get_country_by_id(UUID('00000000-0000-0000-0000-000000000000'))
+        selected_country = await dao.get_default_country()
         municipalities = await dao.get_municipalities_by_country(selected_country.id)
         areas = await dao.get_areas_by_country(selected_country.id)
 
