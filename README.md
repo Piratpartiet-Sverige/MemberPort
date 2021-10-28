@@ -1,13 +1,13 @@
 # MemberPort
 
-A membership management system, written in Python with the [Tornado web-framework](https://www.tornadoweb.org/en/stable/) and [ORY Kratos](https://www.ory.sh/kratos) as the authentication and identification handler.
+A membership management system, written in Python with the [Tornado web-framework](https://www.tornadoweb.org/en/stable/) and [Ory Kratos](https://www.ory.sh/kratos) as the authentication and identification handler.
 
 ## Deployment
 
-This project uses [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/). Every docker image in use can be found in the `docker-compose.yml` file. To build the `member-port` docker image use the command:
+This project uses [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/). Every docker image in use can be found in the `docker-compose.yml` file. To build the `memberport` docker image use the command:
 
 ```
-docker build . --no-cache -t member-port:latest
+docker build . --no-cache -t memberport:latest
 ```
 
 This will update all the python dependencies to their latest versions. To run the project, simply run:

@@ -137,7 +137,7 @@
                 {% end %}
                 <div class="navbar-item">
                     <div class="buttons">
-                        <a href="/kratos/self-service/browser/flows/logout" class="button is-light">
+                        <a href="{{ current_user.logout_url }}" class="button is-light">
                             Logga ut
                         </a>
                     </div>

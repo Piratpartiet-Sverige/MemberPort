@@ -56,6 +56,9 @@ class KratosHandler(RequestHandler):
         req = tornado.httpclient.HTTPRequest(url, method="POST", body=self.request.body,
                                              follow_redirects=False, headers=self.request.headers)
 
+        logger.debug(self.request.body)
+        logger.debug(self.request.headers)
+
         client = tornado.httpclient.AsyncHTTPClient()
         response = yield client.fetch(req, raise_error=False)
 
@@ -67,7 +70,7 @@ class KratosHandler(RequestHandler):
             else:
                 if header.lower() == 'set-cookie':
                     cookie_strings = response.headers.get(header)
-                    cookie_strings = cookie_strings.replace("Domain=pirate-kratos;", "")  # Domain=http://127.0.0.1:8888
+                    cookie_strings = cookie_strings.replace("Domain=pirate-kratos;", "")
                     cookies = []
                     for cookie in cookie_strings.split(","):
                         if cookie[0] == ' ':

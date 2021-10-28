@@ -12,7 +12,7 @@ class ErrorKratosHandler(BaseHandler):
         error = self.get_argument("error", default="")
 
         if (error == ""):
-            return self.redirect("http://127.0.0.1:8888/kratos/self-service/errors")
+            return self.redirect("/kratos/self-service/errors")
 
         message = ""
         config = Config.get_config()

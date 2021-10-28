@@ -1,8 +1,10 @@
 import ory_kratos_client
 
-from ory_kratos_client.rest import ApiException
+from ory_kratos_client.api import v0alpha2_api
 from ory_kratos_client.configuration import Configuration
+from ory_kratos_client.rest import ApiException
 from app.database.dao.geography import GeographyDao
+from app.models import ui_placeholders, ui_positions
 from app.web.handlers.base import BaseHandler
 from app.logger import logger
 from tornado import httpclient  # noqa needed for kratos response
@@ -13,33 +15,39 @@ class SignInHandler(BaseHandler):
         flow = self.get_argument("flow", default="")
 
         if (flow == ""):
-            return self.redirect("http://127.0.0.1:8888/kratos/self-service/login/browser")
+            return self.redirect("/kratos/self-service/login/browser")
 
-        configuration = Configuration()
-        configuration.host = "http://pirate-kratos:4434"
+        configuration = Configuration(
+            host="http://pirate-kratos:4433"
+        )
 
-        csrf_token = ""  # noqa: S105 # nosec
-        error = ""
+        cookie = self.request.headers['Cookie']
+        action = ""
+        method = ""
+        nodes = []
+        errors = []
 
         with ory_kratos_client.ApiClient(configuration) as api_client:
-            api_instance = ory_kratos_client.PublicApi(api_client)
+            api_instance = v0alpha2_api.V0alpha2Api(api_client)
             try:
-                api_response = api_instance.get_self_service_login_flow(flow)
-                csrf_token = api_response.methods['password'].config.fields[-1].value
-
-                if api_response.methods['password'].config.messages is not None:
-                    error = api_response.methods['password'].config.messages[0].text
-                else:
-                    for field in api_response.methods['password'].config.fields:
-                        if field.messages is not None:
-                            error = field.messages[0].text
-                            break
+                api_response = api_instance.get_self_service_login_flow(flow, cookie=cookie)
+                nodes = api_response.ui.nodes.value
+                errors = api_response.ui.messages.value if hasattr(api_response.ui, 'messages') else []
+                action = api_response.ui.action
+                method = api_response.ui.method
             except ApiException as e:
-                logger.error("Exception when calling PublicApi->get_self_service_login_flow: %s\n" % e)
+                logger.error("Exception when calling v0alpha2_api->get_self_service_login_flow: %s\n" % e)
+                logger.error(e.status)
+                if e.status == 410:
+                    return self.redirect("/kratos/self-service/login/browser")
 
-        logger.debug("csrf_token: " + csrf_token)
-
-        self.render("sign-in.html", flow=flow, csrf_token=csrf_token, error=error)
+        self.render(
+            "sign-in.html",
+            action=action,
+            method=method,
+            nodes=nodes,
+            errors=errors
+        )
 
 
 class SignUpHandler(BaseHandler):
@@ -47,70 +55,48 @@ class SignUpHandler(BaseHandler):
         flow = self.get_argument("flow", default="")
 
         if (flow == ""):
-            return self.redirect("http://127.0.0.1:8888/kratos/self-service/registration/browser")
+            return self.redirect("/kratos/self-service/registration/browser")
 
-        configuration = Configuration()
-        configuration.host = "http://pirate-kratos:4434"
+        configuration = Configuration(
+            host="http://pirate-kratos:4433"
+        )
 
-        csrf_token = ""  # noqa: S105 # nosec
-        error = ""
+        cookie = self.request.headers['Cookie']
+        action = ""
+        method = ""
+        nodes = []
+        errors = []
 
         with ory_kratos_client.ApiClient(configuration) as api_client:
-            api_instance = ory_kratos_client.AdminApi(api_client)
+            api_instance = v0alpha2_api.V0alpha2Api(api_client)
             try:
-                api_response = api_instance.get_self_service_registration_flow(flow)
+                api_response = api_instance.get_self_service_registration_flow(flow, cookie=cookie)
+                nodes = api_response.ui.nodes.value
+                errors = api_response.ui.messages.value if hasattr(api_response.ui, 'messages') else []
+                action = api_response.ui.action
+                method = api_response.ui.method
                 logger.debug(api_response)
-                csrf_token = api_response.methods['password'].config.fields[0].value
-                inputs = api_response.methods['password'].config.fields
-
-                if api_response.methods['password'].config.messages is not None:
-                    error = api_response.methods['password'].config.messages[0].text
-                else:
-                    for field in api_response.methods['password'].config.fields:
-                        if field.messages is not None:
-                            error = field.messages[0].text
-                            break
-                logger.debug(error)
             except ApiException as e:
-                logger.error("Exception when calling AdminApi->get_self_service_registration_flow: %s\n" % e)
-            except ValueError as e:
-                logger.error("Exception when calling PublicApi->get_self_service_registration_flow: %s\n" % e)
+                logger.error("Exception when calling V0alpha2Api->get_self_service_registration_flow: %s\n" % e)
 
-        logger.debug("csrf_token: " + csrf_token)
+                if e.status == 410:
+                    return self.redirect("/kratos/self-service/registration/browser")
 
         dao = GeographyDao(self.db)
         countries = await dao.get_countries()
-        placeholders = {
-            "password": "Lösenord",
-            "traits.name.first": "Förnamn",
-            "traits.name.last": "Efternamn",
-            "traits.postal_address.street": "Gatuadress",
-            "traits.postal_address.postal_code": "Postnummer",
-            "traits.postal_address.city": "Stad",
-            "traits.phone": "Telefonnummer",
-            "traits.email": "E-post"
-        }
+        default_country = await dao.get_default_country()
+        default_country = "" if default_country is None else default_country.name
 
-        positions = {
-            "csrf_token": 0,
-            "traits.name.first": 1,
-            "traits.name.last": 2,
-            "traits.email": 3,
-            "traits.phone": 4,
-            "password": 5,
-            "traits.postal_address.street": 6,
-            "traits.postal_address.postal_code": 7,
-            "traits.postal_address.city": 8,
-            "traits.municipality": 9,
-            "traits.country": 10
-        }
+        placeholders = ui_placeholders("Registrera")
+        positions = ui_positions()
 
         self.render(
             "sign-up.html",
-            flow=flow,
-            csrf_token=csrf_token,
-            error=error,
-            inputs=sorted(inputs, key=lambda field: positions[field.name]),
+            action=action,
+            method=method,
+            errors=errors,
+            nodes=sorted(nodes, key=lambda node: positions[node.attributes.name]),
+            default_country=default_country,
             countries=countries,
             placeholders=placeholders
         )
@@ -121,7 +107,7 @@ class RecoveryHandler(BaseHandler):
         flow = self.get_argument("flow", default="")
 
         if (flow == ""):
-            return self.redirect("http://127.0.0.1:8888/kratos/self-service/recovery/browser")
+            return self.redirect("/kratos/self-service/recovery/browser")
 
         configuration = Configuration()
         configuration.host = "http://pirate-kratos:4434"
