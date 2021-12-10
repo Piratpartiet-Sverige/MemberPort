@@ -59,8 +59,9 @@ class Config:
         add_section_attribute("PostgreSQL", "username", "")
         add_section_attribute("PostgreSQL", "password", "")
 
+        # This is for the Celery task queue, check out: https://docs.celeryproject.org/en/stable/getting-started/introduction.html
         add_section("TaskQueue")
-        add_section_attribute("TaskQueue", "broker_url", "")
+        add_section_attribute("TaskQueue", "broker_url", "amqp://rabbitmq:5672")
 
         add_section("Email")
         add_section_attribute("Email", "admin", "")
