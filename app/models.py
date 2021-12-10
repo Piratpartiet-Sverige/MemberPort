@@ -169,6 +169,7 @@ def ui_placeholders(button_label: str) -> dict:
         "traits.postal_address.city": "Stad",
         "traits.phone": "Telefonnummer",
         "traits.email": "E-post",
+        "email": "E-post",
         "traits.municipality": "Kommun",
         "traits.country": "Land",
         "method": button_label

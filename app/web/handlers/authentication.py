@@ -109,40 +109,39 @@ class RecoveryHandler(BaseHandler):
         if (flow == ""):
             return self.redirect("/kratos/self-service/recovery/browser")
 
-        configuration = Configuration()
-        configuration.host = "http://pirate-kratos:4434"
+        configuration = Configuration(
+            host="http://pirate-kratos:4433"
+        )
 
-        csrf_token = ""  # noqa: S105 # nosec
-        error = ""
+        cookie = self.request.headers['Cookie']
         action = ""
+        method = ""
+        nodes = []
+        errors = []
         state = ""
 
         with ory_kratos_client.ApiClient(configuration) as api_client:
-            api_instance = ory_kratos_client.PublicApi(api_client)
+            api_instance = v0alpha2_api.V0alpha2Api(api_client)
             try:
-                api_response = api_instance.get_self_service_recovery_flow(flow)
-                action = api_response.methods["link"].config.action
-                csrf_token = api_response.methods['link'].config.fields[0].value
-                state = api_response.state
-
-                if api_response.methods['link'].config.messages is not None:
-                    error = api_response.methods['link'].config.messages[0].text
-                else:
-                    for field in api_response.methods['link'].config.fields:
-                        if field.messages is not None:
-                            error = field.messages[0].text
-                            break
+                api_response = api_instance.get_self_service_recovery_flow(flow, cookie=cookie)
+                logger.debug(api_response)
+                nodes = api_response.ui.nodes.value
+                errors = api_response.ui.messages.value if hasattr(api_response.ui, 'messages') else []
+                action = api_response.ui.action
+                method = api_response.ui.method
+                state = api_response.state.value
             except ApiException as e:
-                logger.error("Exception when calling PublicApi->get_self_service_login_flow: %s\n" % e)
+                logger.error("Exception when calling V0alpha2Api->get_self_service_recovery_flow: %s\n" % e)
 
-        logger.debug("csrf_token: " + csrf_token)
-        logger.debug(state)
+        placeholders = ui_placeholders("Registrera")
 
         self.render(
             "recovery.html",
             flow=flow,
+            method=method,
             action=action,
-            csrf_token=csrf_token,
-            error=error,
+            nodes=nodes,
+            errors=errors,
+            placeholders=placeholders,
             state=state
         )
