@@ -55,7 +55,7 @@ const rowData = _GRID_DATA_.map((row) => ({
           body: formBody
         })
           .then(response => {
-            if (response.status === 203) { location.reload(true) }
+            if (response.status === 203) { location.reload() }
           })
           .catch(console.error)
       }
