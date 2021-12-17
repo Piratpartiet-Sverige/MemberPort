@@ -84,7 +84,6 @@ services:
         target: /app/app
     command: celery -A app.tasks worker --loglevel=INFO
     depends_on:
-      - memberport
       - rabbitmq
     networks:
       - intranet
@@ -105,7 +104,6 @@ services:
         target: /app/app
     command: celery -A app.tasks beat --loglevel=INFO
     depends_on:
-      - memberport
       - rabbitmq
     networks:
       - intranet
