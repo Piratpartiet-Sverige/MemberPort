@@ -28,10 +28,12 @@ const columnDefs = [
 const rowData = _GRID_DATA_.map((row) => ({
   ...row,
   edit: {
+    style: 'is-link',
     label: 'Ändra',
     onClick: () => { window.location.href = `edit-organization?id=${row.id}` }
   },
   delete: {
+    style: 'is-danger',
     label: 'Ta bort',
     onClick: () => {
       const result = confirm(`Är du säker på att du vill ta bort ${row.name}`)

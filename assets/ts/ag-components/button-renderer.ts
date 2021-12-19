@@ -10,8 +10,17 @@ class ButtonRenderer {
     init (params: any): void {
       this.params = params
 
-      this.eGui = document.createElement('button')
-      // this.eGui.type = 'button'
+      const button = document.createElement('button')
+      button.classList.add('button')
+      button.classList.add('is-small')
+      button.style.verticalAlign = 'baseline'
+      button.type = 'button'
+
+      if (params.value.style !== undefined) {
+        button.classList.add(params.value.style)
+      }
+
+      this.eGui = button
       this.eGui.innerHTML = params.value.label
 
       this.eGui.addEventListener('click', this.params.value.onClick)
