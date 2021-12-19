@@ -3,8 +3,6 @@ import tornado.web
 from app.database.dao.geography import GeographyDao
 from app.web.handlers.base import BaseHandler
 
-from uuid import UUID
-
 
 class GeographyHandler(BaseHandler):
     @tornado.web.authenticated
