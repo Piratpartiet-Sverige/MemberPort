@@ -3,7 +3,7 @@ from typing import Union
 from uuid import uuid4, UUID
 
 from asyncpg import Connection
-from asyncpg.exceptions import UniqueViolationError
+from asyncpg.exceptions import DataError, UniqueViolationError
 
 from app.logger import logger
 from app.models import Country, Municipality, Area
@@ -39,7 +39,7 @@ class GeographyDao(BaseDao):
 
         return area
 
-    async def delete_area(self, area_id: UUID) -> bool:
+    async def delete_area(self, area_id: int) -> bool:
         sql_municipality = """
             DELETE FROM municipalities WHERE "area" IN (SELECT id FROM areas WHERE path <@ (SELECT path FROM areas WHERE id = $1));
         """
@@ -56,14 +56,17 @@ class GeographyDao(BaseDao):
 
         return True
 
-    async def get_area_by_id(self, area_id: UUID) -> Union[Area, None]:
+    async def get_area_by_id(self, area_id: int) -> Union[Area, None]:
         sql = 'SELECT name, created, "country", path FROM areas WHERE id = $1;'
 
         try:
             async with self.pool.acquire() as con:  # type: Connection
                 row = await con.fetchrow(sql, area_id)
+        except DataError:
+            logger.error("area_id was not an integer", stack_info=True)
+            return None
         except Exception:
-            logger.error("An error occured when trying to create new area!", stack_info=True)
+            logger.error("An error occured when trying to retrieve area: %i", area_id, stack_info=True)
             return None
 
         area = None
@@ -144,10 +147,47 @@ class GeographyDao(BaseDao):
 
         return path
 
-    async def update_area(self, area_id: UUID, name: Union[str, None], country_id: Union[UUID, None], path: Union[str, None]) -> bool:
+    async def update_area(self, area_id: int, name: Union[str, None], country_id: Union[UUID, None], path: Union[str, None]) -> bool:
+        arguments = [area_id]
+        sql = self._prepare_sql_for_update_area(arguments, area_id, name, country_id)
+
+        if name is None and country_id is None and path is None:
+            return False
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                async with con.transaction():
+                    if len(arguments) > 1:  # Only execute update if values have actually been changed
+                        await con.execute(sql, *arguments)
+                    if path is not None:  # Update paths for the entire branch
+                        path = path.removesuffix('.' + str(area_id))
+                        path_id = path.split('.')
+                        path_id = list(map(int, path_id))
+
+                        if area_id in path_id:
+                            logger.error("Path: %s not allowed for area: %i\nAn area can't be a child to itself!", path, area_id)
+                            raise ValueError
+
+                        area_count = await con.fetchval('SELECT COUNT(id) FROM areas WHERE id = ANY($1);', path_id)
+                        if area_count is not len(path_id):
+                            logger.error("Path: %s not allowed for area: %i\nPath must contain existing areas!", path, area_id)
+                            raise ValueError
+
+                        source_path = await con.fetchval('SELECT path FROM areas WHERE id = $1;', area_id)
+                        sql = 'UPDATE areas SET path = $1 || SUBPATH(path, nlevel($2)-1) WHERE path <@ $2;'
+                        await con.execute(sql, path, source_path)
+        except Exception:
+            logger.error(
+                "Something wen't wrong when trying to update area with ID: " + area_id.__str__(),
+                exc_info=True
+            )
+            return False
+
+        return True
+
+    def _prepare_sql_for_update_area(self, arguments: list, area_id: int, name: Union[str, None], country_id: Union[UUID, None]) -> str:
         sql = 'UPDATE areas SET'
         values_updated = 0
-        arguments = [area_id]
 
         if name is not None:
             sql += ' name = $' + str(values_updated + 2)
@@ -159,29 +199,12 @@ class GeographyDao(BaseDao):
 
             sql += ' "country" = $' + str(values_updated + 2)
 
-            values_updated += 1
             arguments.append(country_id)
-        if path is not None:
-            if values_updated > 0:
-                sql += ','
-            sql += ' path = $' + str(values_updated + 2)
-            arguments.append(path)
 
         sql += ' WHERE id = $1;'
+        return sql
 
-        try:
-            async with self.pool.acquire() as con:  # type: Connection
-                await con.execute(sql, *arguments)
-        except Exception:
-            logger.error(
-                "Something wen't wrong when trying to update area with ID: " + area_id.__str__(),
-                exc_info=True
-            )
-            return False
-
-        return True
-
-    async def create_municipality(self, name: str, country_id: UUID, area_id: UUID) -> Union[Municipality, None]:
+    async def create_municipality(self, name: str, country_id: UUID, area_id: Union[int, None]) -> Union[Municipality, None]:
         sql = 'INSERT INTO municipalities (id, name, created, "country", "area") VALUES ($1, $2, $3, $4, $5);'
         created = datetime.utcnow()
         municipality_id = uuid4()
@@ -295,20 +318,62 @@ class GeographyDao(BaseDao):
 
         return municipalities
 
-    async def rename_municipality(self, municipality_id: UUID, name: str) -> bool:
-        sql = 'UPDATE municipalities SET name = $2 WHERE id = $1;'
+    async def update_municipality(
+        self,
+        municipality_id: UUID,
+        name: Union[str, None],
+        country_id: Union[UUID, None],
+        area_id: Union[int, None]
+    ) -> bool:
+        arguments = [municipality_id]
+        sql = self._prepare_sql_for_update_municipality(arguments, name, country_id, area_id)
+
+        if name is None and country_id is None and area_id is None:
+            return False
 
         try:
             async with self.pool.acquire() as con:  # type: Connection
-                await con.execute(sql, municipality_id, name)
+                await con.execute(sql, *arguments)
         except Exception:
+            logger.error(arguments)
+            logger.error(sql)
             logger.error(
-                "Something wen't wrong when trying to update name for municipality with ID: " + municipality_id.__str__(),
+                "Something wen't wrong when trying to update municipality with ID: " + municipality_id.__str__(),
                 stack_info=True
             )
             return False
 
         return True
+
+    def _prepare_sql_for_update_municipality(
+        self,
+        arguments: list,
+        name: Union[str, None],
+        country_id: Union[UUID, None],
+        area_id: Union[int, None]
+    ) -> str:
+        sql = 'UPDATE municipalities SET'
+        values_updated = 0
+
+        if name is not None:
+            sql += ' name = $' + str(values_updated + 2)
+            values_updated += 1
+            arguments.append(name)
+        if country_id is not None:
+            if values_updated > 0:
+                sql += ','
+
+            sql += ' "country" = $' + str(values_updated + 2)
+            values_updated += 1
+            arguments.append(country_id)
+        if area_id is not None:
+            if values_updated > 0:
+                sql += ','
+            sql += ' "area" = $' + str(values_updated + 2)
+            arguments.append(area_id)
+
+        sql += ' WHERE id = $1;'
+        return sql
 
     async def create_country(self, name: str) -> Union[Country, None]:
         sql = 'INSERT INTO countries (id, name, created) VALUES ($1, $2, $3);'

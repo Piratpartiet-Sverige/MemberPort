@@ -1,3 +1,25 @@
+export class GeoData {
+  id: string
+  name: string
+  type: GEO_TYPES
+  path: string | undefined
+  area: string | undefined
+
+  constructor (id: string, name: string, type: GEO_TYPES, path: string | undefined, area: string | undefined) {
+    this.id = id
+    this.name = name
+    this.type = type
+    this.path = path
+    this.area = area
+  }
+}
+
+export enum GEO_TYPES {
+  COUNTRY = 'COUNTRY',
+  AREA = 'AREA',
+  MUNICIPALITY = 'MUNICIPALITY',
+}
+
 interface DataBody {
   [index: string]: string
 }
@@ -170,6 +192,25 @@ export async function sendUpdateAreaDataRequest (areaID: string, name: string | 
   return response
 }
 
+export async function sendUpdateAreasRequest (areas: { [id: string]: GeoData }): Promise<Response> {
+  const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
+
+  const response = await fetch('/api/geography/areas', {
+    method: 'PUT',
+    cache: 'no-cache',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-XSRFToken': xsrf.value
+    },
+    body: JSON.stringify(areas),
+    redirect: 'error',
+    referrerPolicy: 'same-origin'
+  })
+
+  return response
+}
+
 export async function sendUpdateMunicipalityDataRequest (municipalityID: string, name: string | null, countryID: string | null, areaID: string | null): Promise<Response> {
   const data: DataBody = {
     municipality_id: municipalityID
@@ -199,6 +240,25 @@ export async function sendUpdateMunicipalityDataRequest (municipalityID: string,
       'X-XSRFToken': xsrf.value
     },
     body: dataBody,
+    redirect: 'error',
+    referrerPolicy: 'same-origin'
+  })
+
+  return response
+}
+
+export async function sendUpdateMunicipalitiesRequest (municipalities: { [id: string]: GeoData }): Promise<Response> {
+  const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
+
+  const response = await fetch('/api/geography/municipalities', {
+    method: 'PUT',
+    cache: 'no-cache',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-XSRFToken': xsrf.value
+    },
+    body: JSON.stringify(municipalities),
     redirect: 'error',
     referrerPolicy: 'same-origin'
   })

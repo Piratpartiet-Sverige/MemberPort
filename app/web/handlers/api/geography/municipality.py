@@ -32,7 +32,7 @@ class APIMunicipalityHandler(BaseHandler):
 
         geo_dao = GeographyDao(self.db)
 
-        result = await geo_dao.rename_municipality(municipality_id, name)
+        result = await geo_dao.update_municipality(municipality_id, name, None, None)
         if result is False:
             self.respond("ERROR OCCURRED WHEN TRYING TO UPDATE MUNICIPALITY", 500)
 

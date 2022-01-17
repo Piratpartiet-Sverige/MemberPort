@@ -19,6 +19,7 @@ from app.web.handlers.admin.add_organization import AddOrganizationHandler
 from app.web.handlers.admin.edit_organization import EditOrganizationHandler
 from app.web.handlers.admin.roles import RolesHandler
 from app.web.handlers.api.geography.area import APIAreaHandler
+from app.web.handlers.api.geography.areas import APIAreasHandler
 from app.web.handlers.api.geography.country import APICountryHandler
 from app.web.handlers.api.geography.municipalities import APIMunicipalitiesHandler
 from app.web.handlers.api.geography.municipality import APIMunicipalityHandler
@@ -99,6 +100,7 @@ def configure_application(options: WebAppOptions):
         (r"/api/membership", APIMemberShipHandler),
         (r"/api/membership/(?P<id>[^\/]+)", APIMemberShipHandler),
         (r"/api/geography/area/(?P<id>[^\/]+)", APIAreaHandler),
+        (r"/api/geography/areas", APIAreasHandler),
         (r"/api/geography/country/(?P<id>[^\/]+)", APICountryHandler),
         (r"/api/geography/municipalities", APIMunicipalitiesHandler),
         (r"/api/geography/municipality/(?P<id>[^\/]+)", APIMunicipalityHandler),

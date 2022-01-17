@@ -1,34 +1,15 @@
 import '../../sass/geography.scss'
-import { sendUpdateCountryDataRequest, sendUpdateAreaDataRequest, sendUpdateMunicipalityDataRequest, sendDeleteCountryRequest, sendDeleteAreaRequest, sendDeleteMunicipalityRequest } from './api'
+import { GeoData, GEO_TYPES, sendUpdateCountryDataRequest, sendUpdateAreaDataRequest, sendUpdateAreasRequest, sendUpdateMunicipalityDataRequest, sendUpdateMunicipalitiesRequest, sendDeleteCountryRequest, sendDeleteAreaRequest, sendDeleteMunicipalityRequest } from './api'
 import { afterPageLoad } from '../utils/after-page-load'
-
-class GeoData {
-  id: string
-  name: string
-  type: GEO_TYPES
-  path: string | undefined
-  area: string | undefined
-
-  constructor (id: string, name: string, type: GEO_TYPES, path: string | undefined, area: string | undefined) {
-    this.id = id
-    this.name = name
-    this.type = type
-    this.path = path
-    this.area = area
-  }
-}
 
 declare let geodata: { [id: string]: GeoData }
 declare let selectedCountryID: string
 
 let selectedNode: HTMLDivElement | undefined
 let moveMode = false
-
-enum GEO_TYPES {
-  COUNTRY = 'COUNTRY',
-  AREA = 'AREA',
-  MUNICIPALITY = 'MUNICIPALITY',
-}
+let movedAreas: { [id: string]: GeoData } = {}
+let movedMunicipalities: { [id: string]: GeoData } = {}
+const pendingNodes: { [id: string]: HTMLDivElement[] } = {}
 
 function renameCountry (id: string, newName: string): void {
   sendUpdateCountryDataRequest(id, newName)
@@ -199,6 +180,20 @@ function addArea (id: string, name: string, parent: string): void {
 
   if (parentElement != null) {
     parentElement.appendChild(area)
+
+    if (pendingNodes[id] === null || pendingNodes[id] === undefined) {
+      return
+    }
+
+    pendingNodes[id].forEach(function (node) {
+      area.appendChild(node)
+    })
+  } else {
+    if (pendingNodes[parent] === null || pendingNodes[parent] === undefined) {
+      pendingNodes[parent] = []
+    }
+
+    pendingNodes[parent].push(area)
   }
 }
 
@@ -208,6 +203,12 @@ function addMunicipality (id: string, name: string, parent: string): void {
 
   if (parentElement != null) {
     parentElement.appendChild(municipality)
+  } else {
+    if (pendingNodes[parent] === null || pendingNodes[parent] === undefined) {
+      pendingNodes[parent] = []
+    }
+
+    pendingNodes[parent].push(municipality)
   }
 }
 
@@ -420,6 +421,7 @@ function moveArea (area: HTMLElement, parent: HTMLElement): void {
     geodata[area.id].path = newPath
   }
 
+  movedAreas[area.id] = geodata[area.id]
   parent.appendChild(area)
 }
 
@@ -430,6 +432,7 @@ function moveMunicipality (municipality: HTMLElement, parent: HTMLElement): void
     geodata[municipality.id].area = undefined
   } else if (geodata[parent.id].type === GEO_TYPES.AREA) {
     geodata[municipality.id].area = parent.id
+    movedMunicipalities[municipality.id] = geodata[municipality.id]
   }
 
   parent.appendChild(municipality)
@@ -632,11 +635,12 @@ function getParentID (id: string, path: string, fallbackID: string): string {
   if (path === id) {
     parentID = fallbackID
   } else {
-    const count = (path.match(/./g) ?? []).length
-    if (count === 1) {
-      parentID = path.substring(0, path.indexOf('.'))
+    const pathList = path.split('.')
+
+    if (pathList.length < 2) {
+      parentID = fallbackID
     } else {
-      parentID = path.substring(path.lastIndexOf('.', path.lastIndexOf('.') - 1), path.lastIndexOf('.'))
+      parentID = pathList[pathList.length - 2]
     }
   }
 
@@ -646,6 +650,7 @@ function getParentID (id: string, path: string, fallbackID: string): string {
 function toggleMoveMode (cancel: boolean): void {
   if (cancel) {
     location.reload()
+    return
   }
 
   const tree = document.getElementById('tree') as HTMLElement
@@ -662,6 +667,43 @@ function toggleMoveMode (cancel: boolean): void {
     text.textContent = 'Flytta runt områden'
 
     cancelMoveButton.style.display = 'none'
+
+    if (Object.keys(movedAreas).length > 0) {
+      sendUpdateAreasRequest(movedAreas)
+        .then(async (response: Response) => {
+          return await response.json()
+        })
+        .then((data: { [name: string]: any }) => {
+          if (data.success === false) {
+            throw new Error(data.reason)
+          }
+
+          createMessage('Flytten av områden gick bra!', 'is-success')
+        }).catch((error: string) => {
+          console.error('Error:', error)
+          createMessage('Någonting gick fel när flytten skulle göras. Vissa områden kan ha flyttat på sig', 'is-danger')
+        })
+    }
+
+    if (Object.keys(movedMunicipalities).length > 0) {
+      sendUpdateMunicipalitiesRequest(movedMunicipalities)
+        .then(async (response: Response) => {
+          return await response.json()
+        })
+        .then((data: { [name: string]: any }) => {
+          if (data.success === false) {
+            throw new Error(data.reason)
+          }
+
+          createMessage('Flytten av kommuner gick bra!', 'is-success')
+        }).catch((error: string) => {
+          console.error('Error:', error)
+          createMessage('Någonting gick fel när flytten skulle göras. Vissa kommuner kan ha flyttat på sig', 'is-danger')
+        })
+    }
+
+    movedAreas = {}
+    movedMunicipalities = {}
   } else {
     moveButton.classList.remove('is-link')
     tree.classList.add('warning')

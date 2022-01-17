@@ -5,7 +5,7 @@ from app.test.web_testcase import MagicMockContext, WebTestCase, get_mock_sessio
 from asyncpg.exceptions import ForeignKeyViolationError
 from asyncpg.transaction import Transaction
 from datetime import datetime
-from uuid import UUID
+from uuid import uuid4, UUID
 from unittest.mock import patch
 from urllib.parse import urlencode
 
@@ -320,3 +320,81 @@ class GeographyTest(WebTestCase):
         self.assertEqual(json_body["reason"], "COULD NOT DELETE MUNICIPALITY! ORGANIZATION COULD BE ACTIVE IN MUNICIPALITY")
         self.assertEqual(json_body["data"], None)
         self.assertEqual(403, response.code)
+
+    @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
+    def test_update_areas_path(self, get_current_user):
+        self.connection.fetchrow.side_effect = [
+            {"name": self.area.name, "created": self.area.created, "country": self.country.id, "path": "3.2.1"},
+            {"name": "Östra distriktet", "created": self.area.created, "country": self.country.id, "path": "3.2"}
+        ]
+        self.connection.fetchval.side_effect = [
+            1,
+            "4.5.1",
+            1,
+            "2"
+        ]
+
+        arguments = {
+            "1": {"path": "2.1"},
+            "2": {"path": "3.2"}
+        }
+
+        # For some reason, headers must be set for PUT requests but not POST
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'Content-Length': len(json.dumps(arguments))
+        }
+
+        response = self.fetch(
+            '/api/geography/areas',
+            method="PUT",
+            body=json.dumps(arguments),
+            headers=headers
+        )
+
+        body = response.body.decode('raw_unicode_escape')
+        json_body = json.loads(body)
+
+        self.assertEqual(self.connection.execute.call_count, 2)
+        self.assertEqual(json_body["success"], True)
+        self.assertEqual(json_body["reason"], "AREAS UPDATED")
+        self.assertEqual(json_body["data"]["2"]["path"], "3.2")
+        self.assertEqual(json_body["data"]["1"]["path"], "3.2.1")
+        self.assertEqual(200, response.code)
+
+    @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
+    def test_update_municipalities_areas(self, get_current_user):
+        municipality_id = uuid4()
+
+        self.connection.fetchrow.side_effect = [
+            {"name": self.municipality.name, "created": self.municipality.created, "country": self.country.id, "area": self.area.id},
+            {"name": "Luleå", "created": self.municipality.created, "country": self.country.id, "area": "3"}
+        ]
+
+        arguments = {
+            self.municipality.id.__str__(): {"area": self.area.id.__str__()},
+            municipality_id.__str__(): {"area": "3"}
+        }
+
+        # For some reason, headers must be set for PUT requests but not POST
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'Content-Length': len(json.dumps(arguments))
+        }
+
+        response = self.fetch(
+            '/api/geography/municipalities',
+            method="PUT",
+            body=json.dumps(arguments),
+            headers=headers
+        )
+
+        body = response.body.decode('raw_unicode_escape')
+        json_body = json.loads(body)
+
+        self.assertEqual(json_body["success"], True)
+        self.assertEqual(json_body["reason"], "MUNICIPALITIES UPDATED")
+        self.assertEqual(200, response.code)
+        self.assertEqual(json_body["data"][municipality_id.__str__()]["area_id"], "3")
+        self.assertEqual(json_body["data"][self.municipality.id.__str__()]["area_id"], self.area.id.__str__())
+        self.assertEqual(self.connection.execute.call_count, len(arguments))

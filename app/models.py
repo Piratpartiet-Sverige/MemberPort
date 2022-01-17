@@ -164,7 +164,7 @@ class Municipality:
     name: str
     created: datetime
     country_id: UUID
-    area_id: UUID
+    area_id: int
 
 
 def municipality_to_json(municipality: Municipality) -> dict:
