@@ -1,4 +1,4 @@
-FROM python:3.8-alpine
+FROM python:3.9-alpine
 WORKDIR /app
 RUN apk add --no-cache alpine-sdk libffi-dev
 COPY requirements.txt requirements.txt

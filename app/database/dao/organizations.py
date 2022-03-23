@@ -118,7 +118,8 @@ class OrganizationsDao(MemberOrgDao):
         if search == "":
             sql = """ SELECT o.id, o.name, o.description, o.created, o.active
                       FROM organizations o
-                      ORDER BY """ + order_column + " " + order_dir + ";"  # noqa: S608 # nosec
+                      ORDER BY """
+            sql = sql + order_column + " " + order_dir + ";"  # order_column and order_dir have fixed values so no SQL injection is possible
 
             async with self.pool.acquire() as con:  # type: Connection
                 rows = await con.fetch(sql)
@@ -129,7 +130,8 @@ class OrganizationsDao(MemberOrgDao):
                       WHERE o.name LIKE $1
                       OR o.description LIKE $1
                       OR to_char(o.created, 'YYYY-MM-DD HH24:MI:SS.US') LIKE $1
-                      ORDER BY """ + order_column + " " + order_dir + ";"  # noqa: S608 # nosec
+                      ORDER BY """
+            sql = sql + order_column + " " + order_dir + ";"  # order_column and order_dir have fixed values so no SQL injection is possible
 
             async with self.pool.acquire() as con:  # type: Connection
                 rows = await con.fetch(sql, search)

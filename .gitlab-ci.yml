@@ -19,7 +19,7 @@ cache:
     - venv/
 
 bandit-run:
-  image: python:3.7-alpine
+  image: python:3.9-alpine
   before_script:
     - python -V
     - python -m venv venv
@@ -29,7 +29,7 @@ bandit-run:
     - bandit -r app
 
 unittests:
-  image: python:3.8-alpine
+  image: python:3.9-alpine
   before_script:
     - python -V
     - python -m venv venv
@@ -46,7 +46,7 @@ lint:frontend:
     - npm run lint
 
 lint:backend:
-  image: python:3.8-alpine
+  image: python:3.9-alpine
   before_script:
     - python -V  # Print out python version for debugging
     - python -m venv venv
