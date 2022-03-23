@@ -30,7 +30,7 @@ class WebTestCase(AsyncHTTPTestCase):
         options.debug = True
         options.xsrf = False
         options.test = True
-        options.cookie_secret = "ccd70ecea6d9f0833b07688e69bf2368f86f9127de17de102e17788a805afb7f"
+        options.cookie_secret = "ccd70ecea6d9f0833b07688e69bf2368f86f9127de17de102e17788a805afb7f"  # noqa: S105 # nosec
 
         app = configure_application(options)
         app.db = Mock(Pool)
