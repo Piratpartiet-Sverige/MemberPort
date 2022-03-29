@@ -25,7 +25,7 @@ class MembersHandler(BaseHandler):
         with ory_kratos_client.ApiClient(configuration) as api_client:
             api_instance = v0alpha2_api.V0alpha2Api(api_client)
             try:
-                api_response = api_instance.admin_list_identities(per_page=50, page=0)
+                api_response = api_instance.admin_list_identities(per_page=50, page=1)
                 members = api_response.value
             except ApiException as e:
                 logger.error("Exception when calling AdminApi->list_identities: %s\n" % e)
