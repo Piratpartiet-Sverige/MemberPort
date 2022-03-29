@@ -452,10 +452,10 @@ class GeographyDao(BaseDao):
         return country
 
     async def get_default_country(self) -> Union[Country, None]:
-        sql = 'SELECT id, name, created FROM countries WHERE name = $1;'
+        sql = 'SELECT id, name, created FROM countries WHERE id = $1;'
 
         async with self.pool.acquire() as con:  # type: Connection
-            row = await con.fetchrow(sql, "Sverige")
+            row = await con.fetchrow(sql, UUID('00000000-0000-0000-0000-000000000000'))
 
         country = Country()
 

@@ -22,6 +22,15 @@
             <span class="icon"><i class="fas fa-ban" aria-hidden="true"></i></span>
             <span>Avbryt</span>
         </button>
+        <br>
+        <br>
+        <div class="field">
+            <div class="buttons">
+                <button id="addCountry" class="button is-primary">Skapa land</button>
+                <button id="addArea" class="button is-primary">Skapa område</button>
+                <button id="addMunicipality" class="button is-primary">Skapa kommun</button>
+            </div>
+        </div>
         {% module xsrf_form_html() %}
         <br>
         <br>
@@ -59,6 +68,22 @@
                 <footer class="modal-card-foot">
                     <button id="editNameButton" class="button is-success">Ok</button>
                     <button id="cancelEdit" class="button">Avbryt</button>
+                </footer>
+            </div>
+        </div>
+        <div id="addModal" class="modal">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Skapa nytt område</p>
+                    <button id="cancelEditSmall" class="delete" aria-label="close"></button>
+                </header>
+                <section class="modal-card-body">
+                    <input class="input" id="addNewName" type="text" value="" placeholder="Namn">
+                </section>
+                <footer class="modal-card-foot">
+                    <button id="addNewButton" class="button is-success">Ok</button>
+                    <button id="cancelAdd" class="button">Avbryt</button>
                 </footer>
             </div>
         </div>

@@ -1,24 +1,4 @@
-export class GeoData {
-  id: string
-  name: string
-  type: GEO_TYPES
-  path: string | undefined
-  area: string | undefined
-
-  constructor (id: string, name: string, type: GEO_TYPES, path: string | undefined, area: string | undefined) {
-    this.id = id
-    this.name = name
-    this.type = type
-    this.path = path
-    this.area = area
-  }
-}
-
-export enum GEO_TYPES {
-  COUNTRY = 'COUNTRY',
-  AREA = 'AREA',
-  MUNICIPALITY = 'MUNICIPALITY',
-}
+import { GeoData } from './geography/geodata'
 
 interface DataBody {
   [index: string]: string
