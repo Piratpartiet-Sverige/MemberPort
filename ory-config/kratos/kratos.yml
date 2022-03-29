@@ -1,16 +1,18 @@
-version: v0.8.0-alpha.2
+version: v0.9.0-alpha.3
 
 dsn: sqlite:///home/ory/sqlite/db.sqlite?_fk=true
 
 identity:
-  default_schema_url: file:///etc/pirate-config/member.schema.json
+  default_schema_id: member
   schemas:
+    - id: member
+      url: file:///etc/pirate-config/member.schema.json
     - id: bot
       url: file:///etc/pirate-config/bot.schema.json
 
 selfservice:
   default_browser_return_url: http://127.0.0.1:8888/
-  whitelisted_return_urls:
+  allowed_return_urls:
     - http://127.0.0.1:8888
 
   methods:

@@ -47,7 +47,7 @@
         },
         "phone": {
           "type": "string",
-          "format": "phone_number",
+          "format": "tel",
           "title": "Phone number",
           "minLength": 6,
           "ory.sh/kratos": {
@@ -79,7 +79,11 @@
         }
       },
       "required": [
-        "email"
+        "country",
+        "email",
+        "municipality",
+        "name",
+        "postal_address"
       ],
       "additionalProperties": false
     }
