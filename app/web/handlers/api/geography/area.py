@@ -19,6 +19,22 @@ class APIAreaHandler(BaseHandler):
 
         return self.respond("RETRIEVED AREA", 200, area_to_json(area))
 
+    async def post(self):
+        area_name = self.get_argument("name", None)
+        country_id = self.get_argument("country", None)
+        parent_id = self.get_argument("parent", "")
+
+        if area_name is None or country_id is None or len(area_name) < 1:
+            return self.respond("AREA OR COUNTRY ID IS MISSING", 400)
+
+        geo_dao = GeographyDao(self.db)
+        area = await geo_dao.create_area(area_name, country_id, parent_id)
+
+        if area is None:
+            return self.respond("SOMETHING WENT WRONG WHEN TRYING TO CREATE AREA", 500)
+
+        return self.respond("AREA CREATED", 201, area_to_json(area))
+
     async def put(self, id: str):
         try:
             area_id = int(id)

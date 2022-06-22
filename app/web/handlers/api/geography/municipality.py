@@ -19,6 +19,30 @@ class APIMunicipalityHandler(BaseHandler):
 
         return self.respond("RETRIEVED MUNICIPALITY", 200, municipality_to_json(municipality))
 
+    async def post(self):
+        municipality_name = self.get_argument("name", None)
+        country_id = self.get_argument("country", None)
+        area_id = self.get_argument("area", "")
+
+        if municipality_name is None or country_id is None or len(municipality_name) < 1:
+            return self.respond("MUNICIPALITY OR COUNTRY ID IS MISSING", 400)
+
+        try:
+            if area_id != "":
+                area_id = int(area_id)
+            else:
+                area_id = None
+        except ValueError:
+            return self.respond("AREA ID MUST BE AN INTEGER", 400)
+
+        geo_dao = GeographyDao(self.db)
+        municipality = await geo_dao.create_municipality(municipality_name, country_id, area_id)
+
+        if municipality is None:
+            return self.respond("SOMETHING WENT WRONG WHEN TRYING TO CREATE MUNICIPALITY", 500)
+
+        return self.respond("MUNICIPALITY CREATED", 201, municipality_to_json(municipality))
+
     async def put(self, id: str):
         municipality_id = self.check_uuid(id)
 

@@ -1,5 +1,6 @@
 import { sendDeleteNodeRequest } from './delete'
 import { sendChangeNameRequest } from './edit'
+import { sendCreateCountryRequest, sendCreateAreaRequest, sendCreateMunicipalityRequest, addArea, addMunicipality } from './add'
 import { GeoData, GEO_TYPES } from './geodata'
 import { sendUpdateAreasRequest, sendUpdateMunicipalitiesRequest } from '../api'
 
@@ -81,20 +82,100 @@ export function closeEditModal (): void {
   }
 }
 
-export function openAddModal (id: string, geodata: { [id: string]: GeoData }): void {
+export function openAddModal (type: GEO_TYPES, geodata: { [id: string]: GeoData }): void {
   const addModal = document.getElementById('addModal')
-  if (addModal !== null) {
-    addModal.classList.add('is-active')
+  const newNameInput = document.getElementById('addNewName') as HTMLInputElement
+  const addTitle = document.getElementById('addTitle')
+  const addNewButton = document.getElementById('addNewButton')
+
+  if (addModal === null || newNameInput === null || addTitle === null || addNewButton === null) {
+    return
   }
 
-  const addNameButton = document.getElementById('addNameButton')
-  if (addNameButton !== null) {
-    addNameButton.onclick = () => { sendChangeNameRequest(id, geodata); closeAddModal() }
-  }
+  addModal.classList.add('is-active')
+  newNameInput.value = ''
 
-  const newNameInput = document.getElementById('newName') as HTMLInputElement
-  if (newNameInput !== null) {
-    newNameInput.value = geodata[id].name
+  switch (type) {
+    case GEO_TYPES.AREA:
+      addTitle.textContent = 'Skapa nytt område'
+      addNewButton.onclick = () => {
+        const countryInput = document.getElementById('country') as HTMLSelectElement
+        const newNameInput = document.getElementById('addNewName') as HTMLInputElement
+
+        if (newNameInput !== null) {
+          sendCreateAreaRequest(newNameInput.value, countryInput.value)
+            .then(async (response: Response) => {
+              return await response.json()
+            })
+            .then((data: { [name: string]: any }) => {
+              if (data.success === false) {
+                throw new Error(data.reason)
+              }
+              const dataBody = data.data
+
+              createMessage('Nytt område skapat: ' + (dataBody.name as string), 'is-success')
+              geodata[dataBody.id] = new GeoData(dataBody.id, dataBody.name, GEO_TYPES.AREA, dataBody.path, undefined)
+              addArea(dataBody.id, dataBody.name, dataBody.country_id, geodata)
+            }).catch((error: string) => {
+              console.error('Error:', error)
+              createMessage('Någonting gick fel när området skulle skapas', 'is-danger')
+            })
+        }
+        closeAddModal()
+      }
+      break
+    case GEO_TYPES.COUNTRY:
+      addTitle.textContent = 'Skapa nytt land'
+      addNewButton.onclick = () => {
+        const newNameInput = document.getElementById('addNewName') as HTMLInputElement
+        if (newNameInput !== null) {
+          sendCreateCountryRequest(newNameInput.value)
+            .then(async (response: Response) => {
+              return await response.json()
+            })
+            .then((data: { [name: string]: any }) => {
+              if (data.success === false) {
+                throw new Error(data.reason)
+              }
+              const dataBody = data.data
+
+              createMessage('Nytt land skapat: ' + (dataBody.name as string), 'is-success')
+            }).catch((error: string) => {
+              console.error('Error:', error)
+              createMessage('Någonting gick fel när landet skulle skapas', 'is-danger')
+            })
+        }
+        closeAddModal()
+      }
+      break
+    case GEO_TYPES.MUNICIPALITY:
+      addTitle.textContent = 'Skapa ny kommun'
+      addNewButton.onclick = () => {
+        const countryInput = document.getElementById('country') as HTMLInputElement
+        const newNameInput = document.getElementById('addNewName') as HTMLInputElement
+
+        if (newNameInput !== null) {
+          sendCreateMunicipalityRequest(newNameInput.value, countryInput.value)
+            .then(async (response: Response) => {
+              return await response.json()
+            })
+            .then((data: { [name: string]: any }) => {
+              if (data.success === false) {
+                throw new Error(data.reason)
+              }
+              const dataBody = data.data
+
+              createMessage('Ny kommun skapad: ' + (dataBody.name as string), 'is-success')
+              geodata[dataBody.id] = new GeoData(dataBody.id, dataBody.name, GEO_TYPES.MUNICIPALITY, undefined, undefined)
+              addMunicipality(dataBody.id, dataBody.name, dataBody.country_id, geodata)
+            }).catch((error: string) => {
+              console.error('Error:', error)
+              createMessage('Någonting gick fel när kommunen skulle skapas', 'is-danger')
+            })
+        }
+        closeAddModal()
+      }
+      break
   }
 }
 

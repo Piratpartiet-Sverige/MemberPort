@@ -680,6 +680,8 @@ VALUES (25, 'Kalmar län', '00000000-0000-0000-0000-000000000000', localtimestam
 INSERT INTO areas (id, name, "country", created, path)
 VALUES (26, 'Gotlands län', '00000000-0000-0000-0000-000000000000', localtimestamp, '5.26');
 
+SELECT setval('areas_id_seq', 26);
+
 -- Municipalities
 INSERT INTO municipalities (id, name, created, "country", "area")
 VALUES (uuid_generate_v4(), 'Ale', localtimestamp, '00000000-0000-0000-0000-000000000000', 20);

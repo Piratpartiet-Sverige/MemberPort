@@ -91,6 +91,25 @@ afterPageLoad().then(() => {
     })
   }
 
+  const addNewCountry = document.getElementById('addCountry')
+  if (addNewCountry !== null) {
+    addNewCountry.addEventListener('click', function () {
+      ui.openAddModal(GEO_TYPES.COUNTRY, geodata)
+    })
+  }
+  const addNewArea = document.getElementById('addArea')
+  if (addNewArea !== null) {
+    addNewArea.addEventListener('click', function () {
+      ui.openAddModal(GEO_TYPES.AREA, geodata)
+    })
+  }
+  const addNewMunicipality = document.getElementById('addMunicipality')
+  if (addNewMunicipality !== null) {
+    addNewMunicipality.addEventListener('click', function () {
+      ui.openAddModal(GEO_TYPES.MUNICIPALITY, geodata)
+    })
+  }
+
   const country = document.getElementById('country')
   const newName = document.getElementById('newName') as HTMLInputElement
   const addNewName = document.getElementById('addNewName') as HTMLInputElement

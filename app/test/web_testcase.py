@@ -48,6 +48,12 @@ class WebTestCase(AsyncHTTPTestCase):
         except ValueError:
             self.fail("'" + field_name + "' field was wrong format")
 
+    def assert_uuid(self, field_name, uuid_str):
+        try:
+            UUID(uuid_str)
+        except Exception:
+            self.fail("'" + field_name + "' field was wrong UUID format")
+
 
 def get_mock_session():
     session = Session()

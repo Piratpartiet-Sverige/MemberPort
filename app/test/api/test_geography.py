@@ -34,6 +34,33 @@ class GeographyTest(WebTestCase):
         return super().setUp()
 
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
+    def test_create_country(self, get_current_user):
+        new_country = "Atlantis"
+        arguments = {
+            "name": new_country
+        }
+
+        response = self.fetch(
+            '/api/geography/country',
+            method="POST",
+            body=urlencode(arguments)
+        )
+
+        body = response.body.decode('raw_unicode_escape')
+        json_body = json.loads(body)
+
+        self.maxDiff = None
+
+        self.assert_uuid("country_id", json_body["data"]["id"])
+
+        self.connection.execute.assert_called()
+        self.assertEqual(json_body["success"], True)
+        self.assertEqual(json_body["reason"], "COUNTRY CREATED")
+        self.assertEqual(json_body["data"]["name"], new_country)
+        self.assert_datetime("created", json_body["data"]["created"])
+        self.assertEqual(201, response.code)
+
+    @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_retrieve_country(self, get_current_user):
         self.connection.fetchrow.return_value = {
             "name": self.country.name,
@@ -129,6 +156,40 @@ class GeographyTest(WebTestCase):
         self.assertEqual(403, response.code)
 
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
+    def test_create_area(self, get_current_user):
+        new_id = 5
+        self.connection.fetchval.side_effect = [str(self.area.id), new_id]
+        new_area = "Österbotten"
+        arguments = {
+            "name": new_area,
+            "country": str(self.country.id),
+            "parent": str(self.area.id)
+        }
+
+        response = self.fetch(
+            '/api/geography/area',
+            method="POST",
+            body=urlencode(arguments)
+        )
+
+        body = response.body.decode('raw_unicode_escape')
+        json_body = json.loads(body)
+
+        self.maxDiff = None
+
+        self.assertEqual(int(json_body["data"]["id"]), 5)
+
+        self.connection.fetchval.assert_called()
+        self.assertEqual(json_body["success"], True)
+        self.assertEqual(json_body["reason"], "AREA CREATED")
+        self.assertEqual(json_body["data"]["name"], new_area)
+        self.assertEqual(json_body["data"]["country_id"], str(self.country.id))
+        self.assertEqual(json_body["data"]["path"], str(self.area.id) + "." + str(new_id))
+        self.assert_datetime("created", json_body["data"]["created"])
+        self.assertEqual(201, response.code)
+
+
+    @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_retrieve_area(self, get_current_user):
         self.connection.fetchrow.return_value = {
             "name": self.area.name,
@@ -222,6 +283,36 @@ class GeographyTest(WebTestCase):
         self.assertEqual(json_body["reason"], "COULD NOT DELETE AREA! ORGANIZATION COULD BE ACTIVE IN AREA")
         self.assertEqual(json_body["data"], None)
         self.assertEqual(403, response.code)
+
+    @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
+    def test_create_municipality(self, get_current_user):
+        new_municipality = "Oslo"
+        arguments = {
+            "name": new_municipality,
+            "country": str(self.country.id),
+            "area": str(self.area.id)
+        }
+
+        response = self.fetch(
+            '/api/geography/municipality',
+            method="POST",
+            body=urlencode(arguments)
+        )
+
+        body = response.body.decode('raw_unicode_escape')
+        json_body = json.loads(body)
+
+        self.maxDiff = None
+
+        self.assert_uuid("municipality_id", json_body["data"]["id"])
+        self.connection.execute.assert_called()
+        self.assertEqual(json_body["success"], True)
+        self.assertEqual(json_body["reason"], "MUNICIPALITY CREATED")
+        self.assertEqual(json_body["data"]["name"], new_municipality)
+        self.assertEqual(json_body["data"]["country_id"], str(self.country.id))
+        self.assertEqual(json_body["data"]["area_id"], str(self.area.id))
+        self.assert_datetime("created", json_body["data"]["created"])
+        self.assertEqual(201, response.code)
 
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_retrieve_municipality(self, get_current_user):

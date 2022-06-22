@@ -51,6 +51,66 @@ export function addCountry (id: string, name: string, geodata: {[id: string]: Ge
   }
 }
 
+export async function sendCreateCountryRequest (name: string): Promise<Response> {
+  const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
+  const dataBody = 'name=' + name
+
+  const response = await fetch('/api/geography/country', {
+    method: 'POST',
+    cache: 'no-cache',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-XSRFToken': xsrf.value
+    },
+    body: dataBody,
+    redirect: 'error',
+    referrerPolicy: 'same-origin'
+  })
+
+  return response
+}
+
+export async function sendCreateAreaRequest (name: string, countryID: string): Promise<Response> {
+  const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
+  const dataBody = 'name=' + name + '&country=' + countryID
+
+  const response = await fetch('/api/geography/area', {
+    method: 'POST',
+    cache: 'no-cache',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-XSRFToken': xsrf.value
+    },
+    body: dataBody,
+    redirect: 'error',
+    referrerPolicy: 'same-origin'
+  })
+
+  return response
+}
+
+export async function sendCreateMunicipalityRequest (name: string, countryID: string): Promise<Response> {
+  const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
+  const dataBody = 'name=' + name + '&country=' + countryID
+
+  const response = await fetch('/api/geography/municipality', {
+    method: 'POST',
+    cache: 'no-cache',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-XSRFToken': xsrf.value
+    },
+    body: dataBody,
+    redirect: 'error',
+    referrerPolicy: 'same-origin'
+  })
+
+  return response
+}
+
 function createArea (id: string, name: string, icon: string, geodata: {[id: string]: GeoData}): HTMLDivElement {
   const area = document.createElement('div')
   area.id = id

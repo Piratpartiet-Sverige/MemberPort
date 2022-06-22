@@ -218,13 +218,14 @@ class GeographyDao(BaseDao):
                 "Tried to create municipality with the ID: " + str(municipality_id) + " and name: " + name + " but it already existed"
             )
             return None
-        except Exception:
-            logger.error("An error occured when trying to create new municipality!", stack_info=True)
+        except Exception as e:
+            logger.error("An error occured when trying to create new municipality!\n" + e, stack_info=True)
             return None
 
         municipality = Municipality()
+        municipality.id = municipality_id
         municipality.name = name
-        municipality.created = country_id
+        municipality.created = created
         municipality.country_id = country_id
         municipality.area_id = area_id
 

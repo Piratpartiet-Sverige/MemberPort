@@ -19,6 +19,20 @@ class APICountryHandler(BaseHandler):
 
         return self.respond("RETRIEVED COUNTRY", 200, country_to_json(country))
 
+    async def post(self):
+        country_name = self.get_argument("name", None)
+
+        if country_name is None or len(country_name) < 1:
+            return self.respond("COUNTRY NAME IS MISSING", 400)
+
+        geo_dao = GeographyDao(self.db)
+        country = await geo_dao.create_country(country_name)
+
+        if country is None:
+            return self.respond("SOMETHING WENT WRONG WHEN TRYING TO CREATE COUNTRY", 500)
+
+        return self.respond("COUNTRY CREATED", 201, country_to_json(country))
+
     async def put(self, id: str):
         country_id = self.check_uuid(id)
 
