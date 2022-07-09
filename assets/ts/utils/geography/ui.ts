@@ -9,8 +9,8 @@ export let moveMode = false
 export let movedAreas: { [id: string]: GeoData } = {}
 export let movedMunicipalities: { [id: string]: GeoData } = {}
 
-export function createMessage (message: string, type: string): void {
-  const tree = document.getElementById('tree')
+export function createMessage (message: string, type: string, parent = 'tree'): void {
+  const tree = document.getElementById(parent)
   const messageDiv = document.createElement('div')
   messageDiv.classList.add('notification')
   messageDiv.classList.add(type)

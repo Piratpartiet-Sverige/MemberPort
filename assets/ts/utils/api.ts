@@ -302,3 +302,88 @@ export async function sendDeleteMunicipalityRequest (municipalityID: string): Pr
 
   return response
 }
+
+export async function sendCreateOrganizationRequest (
+  name: string,
+  description: string,
+  active: boolean,
+  countries: string | null,
+  areas: string | null,
+  municipalities: string | null
+): Promise<Response> {
+  const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
+  const data: DataBody = {
+    name: name,
+    description: description,
+    active: String(active)
+  }
+
+  if (countries != null) {
+    data.countries = countries
+  }
+  if (areas != null) {
+    data.areas = areas
+  }
+  if (municipalities != null) {
+    data.municipalities = municipalities
+  }
+
+  const body = convertDictToBody(data)
+  const response = await fetch('/api/organization', {
+    method: 'POST',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-XSRFToken': xsrf.value
+    },
+    redirect: 'follow',
+    referrerPolicy: 'no-referrer',
+    body: body
+  })
+
+  return response
+}
+
+export async function sendUpdateOrganizationRequest (
+  organizationID: string,
+  name: string,
+  description: string,
+  active: boolean,
+  countries: string | null,
+  areas: string | null,
+  municipalities: string | null
+): Promise<Response> {
+  const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
+  const data: DataBody = {
+    name: name,
+    description: description,
+    active: String(active)
+  }
+
+  if (countries != null) {
+    data.countries = countries
+  }
+  if (areas != null) {
+    data.areas = areas
+  }
+  if (municipalities != null) {
+    data.municipalities = municipalities
+  }
+
+  const body = convertDictToBody(data)
+  const response = await fetch('/api/organization/' + organizationID, {
+    method: 'PUT',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-XSRFToken': xsrf.value
+    },
+    redirect: 'follow',
+    referrerPolicy: 'no-referrer',
+    body: body
+  })
+
+  return response
+}

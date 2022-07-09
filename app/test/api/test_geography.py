@@ -188,7 +188,6 @@ class GeographyTest(WebTestCase):
         self.assert_datetime("created", json_body["data"]["created"])
         self.assertEqual(201, response.code)
 
-
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_retrieve_area(self, get_current_user):
         self.connection.fetchrow.return_value = {

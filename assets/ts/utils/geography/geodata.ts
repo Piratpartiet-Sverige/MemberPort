@@ -4,6 +4,7 @@ export class GeoData {
   type: GEO_TYPES
   path: string | undefined
   area: string | undefined
+  active: boolean | undefined
 
   constructor (id: string, name: string, type: GEO_TYPES, path: string | undefined, area: string | undefined) {
     this.id = id

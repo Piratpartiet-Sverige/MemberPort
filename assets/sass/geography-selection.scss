@@ -1,0 +1,10 @@
+@import "bulma/sass/utilities/_all.sass";
+
+.indent {
+    margin-left: 2rem;
+    border-bottom: 1px solid #ededed;
+}
+
+.no-border {
+    border-bottom: 0;
+}
