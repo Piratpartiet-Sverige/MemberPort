@@ -9,14 +9,7 @@ export function addArea (id: string, name: string, parent: string, geodata: {[id
 
   if (parentElement != null) {
     parentElement.appendChild(area)
-
-    if (pendingNodes[id] === null || pendingNodes[id] === undefined) {
-      return
-    }
-
-    pendingNodes[id].forEach(function (node) {
-      area.appendChild(node)
-    })
+    addPendingNodes(id, area)
   } else {
     if (pendingNodes[parent] === null || pendingNodes[parent] === undefined) {
       pendingNodes[parent] = []
@@ -109,6 +102,19 @@ export async function sendCreateMunicipalityRequest (name: string, countryID: st
   })
 
   return response
+}
+
+function addPendingNodes (id: string, parent: HTMLDivElement): void {
+  if (pendingNodes[id] === null || pendingNodes[id] === undefined) {
+    return
+  }
+
+  pendingNodes[id].forEach(function (node) {
+    parent.appendChild(node)
+    addPendingNodes(node.id, node)
+  })
+
+  delete pendingNodes[id]
 }
 
 function createArea (id: string, name: string, icon: string, geodata: {[id: string]: GeoData}): HTMLDivElement {

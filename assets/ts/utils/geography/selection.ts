@@ -61,9 +61,7 @@ export function addArea (id: string, name: string, parent: string, geodata: { [i
       return
     }
 
-    pendingNodes[id].forEach(function (node) {
-      parentElement.appendChild(node)
-    })
+    addPendingNodes(id, area)
 
     if (parentInput.checked) {
       const children = parentElement.querySelectorAll('.indent input')
@@ -181,7 +179,6 @@ export function getCheckedMunicipalities (parent: string): string {
   for (let i = 0; i < municipalities.length; i++) {
     const municipality = municipalities.item(i) as HTMLElement
     const parentElement = municipality.parentElement
-    console.log(municipality.id)
 
     if (parentElement !== null) {
       const input = parentElement.querySelector('input')
@@ -204,6 +201,19 @@ export function getCheckedMunicipalities (parent: string): string {
   }
 
   return municipalityIDs
+}
+
+function addPendingNodes (id: string, parent: HTMLDivElement): void {
+  if (pendingNodes[id] === null || pendingNodes[id] === undefined) {
+    return
+  }
+
+  pendingNodes[id].forEach(function (node) {
+    parent.appendChild(node)
+    addPendingNodes(node.id, node)
+  })
+
+  delete pendingNodes[id]
 }
 
 function createHTML (id: string, name: string, icon: string, geodata: {[id: string]: GeoData}): HTMLDivElement {
