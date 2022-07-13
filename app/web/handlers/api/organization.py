@@ -75,9 +75,14 @@ class APIOrganizationHandler(BaseHandler):
 
         if countries_id is not None or areas_id is not None or municipalities_id is not None:
             try:
-                countries_id = list(map(UUID, countries_id.split(','))) if countries_id != "" else list()
-                areas_id = list(map(int, areas_id.split(','))) if areas_id != "" else list()
-                municipalities_id = list(map(UUID, municipalities_id.split(','))) if municipalities_id != "" else list()
+                countries_id = list(map(UUID, countries_id.split(','))) if countries_id != "" and countries_id is not None else list()
+                areas_id = list(map(int, areas_id.split(','))) if areas_id != "" and areas_id is not None else list()
+
+                if municipalities_id and municipalities_id is not None != "":
+                    municipalities_id = list(map(UUID, municipalities_id.split(',')))
+                else:
+                    municipalities_id = list()
+
             except ValueError:
                 logger.error(
                     "Recruitment areas contained invalid UUID when trying to set them for org: %s",
