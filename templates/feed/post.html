@@ -1,0 +1,33 @@
+{% extends "../base.html" %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        {% module xsrf_form_html() %}
+        <div class="content">
+            <h1>Skapa inlägg</h1>
+        </div>
+        <div class="field">
+            <div class="control">
+                <input id="postTitle" class="input" type="text" placeholder="Rubrik">
+            </div>
+        </div>
+        <div class="field">
+            <div class="control">
+                <textarea id="editor"></textarea>
+            </div>
+        </div>
+        <div class="field">
+            <div class="control">
+                <button id="publish" class="button is-primary">Publicera</button>
+            </div>
+        </div>
+        <div id="message"></div>
+    </div>
+</section>
+{% end %}
+
+{% block scripts %}
+<script src="{{ static_url('tinymce/tinymce.min.js') }}"></script>
+<script src="{{ static_url('post.bundle.js') }}"></script>
+{% end %}

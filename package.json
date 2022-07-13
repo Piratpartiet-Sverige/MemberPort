@@ -12,6 +12,7 @@
     "@typescript-eslint/eslint-plugin": "^5.30.6",
     "@typescript-eslint/parser": "^5.30.6",
     "bulma": "^0.9.4",
+    "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.1",
     "eslint": "^8.19.0",
     "eslint-config-standard-jsx": "^11.0.0",
@@ -28,6 +29,7 @@
   },
   "dependencies": {
     "@ag-grid-community/client-side-row-model": "^28.0.2",
-    "@ag-grid-community/core": "^28.0.2"
+    "@ag-grid-community/core": "^28.0.2",
+    "tinymce": "^6.1.0"
   }
 }

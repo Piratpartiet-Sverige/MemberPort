@@ -1,6 +1,6 @@
 import { sendDeleteAreaRequest, sendDeleteCountryRequest, sendDeleteMunicipalityRequest } from '../api'
 import { GeoData, GEO_TYPES, getNodeType } from './geodata'
-import { createMessage } from './ui'
+import { createMessage } from '../ui'
 
 export function sendDeleteNodeRequest (id: string, geodata: {[id: string]: GeoData}): void {
   const nodeType = getNodeType(id, geodata)

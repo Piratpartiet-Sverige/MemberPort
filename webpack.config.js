@@ -1,6 +1,7 @@
 const path = require('path')
 const fs = require('fs')
 const MiniCSSExtractPlugin = require('mini-css-extract-plugin')
+const CopyPlugin = require('copy-webpack-plugin')
 
 const isDev = process.env.NODE_ENV === 'development'
 
@@ -85,6 +86,11 @@ module.exports = {
   plugins: [
     new MiniCSSExtractPlugin({
       filename: 'css/[name].bundle.css'
+    }),
+    new CopyPlugin({
+      patterns: [
+        { from: "node_modules/tinymce", to: "tinymce" }
+      ],
     })
   ]
 }

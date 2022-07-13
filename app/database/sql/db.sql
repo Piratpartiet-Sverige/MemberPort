@@ -122,6 +122,44 @@ CREATE TABLE organization_municipality
     PRIMARY KEY ("organization", "municipality")
 );
 
+CREATE TABLE posts
+(
+    id      UUID PRIMARY KEY,
+    title   TEXT NOT NULL,
+    content TEXT NOT NULL,
+    author  UUID REFERENCES users(kratos_id) NOT NULL,
+    created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    updated TIMESTAMP WITHOUT TIME ZONE NOT NULL
+);
+
+CREATE TABLE post_organization
+(
+    "post"         UUID REFERENCES posts(id),
+    "organization" UUID REFERENCES organizations(id),
+    PRIMARY KEY ("post", "organization")
+);
+
+CREATE TABLE post_country
+(
+    "post"         UUID REFERENCES posts(id),
+    "country" UUID REFERENCES countries(id),
+    PRIMARY KEY ("post", "country")
+);
+
+CREATE TABLE post_area
+(
+    "post" UUID REFERENCES posts(id),
+    "area" INTEGER REFERENCES areas(id),
+    PRIMARY KEY ("post", "area")
+);
+
+CREATE TABLE post_municipality
+(
+    "post"         UUID REFERENCES posts(id),
+    "municipality" UUID REFERENCES municipalities(id),
+    PRIMARY KEY ("post", "municipality")
+);
+
 -- Create an administrator role
 INSERT INTO roles (id, name, description)
 VALUES ('00000000-0000-0000-0000-000000000000', 'Admin', 'Default role for admins.');

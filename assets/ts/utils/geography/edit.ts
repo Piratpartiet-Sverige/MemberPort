@@ -1,6 +1,6 @@
 import { GeoData, GEO_TYPES, getNodeType } from './geodata'
 import { sendUpdateCountryDataRequest, sendUpdateAreaDataRequest, sendUpdateMunicipalityDataRequest } from '../api'
-import { createMessage } from './ui'
+import { createMessage } from '../ui'
 
 export function sendChangeNameRequest (id: string, geodata: { [id: string]: GeoData }): void {
   const node = document.getElementById(id)

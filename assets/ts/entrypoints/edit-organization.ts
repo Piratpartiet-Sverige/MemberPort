@@ -1,5 +1,5 @@
 import { sendUpdateOrganizationRequest } from '../utils/api'
-import { createMessage } from '../utils/geography/ui'
+import { createMessage } from '../utils/ui'
 import { GeoData, GEO_TYPES } from '../utils/geography/geodata'
 import { addArea, addCountry, addMunicipality, filter, getCheckedCountries, getCheckedAreas, getCheckedMunicipalities } from '../utils/geography/selection'
 import { afterPageLoad } from '../utils/after-page-load'

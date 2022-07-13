@@ -189,6 +189,26 @@ def municipality_to_json(municipality: Municipality) -> dict:
     }
 
 
+class Post:
+    id: UUID
+    title: str
+    content: str
+    author: UUID
+    created: datetime
+    updated: datetime
+
+
+def post_to_json(post: Post) -> dict:
+    return {
+        'id': post.id.__str__(),
+        'title': post.title,
+        'content': post.content,
+        'author': post.author.__str__(),
+        'created': post.created.isoformat(' ', 'seconds'),
+        'updated': post.updated.isoformat(' ', 'seconds'),
+    }
+
+
 def ui_placeholders(button_label: str) -> dict:
     return {
         "password": "Lösenord",

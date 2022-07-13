@@ -18,6 +18,7 @@ from app.web.handlers.admin.organizations import OrganizationsHandler
 from app.web.handlers.admin.add_organization import AddOrganizationHandler
 from app.web.handlers.admin.edit_organization import EditOrganizationHandler
 from app.web.handlers.admin.roles import RolesHandler
+from app.web.handlers.api.feed.post import APIPostHandler
 from app.web.handlers.api.geography.area import APIAreaHandler
 from app.web.handlers.api.geography.areas import APIAreasHandler
 from app.web.handlers.api.geography.country import APICountryHandler
@@ -30,6 +31,8 @@ from app.web.handlers.api.organization import APIOrganizationHandler
 from app.web.handlers.authentication import RecoveryHandler, SignInHandler, SignUpHandler
 from app.web.handlers.error import Error404Handler
 from app.web.handlers.error_kratos import ErrorKratosHandler
+from app.web.handlers.feed.feed import FeedHandler
+from app.web.handlers.feed.post import PostHandler
 from app.web.handlers.kratos import KratosHandler
 from app.web.handlers.main import MainHandler
 from app.web.handlers.new_member import NewMemberHandler
@@ -99,6 +102,8 @@ def configure_application(options: WebAppOptions):
         (r"/api/member", APIMemberHandler),
         (r"/api/membership", APIMemberShipHandler),
         (r"/api/membership/(?P<id>[^\/]+)", APIMemberShipHandler),
+        (r"/api/feed/post", APIPostHandler),
+        (r"/api/feed/post/(?P<id>[^\/]+)", APIPostHandler),
         (r"/api/geography/area", APIAreaHandler),
         (r"/api/geography/area/(?P<id>[^\/]+)", APIAreaHandler),
         (r"/api/geography/areas", APIAreasHandler),
@@ -113,6 +118,8 @@ def configure_application(options: WebAppOptions):
         (r"/auth/login", SignInHandler),
         (r"/auth/registration", SignUpHandler),
         (r"/error", ErrorKratosHandler),
+        (r"/feed", FeedHandler),
+        (r"/feed/post", PostHandler),
         (r"/login", tornado.web.RedirectHandler, dict(url=r"/auth/login")),
         (r"/new-member", NewMemberHandler),
         (r"/profile", ProfileHandler),

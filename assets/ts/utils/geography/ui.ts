@@ -3,33 +3,12 @@ import { sendChangeNameRequest } from './edit'
 import { sendCreateCountryRequest, sendCreateAreaRequest, sendCreateMunicipalityRequest, addArea, addMunicipality } from './add'
 import { GeoData, GEO_TYPES } from './geodata'
 import { sendUpdateAreasRequest, sendUpdateMunicipalitiesRequest } from '../api'
+import { createMessage } from '../ui'
 
 export let selectedNode: HTMLDivElement | undefined
 export let moveMode = false
 export let movedAreas: { [id: string]: GeoData } = {}
 export let movedMunicipalities: { [id: string]: GeoData } = {}
-
-export function createMessage (message: string, type: string, parent = 'tree'): void {
-  const tree = document.getElementById(parent)
-  const messageDiv = document.createElement('div')
-  messageDiv.classList.add('notification')
-  messageDiv.classList.add(type)
-
-  const button = document.createElement('button')
-  button.type = 'button'
-  button.classList.add('delete')
-  button.onclick = () => { messageDiv.remove() }
-
-  const text = document.createElement('p')
-  text.textContent = message
-
-  messageDiv.appendChild(button)
-  messageDiv.appendChild(text)
-
-  if (tree !== null) {
-    tree.insertAdjacentElement('beforebegin', messageDiv)
-  }
-}
 
 export function closeDeleteModal (): void {
   const deleteModal = document.getElementById('deleteModal')

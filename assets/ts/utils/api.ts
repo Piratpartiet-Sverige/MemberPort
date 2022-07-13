@@ -387,3 +387,27 @@ export async function sendUpdateOrganizationRequest (
 
   return response
 }
+
+export async function sendCreatePostRequest (title: string, content: string): Promise<Response> {
+  const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
+  const data: DataBody = {
+    title,
+    content
+  }
+
+  const body = convertDictToBody(data)
+  const response = await fetch('/api/feed/post', {
+    method: 'POST',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-XSRFToken': xsrf.value
+    },
+    redirect: 'follow',
+    referrerPolicy: 'no-referrer',
+    body
+  })
+
+  return response
+}
