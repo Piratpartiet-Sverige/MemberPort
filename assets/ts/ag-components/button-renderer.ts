@@ -1,4 +1,4 @@
-import { Component } from '@ag-grid-community/all-modules'
+import { Component } from '@ag-grid-community/core'
 
 /*
  * Renders buttons in an ag-grid

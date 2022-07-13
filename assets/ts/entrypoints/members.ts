@@ -1,4 +1,4 @@
-import { Grid, GridOptions, ModuleRegistry } from '@ag-grid-community/all-modules'
+import { Grid, GridOptions, ModuleRegistry } from '@ag-grid-community/core'
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model'
 import { afterPageLoad } from '../utils/after-page-load'
 
@@ -15,6 +15,10 @@ declare const _GRID_DATA_: Array<{
   country: string
 }>
 
+const defaultColDef = {
+  sortable: true
+};
+
 // specify the columns
 const columnDefs = [
   { headerName: 'Medlemsnummer', field: 'number' },
@@ -30,6 +34,7 @@ const columnDefs = [
 // let the grid know which columns and what data to use
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
+  defaultColDef: defaultColDef,
   rowData: _GRID_DATA_
 }
 

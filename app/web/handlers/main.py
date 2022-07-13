@@ -9,8 +9,6 @@ from app.web.handlers.base import BaseHandler
 class MainHandler(BaseHandler):
     @tornado.web.authenticated
     async def get(self):
-        logger.debug("Entered main handler...")
-
         dao = UsersDao(self.db)
         permissions_check = await dao.check_user_admin(self.current_user.user.id)
 

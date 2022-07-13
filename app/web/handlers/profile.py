@@ -43,8 +43,6 @@ class ProfileHandler(BaseHandler):
                 nodes = api_response.ui.nodes.value
                 action = api_response.ui.action
                 method = api_response.ui.method
-
-                logger.debug(nodes)
             except ApiException as e:
                 logger.error("Exception when calling V0alpha2Api->get_self_service_settings_flow: %s\n" % e)
 

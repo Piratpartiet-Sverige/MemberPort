@@ -1,4 +1,4 @@
-import { Grid, GridOptions, ModuleRegistry } from '@ag-grid-community/all-modules'
+import { Grid, GridOptions, ModuleRegistry } from '@ag-grid-community/core'
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model'
 import { afterPageLoad } from '../utils/after-page-load'
 import { ButtonRenderer } from '../ag-components/button-renderer'
@@ -18,8 +18,8 @@ declare const _GRID_DATA_: Array<{
 
 // specify the columns
 const columnDefs = [
-  { headerName: 'Namn', field: 'name' },
-  { headerName: 'Beskrivning', field: 'description' },
+  { headerName: 'Namn', field: 'name', sortable: true },
+  { headerName: 'Beskrivning', field: 'description', sortable: true },
   { headerName: 'Aktiv', field: 'active', cellRenderer: 'checkboxRenderer' },
   { headerName: 'Ändra', field: 'edit', cellRenderer: 'buttonRenderer' },
   { headerName: 'Ta bort', field: 'delete', cellRenderer: 'buttonRenderer' }
