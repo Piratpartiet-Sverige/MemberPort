@@ -84,8 +84,8 @@ class BaseHandler(RequestHandler):
             user_info = await dao.get_user_info(user.id)
 
             if user_info is not None:
-                user.created = user_info["created"]
-                user.number = user_info["member_number"]
+                user.created = user_info.created
+                user.number = user_info.number
             else:
                 user.created = None
                 user.number = None
@@ -127,8 +127,7 @@ class BaseHandler(RequestHandler):
         if type(uuid) is str:
             try:
                 uuid = UUID(uuid)
-            except ValueError as exc:
-                logger.debug(exc)
+            except ValueError:
                 logger.warning("Badly formatted UUID string: " + uuid)
                 return None
         elif type(uuid) is not UUID:

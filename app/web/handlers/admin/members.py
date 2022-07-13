@@ -34,9 +34,11 @@ class MembersHandler(BaseHandler):
 
         for member in members:
             user_info = await user_dao.get_user_info(member.id)
-            member.traits["member_number"] = user_info["member_number"]
-            member.traits["created"] = user_info["created"]
-
-        logger.debug(members)
+            if user_info is not None:
+                member.traits["member_number"] = user_info.number
+                member.traits["created"] = user_info.created
+            else:
+                member.traits["member_number"] = ""
+                member.traits["created"] = "Unknown"
 
         await self.render("admin/members.html", admin=True, title="Members", members=members, organizations=organizations)

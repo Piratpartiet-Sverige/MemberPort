@@ -67,8 +67,8 @@ const rowData = _GRID_DATA_.map((row) => ({
 
 // let the grid know which columns and what data to use
 const gridOptions: GridOptions = {
-  columnDefs: columnDefs,
-  rowData: rowData,
+  columnDefs,
+  rowData,
   components: {
     buttonRenderer: ButtonRenderer,
     checkboxRenderer: CheckboxRenderer

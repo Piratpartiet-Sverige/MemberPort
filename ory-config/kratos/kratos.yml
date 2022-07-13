@@ -43,11 +43,14 @@ selfservice:
       ui_url: http://127.0.0.1:8888/auth/registration
       lifespan: 10m
       after:
-        default_browser_return_url: http://127.0.0.1:8888/new-member
+        default_browser_return_url: http://127.0.0.1:8888/auth/login
         password:
-          default_browser_return_url: http://127.0.0.1:8888/new-member
           hooks:
-            - hook: session
+            - hook: web_hook
+              config:
+                url: http://memberport:8888/new-member
+                method: POST
+                body: file:///etc/pirate-config/new.member.jsonnet
 
     recovery:
       enabled: true

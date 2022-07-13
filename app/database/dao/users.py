@@ -7,15 +7,15 @@ from uuid import UUID
 from asyncpg import Connection
 from asyncpg.exceptions import UniqueViolationError
 
-from app.models import User
+from app.models import User, UserInfo
 from app.database.dao.base import BaseDao
 
 
 class UsersDao(BaseDao):
-    async def get_user_info(self, user_id: UUID) -> dict:
+    async def get_user_info(self, user_id: UUID) -> Union[UserInfo, None]:
         """
-        Retrieves the member number for the user, assigns a new one if not fond
-        :returns An int, the member number for the user with the id: user_id
+        Retrieves the member number for the user
+        :returns An user_info object
         """
 
         sql = 'SELECT member_number, created FROM users WHERE kratos_id = $1'
@@ -23,17 +23,18 @@ class UsersDao(BaseDao):
         async with self.pool.acquire() as con:  # type: Connection
             row = await con.fetchrow(sql, user_id)
 
-        user_info = {}
+        user_info = UserInfo()
+        user_info.id = user_id
 
         if row is None:
             return None
         else:
-            user_info["created"] = row["created"]
-            user_info["member_number"] = row["member_number"]
+            user_info.created = row["created"]
+            user_info.number = row["member_number"]
 
         return user_info
 
-    async def set_user_member_number(self, user_id: UUID) -> None:
+    async def set_user_member_number(self, user_id: UUID) -> int:
         logger.debug("Assign new member number for user: " + str(user_id))
 
         created = datetime.utcnow()
@@ -53,6 +54,8 @@ class UsersDao(BaseDao):
 
             async with self.pool.acquire() as con:  # type: Connection
                 await con.execute(sql, user_id, UUID('00000000-0000-0000-0000-000000000000'))
+
+        return row["member_number"]
 
     async def check_user_admin(self, user_id: UUID) -> bool:
         """

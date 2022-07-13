@@ -75,7 +75,6 @@ class SignUpHandler(BaseHandler):
                 errors = api_response.ui.messages.value if hasattr(api_response.ui, 'messages') else []
                 action = api_response.ui.action
                 method = api_response.ui.method
-                logger.debug(api_response)
             except ApiException as e:
                 logger.error("Exception when calling V0alpha2Api->get_self_service_registration_flow: %s\n" % e)
 

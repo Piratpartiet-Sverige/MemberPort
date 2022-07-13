@@ -11,8 +11,17 @@
         <br>
         <br>
         <h1 class="title is-1 is-centered">
-            {{ message }}
+            {{ code }}
         </h1>
+        <h3 class="title is-3 is-centered">
+            {{ message }}
+        </h3>
+        <h3 class="title is-3 is-centered">
+            {{ status }}
+        </h3>
+        <h3 class="title is-3 is-centered">
+            ID: {{ error_id }}
+        </h3>
         <div class="notification is-link">
             Ett fel uppstod! Kontakta: <a href="mailto:it@piratpartiet.se">it@piratpartiet.se</a> om du behöver support. <a href="{{ url }}">Klicka här för att gå tillbaka!</a>
         </div>

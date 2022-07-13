@@ -88,7 +88,7 @@ export async function sendEndMembershipRequest (membershipID: string, reason: st
 
   if (reason !== undefined && reason != null && reason !== '') {
     data = {
-      reason: reason
+      reason
     }
 
     data = convertDictToBody(data)
@@ -114,7 +114,7 @@ export async function sendEndMembershipRequest (membershipID: string, reason: st
 
 export async function sendUpdateCountryDataRequest (countryID: string, name: string): Promise<Response> {
   const data = {
-    name: name
+    name
   }
 
   const dataBody = convertDictToBody(data)
@@ -313,8 +313,8 @@ export async function sendCreateOrganizationRequest (
 ): Promise<Response> {
   const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
   const data: DataBody = {
-    name: name,
-    description: description,
+    name,
+    description,
     active: String(active)
   }
 
@@ -339,7 +339,7 @@ export async function sendCreateOrganizationRequest (
     },
     redirect: 'follow',
     referrerPolicy: 'no-referrer',
-    body: body
+    body
   })
 
   return response
@@ -356,8 +356,8 @@ export async function sendUpdateOrganizationRequest (
 ): Promise<Response> {
   const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
   const data: DataBody = {
-    name: name,
-    description: description,
+    name,
+    description,
     active: String(active)
   }
 
@@ -382,7 +382,7 @@ export async function sendUpdateOrganizationRequest (
     },
     redirect: 'follow',
     referrerPolicy: 'no-referrer',
-    body: body
+    body
   })
 
   return response

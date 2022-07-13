@@ -114,7 +114,7 @@ function addPendingNodes (id: string, parent: HTMLDivElement): void {
     addPendingNodes(node.id, node)
   })
 
-  delete pendingNodes[id]
+  pendingNodes[id] = []
 }
 
 function createArea (id: string, name: string, icon: string, geodata: {[id: string]: GeoData}): HTMLDivElement {

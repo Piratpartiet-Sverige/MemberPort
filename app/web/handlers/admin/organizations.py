@@ -1,6 +1,5 @@
 import tornado.web
 
-from ory_kratos_client.configuration import Configuration
 from app.database.dao.organizations import OrganizationsDao
 from app.web.handlers.base import BaseHandler
 
@@ -12,8 +11,5 @@ class OrganizationsHandler(BaseHandler):
 
         dao = OrganizationsDao(self.db)
         organizations = await dao.get_organizations("", "", False)
-
-        configuration = Configuration()
-        configuration.host = "http://pirate-kratos:4434"
 
         await self.render("admin/organizations.html", admin=True, title="Organisationer", organizations=organizations)

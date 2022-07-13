@@ -17,7 +17,7 @@ declare const _GRID_DATA_: Array<{
 
 const defaultColDef = {
   sortable: true
-};
+}
 
 // specify the columns
 const columnDefs = [
@@ -33,8 +33,8 @@ const columnDefs = [
 
 // let the grid know which columns and what data to use
 const gridOptions: GridOptions = {
-  columnDefs: columnDefs,
-  defaultColDef: defaultColDef,
+  columnDefs,
+  defaultColDef,
   rowData: _GRID_DATA_
 }
 
