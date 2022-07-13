@@ -43,8 +43,8 @@ services:
       context: .
       dockerfile: Dockerfile
     depends_on:
-      - postgres-db
       - pirate-kratos
+      - rabbitmq
     ports:
       - "8888:8888"
     volumes:

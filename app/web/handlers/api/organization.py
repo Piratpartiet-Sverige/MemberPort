@@ -2,6 +2,7 @@ import tornado.web
 
 from app.web.handlers.base import BaseHandler
 from app.database.dao.organizations import OrganizationsDao
+from app.logger import logger
 from app.models import organization_to_json
 from uuid import UUID
 
@@ -23,12 +24,37 @@ class APIOrganizationHandler(BaseHandler):
         active = self.get_argument("active", False)
         active = active == 'true'
 
-        organization = await OrganizationsDao(self.db).create_organization(name, description, active)
+        org_dao = OrganizationsDao(self.db)
+
+        organization = await org_dao.create_organization(name, description, active)
+
+        countries_id = self.get_argument("countries", "")
+        areas_id = self.get_argument("areas", "")
+        municipalities_id = self.get_argument("municipalities", "")
+
+        if countries_id != "" or areas_id != "" or municipalities_id != "":
+            try:
+                countries_id = list(map(UUID, countries_id.split(','))) if countries_id != "" else list()
+                areas_id = list(map(int, areas_id.split(','))) if areas_id != "" else list()
+                municipalities_id = list(map(UUID, municipalities_id.split(','))) if municipalities_id != "" else list()
+            except ValueError:
+                logger.error(
+                    "Recruitment areas contained invalid UUID when trying to set them for org: %s",
+                    organization.id.__str__(),
+                    stack_info=True
+                )
+                return self.respond("INVALID UUID IN RECRUITMENT AREAS", 400, None)
+
+            success = await org_dao.set_recruitment_areas(organization.id, countries_id, areas_id, municipalities_id)
+            if success is False:
+                return self.respond("SOMETHING WENT WRONG WHEN TRYING TO SET RECRUITMENT AREAS", 500, None)
+
         return self.respond("ORGANIZATION CREATED", 200, organization_to_json(organization))
 
     @tornado.web.authenticated
     async def put(self, id: UUID = None):
-        if id is None:
+        org_id = self.check_uuid(id)
+        if org_id is None:
             return self.respond("ORGANIZATION UUID IS MISSING", 400)
 
         name = self.get_argument("name", None)
@@ -37,12 +63,41 @@ class APIOrganizationHandler(BaseHandler):
         active = active == 'true'
 
         if name is None:
-            return self.respond("name property is missing", 422)
+            return self.respond("NAME IS MISSING", 422)
         if description is None:
-            return self.respond("description property is missing", 422)
+            return self.respond("DESCRIPTION IS MISSING", 422)
 
-        organization = await OrganizationsDao(self.db).update_organization(id, name, description, active)
-        return self.respond("ORGANIZATION CREATED", 200, organization_to_json(organization))
+        countries_id = self.get_argument("countries", None)
+        areas_id = self.get_argument("areas", None)
+        municipalities_id = self.get_argument("municipalities", None)
+
+        org_dao = OrganizationsDao(self.db)
+
+        if countries_id is not None or areas_id is not None or municipalities_id is not None:
+            try:
+                countries_id = list(map(UUID, countries_id.split(','))) if countries_id != "" and countries_id is not None else list()
+                areas_id = list(map(int, areas_id.split(','))) if areas_id != "" and areas_id is not None else list()
+
+                if municipalities_id and municipalities_id is not None != "":
+                    municipalities_id = list(map(UUID, municipalities_id.split(',')))
+                else:
+                    municipalities_id = list()
+
+            except ValueError:
+                logger.error(
+                    "Recruitment areas contained invalid UUID when trying to set them for org: %s",
+                    org_id.__str__(),
+                    stack_info=True
+                )
+                return self.respond("INVALID UUID IN RECRUITMENT AREAS", 400, None)
+
+            success = await org_dao.set_recruitment_areas(org_id, countries_id, areas_id, municipalities_id)
+            if success is False:
+                return self.respond("SOMETHING WENT WRONG WHEN TRYING TO SET RECRUITMENT AREAS", 500, None)
+
+        organization = await org_dao.update_organization(org_id, name, description, active)
+
+        return self.respond("ORGANIZATION UPDATED", 200, organization_to_json(organization))
 
     @tornado.web.authenticated
     async def delete(self, id: UUID = None):

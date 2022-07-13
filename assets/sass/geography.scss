@@ -1,0 +1,31 @@
+@import "bulma/sass/utilities/_all.sass";
+
+div.box.selected {
+    background-color: $link;
+    color: $white;
+}
+
+div.box.selected a {
+    color: $white;
+}
+
+div.warning {
+    outline-style: dashed;
+    outline-width: 10px;
+    outline-offset: 0px;
+    outline-color: $warning;
+}
+
+.node .box {
+    margin-bottom: 0.5rem;
+}
+
+.node {
+    margin: 0;
+    margin-bottom: 0.5rem;
+    padding-left: 2rem;
+}
+
+.node.country {
+    padding-left: 0;
+}

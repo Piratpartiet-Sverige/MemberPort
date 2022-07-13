@@ -174,8 +174,10 @@ class MembershipRow extends HTMLTableRowElement {
         const boldName = document.createElement('b');
         const renewButton = document.createElement('button');
         const endButton = document.createElement('button');
+        const orgID = this.id;
+        const orgName = this.getAttribute('org-name')
 
-        boldName.textContent = self.getAttribute('org-name');
+        boldName.textContent = orgName;
         name.append(boldName);
         created.textContent = self.getAttribute('created');
         renewal.textContent = self.getAttribute('renewal');
@@ -183,8 +185,9 @@ class MembershipRow extends HTMLTableRowElement {
         renewButton.classList.add("button", "is-success");
         endButton.classList.add("button", "is-danger");
         renewButton.onclick = function() {};
+
         endButton.onclick = function() {
-            endMembershipModal(self.id, self.getAttribute('org-name'));
+            endMembershipModal(orgID, orgName);
         };
         renewButton.textContent = "Förnya";
         endButton.textContent = "Avsluta";

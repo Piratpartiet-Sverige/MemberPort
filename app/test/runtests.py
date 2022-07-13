@@ -7,7 +7,6 @@ from tornado import testing
 
 def all():
     suite = defaultTestLoader.discover('./app/test', 'test_*.py', path.dirname(path.abspath(__file__)))
-    print(suite)
     return suite
 
 

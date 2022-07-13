@@ -3,7 +3,7 @@ from typing import Union
 from uuid import uuid4, UUID
 
 from asyncpg import Connection
-from asyncpg.exceptions import UniqueViolationError
+from asyncpg.exceptions import DataError, UniqueViolationError
 
 from app.logger import logger
 from app.models import Country, Municipality, Area
@@ -36,6 +36,48 @@ class GeographyDao(BaseDao):
         area.created = created
         area.country_id = country_id
         area.path = path + str(area_id)
+
+        return area
+
+    async def delete_area(self, area_id: int) -> bool:
+        sql_municipality = """
+            DELETE FROM municipalities WHERE "area" IN (SELECT id FROM areas WHERE path <@ (SELECT path FROM areas WHERE id = $1));
+        """
+        sql_area = 'DELETE FROM areas WHERE path <@ (SELECT path FROM areas WHERE id = $1);'
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                async with con.transaction():
+                    await con.execute(sql_municipality, area_id)
+                    await con.execute(sql_area, area_id)
+        except Exception:
+            logger.error("An error occured when trying to delete an area!", exc_info=True)
+            return False
+
+        return True
+
+    async def get_area_by_id(self, area_id: int) -> Union[Area, None]:
+        sql = 'SELECT name, created, "country", path FROM areas WHERE id = $1;'
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                row = await con.fetchrow(sql, area_id)
+        except DataError:
+            logger.error("area_id was not an integer", stack_info=True)
+            return None
+        except Exception:
+            logger.error("An error occured when trying to retrieve area: %i", area_id, stack_info=True)
+            return None
+
+        area = None
+
+        if row is not None:
+            area = Area()
+            area.id = area_id
+            area.name = row["name"]
+            area.created = row["created"]
+            area.country_id = row["country"]
+            area.path = row["path"]
 
         return area
 
@@ -105,7 +147,64 @@ class GeographyDao(BaseDao):
 
         return path
 
-    async def create_municipality(self, name: str, country_id: UUID, area_id: UUID) -> Union[Municipality, None]:
+    async def update_area(self, area_id: int, name: Union[str, None], country_id: Union[UUID, None], path: Union[str, None]) -> bool:
+        arguments = [area_id]
+        sql = self._prepare_sql_for_update_area(arguments, area_id, name, country_id)
+
+        if name is None and country_id is None and path is None:
+            return False
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                async with con.transaction():
+                    if len(arguments) > 1:  # Only execute update if values have actually been changed
+                        await con.execute(sql, *arguments)
+                    if path is not None:  # Update paths for the entire branch
+                        path = path.removesuffix('.' + str(area_id))
+                        path_id = path.split('.')
+                        path_id = list(map(int, path_id))
+
+                        if area_id in path_id:
+                            logger.error("Path: %s not allowed for area: %i\nAn area can't be a child to itself!", path, area_id)
+                            raise ValueError
+
+                        area_count = await con.fetchval('SELECT COUNT(id) FROM areas WHERE id = ANY($1);', path_id)
+                        if area_count is not len(path_id):
+                            logger.error("Path: %s not allowed for area: %i\nPath must contain existing areas!", path, area_id)
+                            raise ValueError
+
+                        source_path = await con.fetchval('SELECT path FROM areas WHERE id = $1;', area_id)
+                        sql = 'UPDATE areas SET path = $1 || SUBPATH(path, nlevel($2)-1) WHERE path <@ $2;'
+                        await con.execute(sql, path, source_path)
+        except Exception:
+            logger.error(
+                "Something wen't wrong when trying to update area with ID: " + area_id.__str__(),
+                exc_info=True
+            )
+            return False
+
+        return True
+
+    def _prepare_sql_for_update_area(self, arguments: list, area_id: int, name: Union[str, None], country_id: Union[UUID, None]) -> str:
+        sql = 'UPDATE areas SET'
+        values_updated = 0
+
+        if name is not None:
+            sql += ' name = $' + str(values_updated + 2)
+            values_updated += 1
+            arguments.append(name)
+        if country_id is not None:
+            if values_updated > 0:
+                sql += ','
+
+            sql += ' "country" = $' + str(values_updated + 2)
+
+            arguments.append(country_id)
+
+        sql += ' WHERE id = $1;'
+        return sql
+
+    async def create_municipality(self, name: str, country_id: UUID, area_id: Union[int, None]) -> Union[Municipality, None]:
         sql = 'INSERT INTO municipalities (id, name, created, "country", "area") VALUES ($1, $2, $3, $4, $5);'
         created = datetime.utcnow()
         municipality_id = uuid4()
@@ -119,17 +218,30 @@ class GeographyDao(BaseDao):
                 "Tried to create municipality with the ID: " + str(municipality_id) + " and name: " + name + " but it already existed"
             )
             return None
-        except Exception:
-            logger.error("An error occured when trying to create new municipality!", stack_info=True)
+        except Exception as e:
+            logger.error("An error occured when trying to create new municipality!\n" + e, stack_info=True)
             return None
 
         municipality = Municipality()
+        municipality.id = municipality_id
         municipality.name = name
-        municipality.created = country_id
+        municipality.created = created
         municipality.country_id = country_id
         municipality.area_id = area_id
 
         return municipality
+
+    async def delete_municipality(self, municipality_id: UUID) -> bool:
+        sql = 'DELETE FROM municipalities WHERE id = $1;'
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                await con.execute(sql, municipality_id)
+        except Exception:
+            logger.error("An error occured when trying to delete a municipality!", exc_info=True)
+            return False
+
+        return True
 
     async def get_municipality_by_id(self, municipality_id: UUID) -> Union[Municipality, None]:
         sql = 'SELECT name, created, "country", "area" FROM municipalities WHERE id = $1;'
@@ -207,6 +319,63 @@ class GeographyDao(BaseDao):
 
         return municipalities
 
+    async def update_municipality(
+        self,
+        municipality_id: UUID,
+        name: Union[str, None],
+        country_id: Union[UUID, None],
+        area_id: Union[int, None]
+    ) -> bool:
+        arguments = [municipality_id]
+        sql = self._prepare_sql_for_update_municipality(arguments, name, country_id, area_id)
+
+        if name is None and country_id is None and area_id is None:
+            return False
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                await con.execute(sql, *arguments)
+        except Exception:
+            logger.error(arguments)
+            logger.error(sql)
+            logger.error(
+                "Something wen't wrong when trying to update municipality with ID: " + municipality_id.__str__(),
+                stack_info=True
+            )
+            return False
+
+        return True
+
+    def _prepare_sql_for_update_municipality(
+        self,
+        arguments: list,
+        name: Union[str, None],
+        country_id: Union[UUID, None],
+        area_id: Union[int, None]
+    ) -> str:
+        sql = 'UPDATE municipalities SET'
+        values_updated = 0
+
+        if name is not None:
+            sql += ' name = $' + str(values_updated + 2)
+            values_updated += 1
+            arguments.append(name)
+        if country_id is not None:
+            if values_updated > 0:
+                sql += ','
+
+            sql += ' "country" = $' + str(values_updated + 2)
+            values_updated += 1
+            arguments.append(country_id)
+        if area_id is not None:
+            if values_updated > 0:
+                sql += ','
+            sql += ' "area" = $' + str(values_updated + 2)
+            arguments.append(area_id)
+
+        sql += ' WHERE id = $1;'
+        return sql
+
     async def create_country(self, name: str) -> Union[Country, None]:
         sql = 'INSERT INTO countries (id, name, created) VALUES ($1, $2, $3);'
         created = datetime.utcnow()
@@ -231,6 +400,23 @@ class GeographyDao(BaseDao):
         country.created = created
 
         return country
+
+    async def delete_country(self, country_id: UUID) -> bool:
+        sql_area = 'DELETE FROM areas WHERE "country" = $1;'
+        sql_municipality = 'DELETE FROM municipalities WHERE "country" = $1;'
+        sql = 'DELETE FROM countries WHERE id = $1;'
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                async with con.transaction():
+                    await con.execute(sql_municipality, country_id)
+                    await con.execute(sql_area, country_id)
+                    await con.execute(sql, country_id)
+        except Exception:
+            logger.error("An error occured when trying to delete a country!", exc_info=True)
+            return False
+
+        return True
 
     async def get_country_by_id(self, country_id: UUID) -> Union[Country, None]:
         sql = 'SELECT name, created FROM countries WHERE id = $1;'
@@ -267,16 +453,16 @@ class GeographyDao(BaseDao):
         return country
 
     async def get_default_country(self) -> Union[Country, None]:
-        sql = 'SELECT id, created FROM countries WHERE name = $1;'
+        sql = 'SELECT id, name, created FROM countries WHERE id = $1;'
 
         async with self.pool.acquire() as con:  # type: Connection
-            row = await con.fetchrow(sql, "Sverige")
+            row = await con.fetchrow(sql, UUID('00000000-0000-0000-0000-000000000000'))
 
         country = Country()
 
         if row is not None:
             country.id = row["id"]
-            country.name = country
+            country.name = row["name"]
             country.created = row["created"]
         else:
             return None
@@ -299,3 +485,15 @@ class GeographyDao(BaseDao):
             countries.append(country)
 
         return countries
+
+    async def rename_country(self, country_id: UUID, name: str) -> bool:
+        sql = 'UPDATE countries SET name = $2 WHERE id = $1;'
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                await con.execute(sql, country_id, name)
+        except Exception:
+            logger.error("Something wen't wrong when trying to update name for country with ID: " + country_id.__str__(), stack_info=True)
+            return False
+
+        return True

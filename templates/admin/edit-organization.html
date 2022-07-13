@@ -1,67 +1,89 @@
 {% extends "../base.html" %}
+{% block head %}
+<link rel="stylesheet" href="{{ static_url('css/edit-organization.bundle.css') }}">
+{% end %}
 {% block content %}
 {% module xsrf_form_html() %}
 <div class="section">
-<div class="container">
-    <div class="field">
-        <div class="label">Namn</div>
-        <div class="control">
-            <input class="input" name="name" type="text" value="{{ organization.name }}">
+    <div class="container">
+        <div class="content">
+            <h1 class="">Redigera organisation - {{ organization.name }}</h1>
+        </div>
+        <div class="field">
+            <div class="label">Namn</div>
+            <div class="control">
+                <input class="input" name="name" type="text" value="{{ organization.name }}">
+            </div>
+        </div>
+        <div class="field">
+            <div class="label">Beskrivning</div>
+            <div class="control">
+                <input class="input" name="description" type="text" value="{{ organization.description }}">
+            </div>
+        </div>
+        <div id="recruitmentArea" class="panel is-primary">
+            <p class="panel-heading">
+                Upptagningsområden
+            </p>
+            <div class="panel-block">
+                <p class="control has-icons-left">
+                    <input id="searchArea" class="input is-primary" type="text" placeholder="Sök">
+                    <span class="icon is-left">
+                        <i class="fas fa-search" aria-hidden="true"></i>
+                    </span>
+                </p>
+            </div>
+        </div>
+        <div class="field">
+            <label class="checkbox">
+                <input type="checkbox" , name="active" {{ "checked" if organization.active else None }}>
+                Aktiv
+            </label>
+            <div class="control">
+                <button type="button" class="button is-success" id="saveButton">
+                    Spara
+                </button>
+            </div>
         </div>
     </div>
-    <div class="field">
-        <div class="label">Beskrivning</div>
-        <div class="control">
-            <input class="input" name="description" type="text" value="{{ organization.description }}">
-        </div>
-    </div>
-    <div class="field">
-        <label class="checkbox">
-        <input type="checkbox", name="active" {{ "checked" if organization.active else None }}>
-        Aktiv
-    </label>
-    <div class="control">
-        <button type="button"
-            class="button is-success"
-            onclick="submit()"
-            id="saveButtonLastName">Spara</button></p>
-    </div>
-</div>
 </div>
 {% end %}
 {% block scripts %}
 <script type="text/javascript" charset="utf-8">
-    async function putData(url = '', data = {}) {
-        const response = await fetch(url, {
-            method: 'PUT', // *GET, POST, PUT, DELETE, etc.
-            mode: 'cors', // no-cors, *cors, same-origin
-            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-            credentials: 'same-origin', // include, *same-origin, omit
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer',
-            body: data
-        });
-        return await response.json(); // parses JSON response into native JavaScript objects
-    }
+    let geodata = {};
+    let countryID = "{{ country.id }}";
+    let organizationID = "{{ organization.id }}"
 
-
-    function submit() {
-        const details = {
-            '_xsrf': document.getElementsByName("_xsrf")[0].value,
-            'name': document.getElementsByName("name")[0].value,
-            'description': document.getElementsByName("description")[0].value,
-            'active': document.getElementsByName("active")[0].checked
-        }
-
-        const formBody = Object.keys(details).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(details[key])).join('&')
-
-        putData('/api/organization/{{ organization.id }}', formBody).then((data) => {
-            console.log(data); // JSON data parsed by `response.json()` call
-            window.location.href = 'organizations'
-        })
-    }
+    geodata["{{ country.id }}"] = {
+        name: "{{ country.name }}",
+        id: "{{ country.id }}",
+        type: "COUNTRY"
+    };
+    {% for area in areas %}
+    geodata["{{ area.id }}"] = {
+        name: "{{ area.name }}",
+        id: "{{ area.id }}",
+        type: "AREA",
+        path: "{{ area.path }}"
+    };
+    {% end %}
+    {% for municipality in municipalities %}
+    geodata["{{ municipality.id }}"] = {
+        name: "{{ municipality.name }}",
+        id: "{{ municipality.id }}",
+        type: "MUNICIPALITY",
+        area: "{{ municipality.area_id }}"
+    };
+    {% end %}
+    {% for id in country_ids %}
+        geodata["{{ id }}"].active = true
+    {% end %}
+    {% for id in area_ids %}
+        geodata["{{ id }}"].active = true
+    {% end %}
+    {% for id in municipality_ids %}
+        geodata["{{ id }}"].active = true
+    {% end %}
 </script>
+<script src="{{ static_url('edit-organization.bundle.js') }}"></script>
 {% end %}

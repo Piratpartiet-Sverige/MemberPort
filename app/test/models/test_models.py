@@ -1,4 +1,7 @@
-from app.models import Membership, Organization, Municipality, organization_to_json, membership_to_json, municipality_to_json, user_to_json
+from app.models import (
+    Membership, Organization, Municipality, Country, Area, organization_to_json, membership_to_json, municipality_to_json, user_to_json,
+    country_to_json, area_to_json
+)
 from app.test.web_testcase import get_mock_session
 from datetime import datetime
 from unittest import TestCase
@@ -82,3 +85,36 @@ class ModelsTest(TestCase):
         self.assertEqual(created.isoformat(' ', 'seconds'), json["created"])
         self.assertEqual(mun.country_id.__str__(), json["country_id"])
         self.assertEqual(area_id.__str__(), json["area_id"])
+
+    def test_country_model(self):
+        id = uuid4()
+        created = datetime.utcnow()
+
+        country = Country()
+        country.id = id
+        country.name = "Sverige"
+        country.created = created
+
+        json = country_to_json(country)
+        self.assertEqual(id.__str__(), json["id"])
+        self.assertEqual(country.name, json["name"])
+        self.assertEqual(created.isoformat(' ', 'seconds'), json["created"])
+
+    def test_area_model(self):
+        id = 1
+        created = datetime.utcnow()
+        sweden_id = uuid4()
+
+        area = Area()
+        area.id = id
+        area.name = "Norra distriktet"
+        area.created = created
+        area.country_id = sweden_id
+        area.path = "1"
+
+        json = area_to_json(area)
+        self.assertEqual(id.__str__(), json["id"])
+        self.assertEqual(area.name, json["name"])
+        self.assertEqual(created.isoformat(' ', 'seconds'), json["created"])
+        self.assertEqual(sweden_id.__str__(), json["country_id"])
+        self.assertEqual(area.path, json["path"])

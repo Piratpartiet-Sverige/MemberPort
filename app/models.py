@@ -133,6 +133,14 @@ class Country:
     created: datetime
 
 
+def country_to_json(country: Country) -> dict:
+    return {
+        'id': country.id.__str__(),
+        'name': country.name.__str__(),
+        'created': country.created.isoformat(' ', 'seconds')
+    }
+
+
 class Area:
     id: int
     name: str
@@ -141,12 +149,22 @@ class Area:
     path: str
 
 
+def area_to_json(area: Area) -> dict:
+    return {
+        'id': area.id.__str__(),
+        'name': area.name.__str__(),
+        'created': area.created.isoformat(' ', 'seconds'),
+        'country_id': area.country_id.__str__(),
+        'path': area.path
+    }
+
+
 class Municipality:
     id: UUID
     name: str
     created: datetime
     country_id: UUID
-    area_id: UUID
+    area_id: int
 
 
 def municipality_to_json(municipality: Municipality) -> dict:

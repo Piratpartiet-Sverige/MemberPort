@@ -1,18 +1,47 @@
 {% extends "../base.html" %}
+{% block head %}
+<link rel="stylesheet" href="{{ static_url('css/geography.bundle.css') }}">
+{% end %}
 {% block content %}
 <section class="section">
     <div class="container">
         <h1 class="title">Geografi</h1>
-        <div class="container">
-            <div id="tree">
+        <div class="select">
+            <select id="country" name="country">
+                <option disabled selected value>Välj land</option>
+                {% for country in countries %}
+                <option {{ "selected" if country.id.int == selected_country.id.int else "" }} value="{{ country.id }}">{{ country.name }}</option>
+                {% end %}
+            </select>
+        </div>
+        <button id="moveButton" type="button" class="button is-link">
+            <span class="icon"><i class="fas fa-arrows-alt" aria-hidden="true"></i></span>
+            <span>Flytta runt områden</span>
+        </button>
+        <button id="cancelMoveButton" type="button" class="button is-danger" style="display: none;">
+            <span class="icon"><i class="fas fa-ban" aria-hidden="true"></i></span>
+            <span>Avbryt</span>
+        </button>
+        <br>
+        <br>
+        <div class="field">
+            <div class="buttons">
+                <button id="addCountry" class="button is-primary">Skapa land</button>
+                <button id="addArea" class="button is-primary">Skapa område</button>
+                <button id="addMunicipality" class="button is-primary">Skapa kommun</button>
             </div>
+        </div>
+        {% module xsrf_form_html() %}
+        <br>
+        <br>
+        <div id="tree">
         </div>
         <div id="deleteModal" class="modal">
             <div class="modal-background"></div>
             <div class="modal-card">
                 <header class="modal-card-head">
                     <p class="modal-card-title">Ta bort geografi</p>
-                    <button onclick="closeDeleteModal();" class="delete" aria-label="close"></button>
+                    <button id="cancelDeleteSmall" class="delete" aria-label="close"></button>
                 </header>
                 <section class="modal-card-body">
                     <p id="deleteText">
@@ -20,9 +49,9 @@
                     </p>
                 </section>
                 <footer class="modal-card-foot">
-                    <button id="deleteNodeButton" class="button is-danger" onclick="deleteNode();closeDeleteModal();">Ta
+                    <button id="deleteNodeButton" class="button is-danger">Ta
                         bort</button>
-                    <button class="button" onclick="closeDeleteModal();">Avbryt</button>
+                    <button id="cancelDelete" class="button">Avbryt</button>
                 </footer>
             </div>
         </div>
@@ -31,15 +60,30 @@
             <div class="modal-card">
                 <header class="modal-card-head">
                     <p class="modal-card-title">Byt namn</p>
-                    <button onclick="closeEditModal();" class="delete" aria-label="close"></button>
+                    <button id="cancelEditSmall" class="delete" aria-label="close"></button>
                 </header>
                 <section class="modal-card-body">
                     <input class="input" id="newName" type="text" value="" placeholder="Namn">
                 </section>
                 <footer class="modal-card-foot">
-                    <button id="editNameButton" class="button is-success"
-                        onclick="changeNodeName();closeEditModal();">Ok</button>
-                    <button class="button" onclick="closeEditModal();">Avbryt</button>
+                    <button id="editNameButton" class="button is-success">Ok</button>
+                    <button id="cancelEdit" class="button">Avbryt</button>
+                </footer>
+            </div>
+        </div>
+        <div id="addModal" class="modal">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                    <p id="addTitle" class="modal-card-title">Skapa nytt område</p>
+                    <button id="cancelAddSmall" class="delete" aria-label="close"></button>
+                </header>
+                <section class="modal-card-body">
+                    <input class="input" id="addNewName" type="text" value="" placeholder="Namn">
+                </section>
+                <footer class="modal-card-foot">
+                    <button id="addNewButton" class="button is-success" >Ok</button>
+                    <button id="cancelAdd" class="button">Avbryt</button>
                 </footer>
             </div>
         </div>
@@ -48,40 +92,35 @@
 {% end %}
 
 {% block scripts %}
-<script src="{{ static_url('js/geography.js') }}"></script>
 <script>
-    var swedenID = "";
-    var parentID = "";
-    {% for country in countries %}
-    geodata["{{ country.id }}"] = {
-        name: "{{ country.name }}",
-        id: "{{ country.id }}"
+    let geodata = {};
+    let selectedCountryID = "";
+
+    geodata["{{ selected_country.id }}"] = {
+        name: "{{ selected_country.name }}",
+        id: "{{ selected_country.id }}",
+        type: "COUNTRY"
     };
-    if ("{{ country.name }}" === "Sverige") {
-        swedenID = "{{ country.id }}";
-        addCountry(swedenID, "{{ country.name }}");
-    }
-    {% end %}
+
+    selectedCountryID = "{{ selected_country.id }}";
+
     {% for area in areas %}
     geodata["{{ area.id }}"] = {
         name: "{{ area.name }}",
         id: "{{ area.id }}",
+        type: "AREA",
         path: "{{ area.path }}"
     };
-    parentID = getParentID("{{ area.id }}", "{{ area.path }}", swedenID);
-    addArea("{{ area.id }}", "{{ area.name }}", parentID);
     {% end %}
+
     {% for municipality in municipalities %}
     geodata["{{ municipality.id }}"] = {
         name: "{{ municipality.name }}",
         id: "{{ municipality.id }}",
+        type: "MUNICIPALITY",
         area: "{{ municipality.area_id }}"
     };
-    parentID = "{{ municipality.area_id }}";
-    if (parentID === "") {
-        parentID = swedenID;
-    }
-    addMunicipality("{{ municipality.id }}", "{{ municipality.name }}", parentID);
     {% end %}
 </script>
+<script src="{{ static_url('geography.bundle.js') }}"></script>
 {% end %}

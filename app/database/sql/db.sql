@@ -1,4 +1,4 @@
--- Database structure for Member Port
+-- Database structure for Memberport
 -- SQL is written with PostgreSQL syntax
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";

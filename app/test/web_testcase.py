@@ -16,7 +16,10 @@ class MagicMockContext(MagicMock):
     async def __aenter__(self):
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, exc_type, exc, traceback):
+        if exc is not None:
+            raise exc
+
         return self
 
 
@@ -44,6 +47,12 @@ class WebTestCase(AsyncHTTPTestCase):
             self.assertTrue(isinstance(datetime.strptime(datetime_str, time_format), datetime))
         except ValueError:
             self.fail("'" + field_name + "' field was wrong format")
+
+    def assert_uuid(self, field_name, uuid_str):
+        try:
+            UUID(uuid_str)
+        except Exception:
+            self.fail("'" + field_name + "' field was wrong UUID format")
 
 
 def get_mock_session():

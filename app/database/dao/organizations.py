@@ -41,28 +41,110 @@ class OrganizationsDao(MemberOrgDao):
         return organization
 
     async def add_recruitment_areas(self, org_id: UUID, areas: Union[list, None]) -> None:
-        await self._add_recruitment_areas(org_id, "area", areas)
+        try:
+            await self._add_recruitment_areas(org_id, "area", areas, None)
+        except Exception:
+            logger.error("An error occured when trying to add recruitment areas to org: " + org_id.__str__(), stack_info=True)
 
     async def add_recruitment_countries(self, org_id: UUID, areas: Union[list, None]) -> None:
-        await self._add_recruitment_areas(org_id, "country", areas)
+        try:
+            await self._add_recruitment_areas(org_id, "country", areas, None)
+        except Exception:
+            logger.error("An error occured when trying to add recruitment countries to org: " + org_id.__str__(), stack_info=True)
 
     async def add_recruitment_municipalities(self, org_id: UUID, areas: Union[list, None]) -> None:
-        await self._add_recruitment_areas(org_id, "municipality", areas)
+        try:
+            await self._add_recruitment_areas(org_id, "municipality", areas, None)
+        except Exception:
+            logger.error("An error occured when trying to add recruitment municipalities to org: " + org_id.__str__(), stack_info=True)
 
-    async def _add_recruitment_areas(self, org_id: UUID, area_type: str, areas: Union[list, None]) -> None:
+    async def _add_recruitment_areas(self, org_id: UUID, area_type: str, areas: Union[list, None], con: Union[Connection, None]) -> None:
         if areas is None or (area_type != "country" and area_type != "area" and area_type != "municipality"):
             return
+
+        if con is None:
+            con = await self.pool.acquire()
 
         sql = 'INSERT INTO organization_country ("organization", "country") VALUES ($1, $2);'
         sql = sql.replace("country", area_type)
 
         for area in areas:
             try:
-                async with self.pool.acquire() as con:  # type: Connection
-                    await con.execute(sql, org_id, area)
+                await con.execute(sql, org_id, area)
             except UniqueViolationError as exc:
                 logger.debug(exc.__str__())
                 logger.warning("Tried to insert recruitment area: " + str(area) + " but the relation already existed")
+
+    async def get_recruitment_countries(self, org_id: UUID) -> list:
+        sql = 'SELECT "country" FROM organization_country WHERE "organization" = $1;'
+        country_ids = list()
+
+        try:
+            async with self.pool.acquire() as con:
+                rows = await con.fetch(sql, org_id)
+        except Exception as exc:
+            logger.debug(exc.__str__())
+            logger.error("An error occured when trying to retrieve recruitment country", stack_info=True)
+
+        for row in rows:
+            country_ids.append(row["country"])
+
+        return country_ids
+
+    async def get_recruitment_areas(self, org_id: UUID) -> list:
+        sql = 'SELECT "area" FROM organization_area WHERE "organization" = $1;'
+        area_ids = list()
+
+        try:
+            async with self.pool.acquire() as con:
+                rows = await con.fetch(sql, org_id)
+        except Exception as exc:
+            logger.debug(exc.__str__())
+            logger.error("An error occured when trying to retrieve recruitment area", stack_info=True)
+
+        for row in rows:
+            area_ids.append(row["area"])
+
+        return area_ids
+
+    async def get_recruitment_municipalities(self, org_id: UUID) -> list:
+        sql = 'SELECT "municipality" FROM organization_municipality WHERE "organization" = $1;'
+        municipality_ids = list()
+
+        try:
+            async with self.pool.acquire() as con:
+                rows = await con.fetch(sql, org_id)
+        except Exception as exc:
+            logger.debug(exc.__str__())
+            logger.error("An error occured when trying to retrieve recruitment municipality", stack_info=True)
+
+        for row in rows:
+            municipality_ids.append(row["municipality"])
+
+        return municipality_ids
+
+    async def set_recruitment_areas(self, org_id: UUID, countries: list, areas: list, municipalities: list) -> bool:
+        async with self.pool.acquire() as con:
+            try:
+                async with con.transaction():
+                    await self._remove_all_recruitment(org_id, con)
+                    await self._add_recruitment_areas(org_id, "country", countries, con)
+                    await self._add_recruitment_areas(org_id, "area", areas, con)
+                    await self._add_recruitment_areas(org_id, "municipality", municipalities, con)
+            except Exception:
+                logger.error("An error occured when trying to set recruitment areas!", stack_info=True)
+                return False
+
+        return True
+
+    async def _remove_all_recruitment(self, org_id: UUID, con: Connection) -> bool:
+        sql_country = 'DELETE FROM organization_country WHERE "organization" = $1;'
+        sql_area = 'DELETE FROM organization_area WHERE "organization" = $1;'
+        sql_municipality = 'DELETE FROM organization_municipality WHERE "organization" = $1;'
+
+        await con.execute(sql_country, org_id)
+        await con.execute(sql_area, org_id)
+        await con.execute(sql_municipality, org_id)
 
     async def get_default_organization(self) -> Union[Organization, None]:
         sql = "SELECT default_organization FROM settings"
