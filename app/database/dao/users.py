@@ -1,3 +1,5 @@
+import ory_kratos_client
+
 from app.logger import logger
 
 from datetime import datetime
@@ -10,6 +12,10 @@ from asyncpg.exceptions import UniqueViolationError
 from app.models import User, UserInfo
 from app.database.dao.base import BaseDao
 
+from ory_kratos_client.api import v0alpha2_api
+from ory_kratos_client.configuration import Configuration
+from ory_kratos_client.rest import ApiException
+
 
 class UsersDao(BaseDao):
     async def get_user_info(self, user_id: UUID) -> Union[UserInfo, None]:
@@ -18,7 +24,7 @@ class UsersDao(BaseDao):
         :returns An user_info object
         """
 
-        sql = 'SELECT member_number, created FROM users WHERE kratos_id = $1'
+        sql = 'SELECT member_number, created FROM users WHERE kratos_id = $1;'
 
         async with self.pool.acquire() as con:  # type: Connection
             row = await con.fetchrow(sql, user_id)
@@ -95,21 +101,48 @@ class UsersDao(BaseDao):
         return True
 
     async def remove_user(self, user_id: UUID) -> None:
-        user = await self.get_user_by_id(user_id)
-        sql = 'DELETE FROM verified_emails WHERE "email" = $1;'
-        async with self.pool.acquire() as con:  # type: Connection
-            await con.execute(sql, user.email)
-
-        sql = 'DELETE FROM email_verify_links WHERE "email" = $1;'
-        async with self.pool.acquire() as con:  # type: Connection
-            await con.execute(sql, user.email)
-
         sql = 'DELETE FROM users WHERE id = $1;'
         async with self.pool.acquire() as con:  # type: Connection
             await con.execute(sql, user_id)
 
-    async def get_user_by_id(self, user_id: UUID) -> User:
-        return await self._get_user(user_id=user_id)
+    async def get_user_by_id(self, user_id: UUID) -> Union[User, None]:
+        user_info = await self.get_user_info(user_id)
+
+        if user_info is None:
+            return None
+
+        user = User()
+
+        configuration = Configuration()
+        configuration.host = "http://pirate-kratos:4434"
+
+        with ory_kratos_client.ApiClient(configuration) as api_client:
+            api_instance = v0alpha2_api.V0alpha2Api(api_client)
+            try:
+                api_response = api_instance.admin_get_identity(user_id.__str__())
+
+                user.id = UUID(api_response["id"])
+                user.name.first = api_response["traits"]["name"]["first"]
+                user.name.last = api_response["traits"]["name"]["last"]
+                user.email = api_response["traits"]["email"]
+                user.phone = api_response["traits"]["phone"]  # Ory does not yet support phone numbers
+                user.postal_address.street = api_response["traits"]["postal_address"]["street"]
+                user.postal_address.postal_code = api_response["traits"]["postal_address"]["postal_code"]
+                user.postal_address.city = api_response["traits"]["postal_address"]["city"]
+                user.municipality = api_response["traits"]["municipality"]
+                user.country = api_response["traits"]["country"]
+                user.verified = api_response["verifiable_addresses"][0]["verified"]
+                user.created = user_info.created
+                user.number = user_info.number
+            except ApiException as exc:
+                logger.error("Exception when calling AdminApi->list_identities: %s\n", exc)
+                return None
+            except Exception as exc:
+                logger.error(exc.__str__())
+                logger.error("Something went wrong when trying to retrieve user: " + user_id.__str__())
+                return None
+
+        return user
 
     async def get_user_count(self, global_search: str = None) -> int:
         """
@@ -135,46 +168,3 @@ class UsersDao(BaseDao):
                 row = await con.fetchrow(sql, global_search)
 
             return row["users"]
-
-    async def is_user_verified(self, user_id: UUID) -> bool:
-        sql = 'SELECT "user" FROM verified_users WHERE "user" = $1;'
-
-        async with self.pool.acquire() as con:  # type: Connection
-            row = await con.fetchrow(sql, user_id)
-
-        if row is None or row["user"] is None:
-            return False
-
-        return True
-
-    async def is_email_verified(self, email: str) -> bool:
-        sql = 'SELECT "email" AS verified FROM verified_emails WHERE "email" = $1;'
-
-        async with self.pool.acquire() as con:  # type: Connection
-            row = await con.fetchrow(sql, email)
-
-        if row is None:
-            return False
-        elif row["verified"] is not None:
-            return True
-
-        logger.warning("is_email_verified: row was found with " + email + " but the content was null")
-        return False
-
-    async def _get_user(self, user_id: UUID = None) -> Union[User, None]:
-        sql = "SELECT id, created FROM users WHERE id = $1"
-
-        if user_id is None:
-            return None
-
-        async with self.pool.acquire() as con:  # type: Connection
-            row = await con.fetchrow(sql, user_id)
-
-        if row is None:
-            return None
-
-        user = User()
-        user.id = row["id"]
-        user.created = row["created"]
-
-        return user

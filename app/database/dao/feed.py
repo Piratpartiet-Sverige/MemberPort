@@ -40,3 +40,25 @@ class FeedDao(BaseDao):
             return None
 
         return post
+
+    async def get_posts(self) -> list:
+        posts = list()
+        sql = "SELECT id, title, content, author, created, updated FROM posts ORDER BY created DESC;"
+
+        try:
+            async with self.pool.acquire() as con:
+                rows = await con.fetch(sql)
+                for row in rows:
+                    post = Post()
+                    post.id = row["id"]
+                    post.title = row["title"]
+                    post.content = row["content"]
+                    post.author = row["author"]
+                    post.created = row["created"]
+                    post.updated = row["updated"]
+                    posts.append(post)
+        except Exception as exc:
+            logger.debug(exc.__str__())
+            logger.error("SOMETHING WENT WRONG WHEN TRYING TO CREATE POST", stack_info=True)
+        logger.debug(posts)
+        return posts

@@ -2,6 +2,25 @@
 
 {% block content %}
 <section class="section">
+    <div class="container">
+        {% autoescape None %}
+        {% for post in posts %}
+        <div class="box">
+            <article class="media">
+                <div class="media-content">
+                    <div class="content">
+                        <h3>{{ xhtml_escape(post.title) }}</h3>
+                        <b>{{ authors[post.author].name.first + " " + authors[post.author].name.last }}</b>
+                        <hr>
+                        {{ post.content }}
+                        <br>
+                        <i>{{ post.created.isoformat(' ', 'minutes') }}</i>
+                    </div>
+                </div>
+            </article>
+        </div>
+        {% end %}
+    </div>
 </section>
 {% end %}
 
