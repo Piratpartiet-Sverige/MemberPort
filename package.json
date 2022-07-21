@@ -30,6 +30,9 @@
   "dependencies": {
     "@ag-grid-community/client-side-row-model": "^28.0.2",
     "@ag-grid-community/core": "^28.0.2",
+    "@fullcalendar/core": "^5.11.0",
+    "@fullcalendar/daygrid": "^5.11.0",
+    "@fullcalendar/icalendar": "^5.11.0",
     "tinymce": "^6.1.0"
   }
 }

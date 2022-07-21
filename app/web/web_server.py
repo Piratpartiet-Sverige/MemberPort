@@ -12,12 +12,14 @@ from app.database.setup import db_setup, first_setup, show_db_error
 from app.logger import logger
 from app.plugins.plugin import get_available_plugins, load_plugins
 from app.web.handlers.admin.add_member import AddMemberHandler
+from app.web.handlers.admin.calendar import CalendarHandler
 from app.web.handlers.admin.geography import GeographyHandler
 from app.web.handlers.admin.members import MembersHandler
 from app.web.handlers.admin.organizations import OrganizationsHandler
 from app.web.handlers.admin.add_organization import AddOrganizationHandler
 from app.web.handlers.admin.edit_organization import EditOrganizationHandler
 from app.web.handlers.admin.roles import RolesHandler
+from app.web.handlers.api.calendar import APICalendarHandler
 from app.web.handlers.api.feed.post import APIPostHandler
 from app.web.handlers.api.geography.area import APIAreaHandler
 from app.web.handlers.api.geography.areas import APIAreasHandler
@@ -93,12 +95,14 @@ def configure_application(options: WebAppOptions):
         (r"/", MainHandler),
         (r"/kratos/(.*)", KratosHandler),
         (r"/admin/add-member", AddMemberHandler),
+        (r"/admin/calendar", CalendarHandler),
         (r"/admin/geography", GeographyHandler),
         (r"/admin/members", MembersHandler),
         (r"/admin/organizations", OrganizationsHandler),
         (r"/admin/add-organization", AddOrganizationHandler),
         (r"/admin/edit-organization", EditOrganizationHandler),
         (r"/admin/roles", RolesHandler),
+        (r"/api/calendar", APICalendarHandler),
         (r"/api/member", APIMemberHandler),
         (r"/api/membership", APIMemberShipHandler),
         (r"/api/membership/(?P<id>[^\/]+)", APIMemberShipHandler),

@@ -1,0 +1,35 @@
+{% extends "../base.html" %}
+{% block content %}
+{% module xsrf_form_html() %}
+<div class="section">
+    <div class="container">
+        <h1 class="title">Kalender</h1>
+        <div class="field is-grouped">
+            <div id="calendars" style="width: 100%; height: 80vh;" class="ag-theme-alpine"></div>
+        </div>
+        <div class="field is-grouped">
+            <p class="control">
+                <button type="button" class="button is-success" onclick="location.href='add-source'" id="saveButton">
+                    Lägg till
+                </button>
+            </p>
+        </div>
+    </div>
+</div>
+{% end %}
+{% block scripts %}
+<script type="text/javascript">
+    // specify the data
+    var _GRID_DATA_ = [
+        {% for calendar in calendars %}
+        {
+            id: "",
+            description: "",
+            url: "{{ calendar }}"
+        },
+        {% end %}
+    ];
+</script>
+<script src="{{ static_url('calendar.bundle.js') }}"></script>
+
+{% end %}

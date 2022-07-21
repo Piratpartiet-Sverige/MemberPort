@@ -1,5 +1,6 @@
 from datetime import datetime
 from uuid import UUID
+from typing import Union
 
 
 class Name:
@@ -206,6 +207,32 @@ def post_to_json(post: Post) -> dict:
         'author': post.author.__str__(),
         'created': post.created.isoformat(' ', 'seconds'),
         'updated': post.updated.isoformat(' ', 'seconds'),
+    }
+
+
+class Event:
+    id: Union[UUID, None]
+    title: str
+    description: str
+    host: Union[UUID, None]
+    start: datetime
+    end: datetime
+    created: datetime
+    all_day: False
+    url: str
+
+
+def event_to_json(event: Event) -> dict:
+    return {
+        'id': event.id.__str__() if event.id is not None else '',
+        'title': event.title,
+        'description': event.description,
+        'host': event.host.__str__() if event.host is not None else '',
+        'start': event.start.isoformat(' ', 'seconds'),
+        'end': event.end.isoformat(' ', 'seconds'),
+        'created': event.created.isoformat(' ', 'seconds'),
+        'allDay': event.all_day.__str__().lower(),
+        'url': event.url
     }
 
 
