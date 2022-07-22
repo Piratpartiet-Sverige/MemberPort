@@ -20,9 +20,9 @@ declare const _GRID_DATA_: Array<{
 const columnDefs = [
   { headerName: 'Namn', field: 'name', sortable: true },
   { headerName: 'Beskrivning', field: 'description', sortable: true },
-  { headerName: 'Aktiv', field: 'active', cellRenderer: 'checkboxRenderer' },
-  { headerName: 'Ändra', field: 'edit', cellRenderer: 'buttonRenderer' },
-  { headerName: 'Ta bort', field: 'delete', cellRenderer: 'buttonRenderer' }
+  { headerName: 'Aktiv', field: 'active', cellRenderer: 'checkboxRenderer', suppressSizeToFit: true },
+  { headerName: 'Ändra', field: 'edit', cellRenderer: 'buttonRenderer', suppressSizeToFit: true },
+  { headerName: 'Ta bort', field: 'delete', cellRenderer: 'buttonRenderer', suppressSizeToFit: true }
 ]
 
 const rowData = _GRID_DATA_.map((row) => ({
@@ -57,7 +57,12 @@ const rowData = _GRID_DATA_.map((row) => ({
           body: formBody
         })
           .then(response => {
-            if (response.status === 203) { location.reload() }
+            if (response.status === 204) {
+              const transaction = {
+                remove: [{ id: row.id }]
+              }
+              gridOptions.api?.applyTransaction(transaction)
+            }
           })
           .catch(console.error)
       }
@@ -67,18 +72,25 @@ const rowData = _GRID_DATA_.map((row) => ({
 
 // let the grid know which columns and what data to use
 const gridOptions: GridOptions = {
+  getRowId: (params) => params.data.id,
   columnDefs,
+  defaultColDef: {
+    resizable: true
+  },
   rowData,
   components: {
     buttonRenderer: ButtonRenderer,
     checkboxRenderer: CheckboxRenderer
+  },
+  domLayout: 'autoHeight',
+  onFirstDataRendered (event) {
+    event.api.sizeColumnsToFit()
   }
 }
 
 afterPageLoad().then(() => {
-  // lookup the container we want the Grid to use
   const eGridDiv = document.querySelector<HTMLElement>('#organizations')
-  // create the grid passing in the div to use together with the columns & data we want to use
+
   if (eGridDiv != null) {
     // eslint-disable-next-line no-new
     new Grid(eGridDiv, gridOptions)

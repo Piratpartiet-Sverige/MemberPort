@@ -16,12 +16,13 @@ declare const _GRID_DATA_: Array<{
 }>
 
 const defaultColDef = {
-  sortable: true
+  sortable: true,
+  resizable: true
 }
 
 // specify the columns
 const columnDefs = [
-  { headerName: 'Medlemsnummer', field: 'number' },
+  { headerName: '#', field: 'number' },
   { headerName: 'Namn', field: 'name' },
   { headerName: 'E-mail', field: 'email' },
   { headerName: 'Telefon', field: 'phone' },
@@ -35,13 +36,28 @@ const columnDefs = [
 const gridOptions: GridOptions = {
   columnDefs,
   defaultColDef,
-  rowData: _GRID_DATA_
+  rowData: _GRID_DATA_,
+  domLayout: 'autoHeight',
+  onFirstDataRendered (event) {
+    const allColumnIds: string[] = []
+    const columns = event.columnApi.getColumns()
+
+    if (columns == null) {
+      event.api.sizeColumnsToFit()
+      return
+    }
+
+    columns.forEach((column) => {
+      allColumnIds.push(column.getId())
+    })
+
+    event.columnApi.autoSizeColumns(allColumnIds, false)
+  }
 }
 
 afterPageLoad().then(() => {
-  // lookup the container we want the Grid to use
   const eGridDiv = document.querySelector<HTMLElement>('#myGrid')
-  // create the grid passing in the div to use together with the columns & data we want to use
+
   if (eGridDiv != null) {
     // eslint-disable-next-line no-new
     new Grid(eGridDiv, gridOptions)

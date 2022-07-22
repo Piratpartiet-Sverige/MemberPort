@@ -149,7 +149,7 @@ class GeographyDao(BaseDao):
 
     async def update_area(self, area_id: int, name: Union[str, None], country_id: Union[UUID, None], path: Union[str, None]) -> bool:
         arguments = [area_id]
-        sql = self._prepare_sql_for_update_area(arguments, area_id, name, country_id)
+        sql = self._prepare_sql_for_update_area(arguments, name, country_id)
 
         if name is None and country_id is None and path is None:
             return False
@@ -185,7 +185,7 @@ class GeographyDao(BaseDao):
 
         return True
 
-    def _prepare_sql_for_update_area(self, arguments: list, area_id: int, name: Union[str, None], country_id: Union[UUID, None]) -> str:
+    def _prepare_sql_for_update_area(self, arguments: list, name: Union[str, None], country_id: Union[UUID, None]) -> str:
         sql = 'UPDATE areas SET'
         values_updated = 0
 

@@ -128,13 +128,11 @@ class GeographyTest(WebTestCase):
         )
 
         body = response.body.decode('raw_unicode_escape')
-        json_body = json.loads(body)
+        self.assertEqual(len(body), 0)
 
         self.connection.execute.assert_called()
-        self.assertEqual(json_body["success"], True)
-        self.assertEqual(json_body["reason"], "COUNTRY DELETED")
-        self.assertEqual(json_body["data"], None)
-        self.assertEqual(200, response.code)
+        self.assertEqual(response.reason, "COUNTRY DELETED")
+        self.assertEqual(204, response.code)
 
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_delete_fail_country(self, get_current_user):
@@ -256,13 +254,11 @@ class GeographyTest(WebTestCase):
         )
 
         body = response.body.decode('raw_unicode_escape')
-        json_body = json.loads(body)
+        self.assertEqual(len(body), 0)
 
         self.connection.execute.assert_called()
-        self.assertEqual(json_body["success"], True)
-        self.assertEqual(json_body["reason"], "AREA DELETED")
-        self.assertEqual(json_body["data"], None)
-        self.assertEqual(200, response.code)
+        self.assertEqual(response.reason, "AREA DELETED")
+        self.assertEqual(204, response.code)
 
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_delete_fail_area(self, get_current_user):
@@ -385,13 +381,11 @@ class GeographyTest(WebTestCase):
         )
 
         body = response.body.decode('raw_unicode_escape')
-        json_body = json.loads(body)
+        self.assertEqual(len(body), 0)
 
         self.connection.execute.assert_called_once()
-        self.assertEqual(json_body["success"], True)
-        self.assertEqual(json_body["reason"], "MUNICIPALITY DELETED")
-        self.assertEqual(json_body["data"], None)
-        self.assertEqual(200, response.code)
+        self.assertEqual(response.reason, "MUNICIPALITY DELETED")
+        self.assertEqual(204, response.code)
 
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_delete_fail_municipality(self, get_current_user):
