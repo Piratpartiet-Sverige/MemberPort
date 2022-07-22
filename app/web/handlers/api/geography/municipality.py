@@ -76,4 +76,4 @@ class APIMunicipalityHandler(BaseHandler):
         if result is False:
             return self.respond("COULD NOT DELETE MUNICIPALITY! ORGANIZATION COULD BE ACTIVE IN MUNICIPALITY", 403)
 
-        return self.respond("MUNICIPALITY DELETED", 200, None)
+        return self.respond("MUNICIPALITY DELETED", 204)

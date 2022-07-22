@@ -2,36 +2,35 @@
 {% block content %}
 {% module xsrf_form_html() %}
 <div class="section">
-<div class="container">
-    <h1 class="title">Föreningar</h1>
-    <div class="field is-grouped">
-    <div id="organizations" style="width: 100%; height: 80vh;" class="ag-theme-alpine"></div>
+    <div class="container">
+        <h1 class="title">Föreningar</h1>
+        <div id="organizations" class="ag-theme-alpine"></div>
+        <div class="field is-grouped">
+            <p class="control">
+                <button type="button" class="button is-success" onclick="location.href='add-organization'"
+                    id="saveButton">
+                    Lägg till
+                </button>
+            </p>
+        </div>
     </div>
-    <div class="field is-grouped">
-    <p class="control">
-        <button type="button" class="button is-success"
-            onclick="location.href='add-organization'"
-            id="saveButton">Lägg till</button></p>
-    </div>
-</div>
 </div>
 {% end %}
 {% block scripts %}
 <script type="text/javascript">
-// specify the data
-var _GRID_DATA_= [
+    var _GRID_DATA_ = [
         {% for organization in organizations %}
         {
             id: "{{ organization.id }}",
             name: "{{ organization.name }}",
             description: "{{ organization.description }}",
             active: {
-                checked: {{ "true" if organization.active else "false"}},
+                checked: {{ "true" if organization.active else "false" }},
                 disabled: true
             }
         },
         {% end %}
-    ];</script>
+    ];
+</script>
 <script src="{{ static_url('organizations.bundle.js') }}"></script>
-
 {% end %}

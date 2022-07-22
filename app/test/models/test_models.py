@@ -1,6 +1,19 @@
 from app.models import (
-    Membership, Organization, Municipality, Country, Area, organization_to_json, membership_to_json, municipality_to_json, user_to_json,
-    country_to_json, area_to_json
+    Membership,
+    Organization,
+    Municipality,
+    Country,
+    Area,
+    Post,
+    Calendar,
+    organization_to_json,
+    membership_to_json,
+    municipality_to_json,
+    user_to_json,
+    country_to_json,
+    area_to_json,
+    post_to_json,
+    calendar_to_json
 )
 from app.test.web_testcase import get_mock_session
 from datetime import datetime
@@ -113,8 +126,46 @@ class ModelsTest(TestCase):
         area.path = "1"
 
         json = area_to_json(area)
-        self.assertEqual(id.__str__(), json["id"])
+        self.assertEqual(area.id.__str__(), json["id"])
         self.assertEqual(area.name, json["name"])
         self.assertEqual(created.isoformat(' ', 'seconds'), json["created"])
-        self.assertEqual(sweden_id.__str__(), json["country_id"])
+        self.assertEqual(area.country_id.__str__(), json["country_id"])
         self.assertEqual(area.path, json["path"])
+
+    def test_post_model(self):
+        created = datetime.utcnow()
+        id = uuid4()
+        author = uuid4()
+        updated = datetime.utcnow()
+
+        post = Post()
+        post.id = id
+        post.title = "Rubrik"
+        post.content = "<p>Innehåll här</p>"
+        post.author = author
+        post.created = created
+        post.updated = updated
+
+        json = post_to_json(post)
+        self.assertEqual(post.id.__str__(), json["id"])
+        self.assertEqual(post.title, json["title"])
+        self.assertEqual(post.content, json["content"])
+        self.assertEqual(post.author.__str__(), json["author"])
+        self.assertEqual(post.created.isoformat(' ', 'seconds'), json["created"])
+        self.assertEqual(post.updated.isoformat(' ', 'seconds'), json["updated"])
+
+    def test_calendar_model(self):
+        created = datetime.utcnow()
+        id = uuid4()
+
+        calendar = Calendar()
+        calendar.id = id
+        calendar.description = "Kalender"
+        calendar.ics_url = "https://www.example.com"
+        calendar.created = created
+
+        json = calendar_to_json(calendar)
+        self.assertEqual(calendar.id.__str__(), json["id"])
+        self.assertEqual(calendar.description, json["description"])
+        self.assertEqual(calendar.ics_url, json["ics_url"])
+        self.assertEqual(calendar.created.isoformat(' ', 'seconds'), json["created"])

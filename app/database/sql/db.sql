@@ -160,6 +160,14 @@ CREATE TABLE post_municipality
     PRIMARY KEY ("post", "municipality")
 );
 
+CREATE TABLE ics_links
+(
+    id          UUID PRIMARY KEY,
+    description TEXT NOT NULL,
+    ics_url     TEXT NOT NULL,
+    created     TIMESTAMP WITHOUT TIME ZONE NOT NULL
+);
+
 -- Create an administrator role
 INSERT INTO roles (id, name, description)
 VALUES ('00000000-0000-0000-0000-000000000000', 'Admin', 'Default role for admins.');

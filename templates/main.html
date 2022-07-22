@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ static_url('css/dashboard.bundle.css') }}">
+{% end %}
+
 {% block content %}
 <section class="section">
 
@@ -53,11 +57,11 @@
             </div>
             {% end %}
             <div class="content">
-                <h1 class="title has-text-centered">
+                <h1>
                     Kalender
                 </h1>
-                <!--- The idea is to embed our calendar here --->
             </div>
+            <div id="calendar" style="max-width: 900px;"></div>
         </div>
     </div>
 </section>
@@ -100,4 +104,5 @@
         });
     {% end %}
 </script>
+<script src="{{ static_url('dashboard.bundle.js') }}"></script>
 {% end %}

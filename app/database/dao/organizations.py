@@ -284,13 +284,13 @@ class OrganizationsDao(MemberOrgDao):
         # NULL default_organization if were removing default
         try:
             async with self.pool.acquire() as con:
-                await con.execute("UPDATE settings SET default_organization = NULL WHERE default_organization = $1", id)
+                await con.execute("UPDATE settings SET default_organization = NULL WHERE default_organization = $1;", id)
         except Exception:
             return False
 
         try:
             async with self.pool.acquire() as con:
-                await con.execute("DELETE FROM organizations WHERE id = $1", id)
+                await con.execute("DELETE FROM organizations WHERE id = $1;", id)
         except Exception:
             return False
         return True

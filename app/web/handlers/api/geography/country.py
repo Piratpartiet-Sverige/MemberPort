@@ -66,4 +66,4 @@ class APICountryHandler(BaseHandler):
         if result is False:
             return self.respond("COULD NOT DELETE COUNTRY! ORGANIZATION COULD BE ACTIVE IN COUNTRY", 403)
 
-        return self.respond("COUNTRY DELETED", 200, None)
+        return self.respond("COUNTRY DELETED", 204)

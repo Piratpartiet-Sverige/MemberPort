@@ -11,7 +11,7 @@ class APIOrganizationHandler(BaseHandler):
     @tornado.web.authenticated
     async def get(self, id: str):
         org_id = self.check_uuid(id)
-        if id is None:
+        if org_id is None:
             return self.respond("ORGANIZATION UUID IS MISSING", 400)
 
         organization = await OrganizationsDao(self.db).get_organization_by_id(org_id)
@@ -100,9 +100,10 @@ class APIOrganizationHandler(BaseHandler):
         return self.respond("ORGANIZATION UPDATED", 200, organization_to_json(organization))
 
     @tornado.web.authenticated
-    async def delete(self, id: UUID = None):
-        if id is None:
+    async def delete(self, id: str = None):
+        org_id = self.check_uuid(id)
+        if org_id is None:
             return self.respond("ORGANIZATION UUID IS MISSING", 400)
-        if not await OrganizationsDao(self.db).delete_organization(id):
+        if not await OrganizationsDao(self.db).delete_organization(org_id):
             return self.respond("INTERNAL SERVER ERROR", 500)
-        return self.respond("ORGANIZATION DELETED", 203)
+        return self.respond("ORGANIZATION DELETED", 204)

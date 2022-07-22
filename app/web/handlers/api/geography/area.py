@@ -77,4 +77,4 @@ class APIAreaHandler(BaseHandler):
         if result is False:
             return self.respond("COULD NOT DELETE AREA! ORGANIZATION COULD BE ACTIVE IN AREA", 403)
 
-        return self.respond("AREA DELETED", 200, None)
+        return self.respond("AREA DELETED", 204)

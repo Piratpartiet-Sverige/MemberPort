@@ -59,6 +59,6 @@ class FeedDao(BaseDao):
                     posts.append(post)
         except Exception as exc:
             logger.debug(exc.__str__())
-            logger.error("SOMETHING WENT WRONG WHEN TRYING TO CREATE POST", stack_info=True)
-        logger.debug(posts)
+            logger.error("SOMETHING WENT WRONG WHEN TRYING TO RETRIEVE POSTS", stack_info=True)
+
         return posts

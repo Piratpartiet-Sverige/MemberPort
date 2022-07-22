@@ -36,7 +36,7 @@
         </div>
         <div class="field">
             <label class="checkbox">
-                <input type="checkbox" , name="active" {{ "checked" if organization.active else None }}>
+                <input type="checkbox" name="active" {{ "checked" if organization.active else None }}>
                 Aktiv
             </label>
             <div class="control">
@@ -76,13 +76,13 @@
     };
     {% end %}
     {% for id in country_ids %}
-        geodata["{{ id }}"].active = true
+    geodata["{{ id }}"].active = true
     {% end %}
     {% for id in area_ids %}
-        geodata["{{ id }}"].active = true
+    geodata["{{ id }}"].active = true
     {% end %}
     {% for id in municipality_ids %}
-        geodata["{{ id }}"].active = true
+    geodata["{{ id }}"].active = true
     {% end %}
 </script>
 <script src="{{ static_url('edit-organization.bundle.js') }}"></script>
