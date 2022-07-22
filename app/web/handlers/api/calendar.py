@@ -49,6 +49,8 @@ class APICalendarHandler(BaseHandler):
 
             ical_response = ""
 
+        if len(ical) == 0:
+            ical += "BEGIN:VCALENDAR\n"
         ical += "END:VCALENDAR"
 
         self.set_status(200, "CALENDAR RETURNED")
