@@ -9,7 +9,7 @@ class CalendarHandler(BaseHandler):
     async def get(self):
         calendar_dao = CalendarDao(self.db)
 
-        calendars = await calendar_dao.get_ics_links()
+        calendars = await calendar_dao.get_calendars()
 
         await self.render(
             "admin/calendar.html",

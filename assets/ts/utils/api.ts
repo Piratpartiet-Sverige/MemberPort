@@ -411,3 +411,74 @@ export async function sendCreatePostRequest (title: string, content: string): Pr
 
   return response
 }
+
+export async function sendCreateCalendarRequest (description: string, url: string): Promise<Response> {
+  const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
+  const data = {
+    description,
+    url
+  }
+  const body = convertDictToBody(data)
+
+  const response = await fetch('/api/calendar', {
+    method: 'POST',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-XSRFToken': xsrf.value
+    },
+    redirect: 'follow',
+    referrerPolicy: 'no-referrer',
+    body
+  })
+
+  return response
+}
+
+export async function sendUpdateCalendarRequest (id: string, description: string | null, url: string | null): Promise<Response> {
+  const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
+  const data: DataBody = {}
+
+  if (description !== null) {
+    data.description = description
+  }
+  if (url !== null) {
+    data.url = url
+  }
+
+  const body = convertDictToBody(data)
+
+  const response = await fetch('/api/calendar/' + id, {
+    method: 'PUT',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-XSRFToken': xsrf.value
+    },
+    redirect: 'follow',
+    referrerPolicy: 'no-referrer',
+    body
+  })
+
+  return response
+}
+
+export async function sendDeleteCalendarRequest (id: string): Promise<Response> {
+  const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
+
+  const response = await fetch('/api/calendar/' + id, {
+    method: 'DELETE',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-XSRFToken': xsrf.value
+    },
+    redirect: 'follow',
+    referrerPolicy: 'no-referrer'
+  })
+
+  return response
+}

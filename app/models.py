@@ -236,6 +236,22 @@ def event_to_json(event: Event) -> dict:
     }
 
 
+class Calendar:
+    id: UUID
+    description: str
+    ics_url: Union[UUID, None]
+    created: datetime
+
+
+def calendar_to_json(calendar: Calendar) -> dict:
+    return {
+        'id': calendar.id.__str__(),
+        'description': calendar.description,
+        'ics_url': calendar.ics_url,
+        'created': calendar.created.isoformat(' ', 'seconds')
+    }
+
+
 def ui_placeholders(button_label: str) -> dict:
     return {
         "password": "Lösenord",

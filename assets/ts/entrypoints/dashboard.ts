@@ -5,7 +5,7 @@ import iCalendarPlugin from '@fullcalendar/icalendar'
 import { afterPageLoad } from '../utils/after-page-load'
 
 afterPageLoad().then(() => {
-  const calendarElement = document.getElementById('calender')
+  const calendarElement = document.getElementById('calendar')
 
   if (calendarElement !== null) {
     const calendar = new Calendar(calendarElement, {

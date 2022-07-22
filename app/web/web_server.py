@@ -103,6 +103,7 @@ def configure_application(options: WebAppOptions):
         (r"/admin/edit-organization", EditOrganizationHandler),
         (r"/admin/roles", RolesHandler),
         (r"/api/calendar", APICalendarHandler),
+        (r"/api/calendar/(?P<id>[^\/]+)", APICalendarHandler),
         (r"/api/member", APIMemberHandler),
         (r"/api/membership", APIMemberShipHandler),
         (r"/api/membership/(?P<id>[^\/]+)", APIMemberShipHandler),

@@ -4,12 +4,10 @@
 <div class="section">
     <div class="container">
         <h1 class="title">Kalender</h1>
-        <div class="field is-grouped">
-            <div id="calendars" style="width: 100%; height: 80vh;" class="ag-theme-alpine"></div>
-        </div>
+        <div id="calendars" style="margin-bottom: 1rem;" class="ag-theme-alpine"></div>
         <div class="field is-grouped">
             <p class="control">
-                <button type="button" class="button is-success" onclick="location.href='add-source'" id="saveButton">
+                <button type="button" class="button is-success" id="addButton">
                     Lägg till
                 </button>
             </p>
@@ -23,9 +21,9 @@
     var _GRID_DATA_ = [
         {% for calendar in calendars %}
         {
-            id: "",
-            description: "",
-            url: "{{ calendar }}"
+            id: "{{ calendar.id }}",
+            description: "{{ calendar.description }}",
+            url: "{{ calendar.ics_url }}"
         },
         {% end %}
     ];
