@@ -97,7 +97,7 @@ class APICalendarHandler(BaseHandler):
         if calendar is None:
             return self.respond("SOMETHING WENT WRONG WHEN TRYING TO UPDATE CALENDAR", 500)
 
-        return self.respond("CALENDAR UPDATED", 201, calendar_to_json(calendar))
+        return self.respond("CALENDAR UPDATED", 200, calendar_to_json(calendar))
 
     async def delete(self, id: str):
         calendar_id = self.check_uuid(id)
