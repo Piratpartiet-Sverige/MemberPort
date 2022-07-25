@@ -37,7 +37,6 @@ class ProfileHandler(BaseHandler):
             api_instance = v0alpha2_api.V0alpha2Api(api_client)
             try:
                 api_response = api_instance.get_self_service_settings_flow(flow, cookie=cookie)
-
                 state = api_response.state.value
                 errors = api_response.ui.messages.value if hasattr(api_response.ui, 'messages') else []
                 nodes = api_response.ui.nodes.value

@@ -6,23 +6,34 @@
 
 {% block content %}
 <section class="section">
-
+    {% autoescape None %}
     <div class="notification is-warning" id="onboardingNotification">
         <button class="delete" onclick="toggleNotification('onboardingNotification')"></button>
         <div class="content">
-            <h3 class="title">Välkommen {{ name }}! Ditt medlemsnummer är: #{{ str(number) }}</h3>
+            {% if onboarding %}
+            <h3 class="title">Välkommen {{ xhtml_escape(name) }}! Ditt medlemsnummer är: #{{ str(number) }}</h3>
             <p>Som ny medlem i Piratpartiet rekommenderar vi att du går igenom den här onboardingen.</p>
+            {% else %}
+            <h3 class="title">Välkommen tillbaka {{ xhtml_escape(name) }}! #{{ str(number) }}</h3>
+            {% end %}
+            {% if verified is False %}
+            <p>Du har inte verifierat din mail än, detta behövs göra för att du fullt ut ska kunna delta. Klicka på knappen nedanför för att göra det</p>
+            {% end %}
         </div>
         <div class="buttons">
+            {% if onboarding %}
             <button class="button is-success">Till onboardingen</button>
+            {% end %}
+            {% if verified is False %}
+            <a class="button is-success" href="/verify">Verifiera mail</a>
+            {% end %}
         </div>
     </div>
-
     <div class="columns">
-        <div class="column is-one-fifth">
+        <div class="column is-2">
             {% include 'menu.html' %}
         </div>
-        <div class="column">
+        <div class="column is-6">
             {% if feed_url != "" %}
             <div class="content">
                 <h1 class="title has-text-centered">
@@ -56,11 +67,26 @@
                 </div>
             </div>
             {% end %}
-            <div class="content">
-                <h1>
-                    Kalender
-                </h1>
+            {% for post in posts %}
+            <div class="box" style="overflow: scroll;">
+                <article class="media">
+                    <div class="media-content">
+                        <div class="content">
+                            <h3>{{ xhtml_escape(post.title) }}</h3>
+                            <p>
+                                Inlägg av
+                                <b>{{ xhtml_escape(authors[post.author].name.first) + " " + xhtml_escape(authors[post.author].name.last) }}</b>
+                                <i>{{ post.created.isoformat(' ', 'minutes') }}</i>
+                            </p>
+                            <hr>
+                            {{ post.content }}
+                        </div>
+                    </div>
+                </article>
             </div>
+            {% end %}
+        </div>
+        <div class="column is-4">
             <div id="calendar" style="max-width: 900px;"></div>
         </div>
     </div>

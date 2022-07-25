@@ -17,9 +17,9 @@ afterPageLoad().then(() => {
       locale: svLocale,
       initialView: 'dayGridMonth',
       headerToolbar: {
-        left: 'prev,next today',
-        center: 'title',
-        right: ''
+        left: 'title',
+        center: '',
+        right: 'today prev,next'
       }
     })
 

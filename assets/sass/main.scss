@@ -1,5 +1,13 @@
 @charset "utf-8";
 
+$purple: #512483;
+$orange: #f28903;
+$pink: #d82e8a;
+$red: #cf232c;
+$blue: #00a6d0;
+$turquoise: #00a09b;
+$primary: $purple;
+
 // Import only what you need from Bulma
 @import "bulma/sass/utilities/_all.sass";
 @import "bulma/sass/base/_all.sass";
@@ -13,3 +21,63 @@
 // ag-grid
 @import '@ag-grid-community/core/dist/styles/ag-grid.scss';
 @import '@ag-grid-community/core/dist/styles/ag-theme-alpine/sass/ag-theme-alpine.scss';
+
+%calendar-buttons {
+    background-color: $primary;
+    border-color: transparent;
+    color: $white;
+    border-width: 1px;
+    cursor: pointer;
+    justify-content: center;
+    padding-bottom: calc(0.5em - 1px);
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-top: calc(0.5em - 1px);
+    text-align: center;
+    white-space: nowrap;
+}
+
+.fc-today-button.fc-button.fc-button-primary {
+    @extend %calendar-buttons;
+}
+.fc-prev-button.fc-button.fc-button-primary {
+    @extend %calendar-buttons;
+}
+.fc-next-button.fc-button.fc-button-primary {
+    @extend %calendar-buttons;
+}
+
+.fc-today-button.fc-button.fc-button-primary:hover {
+    background-color: $primary-dark;
+}
+.fc-prev-button.fc-button.fc-button-primary:hover {
+    background-color: $primary-dark;
+}
+.fc-next-button.fc-button.fc-button-primary:hover {
+    background-color: $primary-dark;
+}
+
+.fc-today-button.fc-button.fc-button-primary:disabled {
+    background-color: $primary-dark;
+    color: $grey-lightest;
+}
+.fc-prev-button.fc-button.fc-button-primary:disabled {
+    background-color: $primary-dark;
+    color: $grey-lightest;
+}
+.fc-next-button.fc-button.fc-button-primary:disabled {
+    background-color: $primary-dark;
+    color: $grey-lightest;
+}
+
+.fc-col-header-cell-cushion {
+    color: $black-bis;
+}
+
+.fc-daygrid-day * a {
+    color: $black-bis;  
+}
+
+.fc td.fc-daygrid-day.fc-day-today {
+    background-color: $warning;
+}

@@ -4,8 +4,10 @@
 {% block content %}
 <div class="section">
 <div class="container">
-    <h1 class="title">Roller</h1>
-    <p>En roll är egentligen bara en samling av rättigheter. Dessa rättigheter styr vad en användare med rollen har möjlighet att göra inom systemet. Utöver roller så finns det två saker som begränsar användaren. Den första är vilken förening man blivit tilldelad rollen inom. Den andra är om man blivit tilldelad rollen inom ett specifikt geografiskt område. Det betyder att en person som t.ex. får rättigheten att skicka ut mail till medlemmar kan begränsas av att bara kunna skicka mail till medlemmar i en viss förening, som bor inom ett visst geografiskt område.</p>
+    <div class="content">
+        <h1>Roller</h1>
+        <p>En roll är egentligen bara en samling av rättigheter. Dessa rättigheter styr vad en användare med rollen har möjlighet att göra inom systemet. Utöver roller så finns det två saker som begränsar användaren. Den första är vilken förening man blivit tilldelad rollen inom. Den andra är om man blivit tilldelad rollen inom ett specifikt geografiskt område. Det betyder att en person som t.ex. får rättigheten att skicka ut mail till medlemmar kan begränsas av att bara kunna skicka mail till medlemmar i en viss förening, som bor inom ett visst geografiskt område.</p>
+    </div>
     <div id="myGrid" style="width: 100%; height: 80vh;" class="ag-theme-alpine"></div>
     <br>
     {% module xsrf_form_html() %}

@@ -14,20 +14,18 @@
 </head>
 <body class="has-navbar-fixed-top">
     {% block body %}
-    <nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation">
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item" href="/">
                 <img src="{{ static_url('img/vitt_segel.png') }}"
                     width="28" height="28">
             </a>
-            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
-                data-target="mainNavbar">
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="mainNavbar">
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
             </a>
         </div>
-    
         <div id="mainNavbar" class="navbar-menu">
             <div class="navbar-start">
                 <a href="/" class="navbar-item">
@@ -150,6 +148,19 @@
     </nav>
     {% block content %}
     {% end %}
+    <script>
+        const navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+        navbarBurgers.forEach( el => {
+            el.addEventListener('click', () => {
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+            });
+        });
+    </script>
     {% end %}
     {% block scripts %}{% end %}
 </body>

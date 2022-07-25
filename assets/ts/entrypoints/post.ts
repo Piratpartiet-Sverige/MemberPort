@@ -5,7 +5,12 @@ import { createMessage } from '../utils/ui'
 
 afterPageLoad().then(() => {
   const editor = tinymce.init({
-    selector: 'textarea#editor'
+    selector: 'textarea#editor',
+    plugins: 'autosave image link emoticons lists help',
+    browser_spellcheck: true,
+    contextmenu: false,
+    menubar: false,
+    toolbar: 'newdocument restoredraft undo redo | styles | bold italic underline | bullist numlist | alignleft aligncenter alignright alignjustify alignnone | link image'
   })
 
   const publish = document.getElementById('publish')

@@ -4,3 +4,4 @@ pytz==2022.1
 ory-kratos-client==0.10.1
 aiosmtplib==1.1.6
 celery==5.2.7
+bleach[css]==5.0.1

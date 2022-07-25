@@ -7,20 +7,20 @@ export function filter (query: string): void {
 
   if (query.length === 0) {
     searchables.forEach(function (searchable: Element) {
-      searchable.parentElement?.classList.remove('is-hidden')
+      searchable.parentElement?.classList.remove('no-border')
+      searchable.classList.remove('is-hidden')
     })
+
     return
   }
 
   searchables.forEach(function (searchable: Element) {
-    const nameElement = searchable.lastChild
+    const name = searchable.textContent
     const parentElement = searchable.parentElement
 
-    if (nameElement === null || parentElement === null) {
+    if (name === null || parentElement === null) {
       return
     }
-
-    const name = nameElement.textContent
 
     if (name === null) {
       return
@@ -220,12 +220,15 @@ function createHTML (id: string, name: string, icon: string, geodata: {[id: stri
   const element = document.createElement('div')
   element.id = id
 
+  let minimizeOption = true
+
   if (geodata[id].type === GEO_TYPES.COUNTRY) {
     element.classList.add('country')
   } else if (geodata[id].type === GEO_TYPES.AREA) {
     element.classList.add('indent')
     element.classList.add('area')
   } else if (geodata[id].type === GEO_TYPES.MUNICIPALITY) {
+    minimizeOption = false
     element.classList.add('indent')
     element.classList.add('municipality')
   }
@@ -266,9 +269,68 @@ function createHTML (id: string, name: string, icon: string, geodata: {[id: stri
   anchorElement.appendChild(label)
   anchorElement.appendChild(span)
   anchorElement.append(name)
+
+  if (minimizeOption) {
+    const minimizeExpand = createMinimizeExpand(id)
+    anchorElement.append(minimizeExpand)
+  }
+
   element.appendChild(anchorElement)
 
   return element
+}
+
+function createMinimizeExpand (id: string): HTMLDivElement {
+  const minimizeExpand = document.createElement('div')
+  minimizeExpand.classList.add('is-flex', 'is-flex-grow-1', 'is-justify-content-flex-end', 'is-align-items-center', 'is-align-self-stretch')
+
+  const spanMinimize = document.createElement('span')
+  spanMinimize.classList.add('is-align-self-stretch')
+  spanMinimize.style.minWidth = '32px'
+  spanMinimize.style.height = '100%'
+  spanMinimize.onclick = (ev: MouseEvent) => {
+    ev.stopPropagation()
+    const element = document.getElementById(id)
+    const icon = spanMinimize.children.item(0)
+
+    if (icon === null) {
+      return
+    }
+
+    const hideElements = icon.classList.contains('fa-angle-down')
+    if (hideElements) {
+      icon.classList.remove('fa-angle-down')
+      icon.classList.add('fa-angle-up')
+    } else {
+      icon.classList.remove('fa-angle-up')
+      icon.classList.add('fa-angle-down')
+    }
+
+    if (element !== null) {
+      const searchables = element.querySelectorAll('.searchable')
+      searchables.forEach((searchable: Element) => {
+        if (searchable.parentElement?.id === id) {
+          return
+        }
+
+        if (hideElements) {
+          searchable.parentElement?.classList.add('no-border')
+          searchable.classList.add('is-hidden')
+        } else {
+          searchable.parentElement?.classList.remove('no-border')
+          searchable.classList.remove('is-hidden')
+        }
+      })
+    }
+  }
+
+  const arrowIcon = document.createElement('i')
+  arrowIcon.classList.add('fas')
+  arrowIcon.classList.add('fa-angle-down')
+
+  spanMinimize.appendChild(arrowIcon)
+  minimizeExpand.appendChild(spanMinimize)
+  return minimizeExpand
 }
 
 function clickCheck (id: string, element: HTMLElement, input: HTMLInputElement, geodata: {[id: string]: GeoData}): void {
