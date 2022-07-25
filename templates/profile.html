@@ -7,287 +7,301 @@
 {% block content %}
 <section class="section">
     <div class="container">
-        <div class="columns">
-            <div class="column is-one-fifth">
-                <aside class="menu sticky">
-                    <p class="menu-label">
-                        Mitt medlemskap
-                    </p>
-                    <ul class="menu-list">
-                        <li><a href="#profil">Min profil</a></li>
-                        <li><a href="#prenumerationer">Mailprenumerationer</a></li>
-                        <li><a href="#medlemskap">Hantera medlemskap</a></li>
-                    </ul>
-                    <hr>
-                    <ul class="menu-list">
-                        <li><a href="#ledare">Mina ledare</a></li>
-                    </ul>
-                </aside>
-            </div>
-            <div class="column">
-                <div id="reason" class="modal">
-                    <div class="modal-background"></div>
-                    <div class="modal-card">
-                        <header class="modal-card-head">
-                            <p class="modal-card-title">Avsluta medlemskap</p>
-                            <button class="delete" aria-label="close" onclick="toggleModal('reason')"></button>
-                        </header>
-                        <section class="modal-card-body">
-                            <div class="content">
-                                <p><b>Anledning varför du vill avsluta ditt medlemskap</b></p>
-                            </div>
-                            <textarea name="reason" class="textarea" placeholder="e.g. Jag avslutar mitt medlemskap på grund av att..."></textarea>
-                        </section>
-                        <footer class="modal-card-foot">
-                            <button id="endMembershipButton" class="button is-danger" onclick="endMembership()">Avsluta medlemskap</button>
-                            <button class="button is-success" onclick="toggleModal('reason')">Avbryt</button>
-                        </footer>
+        <div id="reason" class="modal">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Avsluta medlemskap</p>
+                    <button class="delete" aria-label="close" onclick="toggleModal('reason')"></button>
+                </header>
+                <section class="modal-card-body">
+                    <div class="content">
+                        <p><b>Anledning varför du vill avsluta ditt medlemskap</b></p>
                     </div>
-                </div>
-                <div class="content">
-                    <h1 id="profil">Min profil</h1>
-                </div>
-                <div class="box">
-                    {% module xsrf_form_html() %}
-                    <form id="settings" action="{{ action }}" method="{{ method }}">
-                        <div class="field">
-                            {% for node in nodes %}
-                            {% if node.attributes.name == 'csrf_token' %}
-                            <input name="{{ node.attributes.name }}" type="hidden" value="{{ node.attributes.value }}" />
-                            {% elif node.attributes.name == 'traits.municipality' %}
-                            <label class="label">
-                                {{ placeholders[node.attributes.name] }}
-                                <div class="field">
-                                    <div class="control">
-                                        <div class="select" style="width: 100%;">
-                                            <select id="{{ node.attributes.name }}" name="{{ node.attributes.name }}" style="width: 100%;">
-                                                <option disabled value>Välj din kommun</option>
-                                                {% for municipality in municipalities %}
-                                                <option {{ "selected" if node.attributes.value == municipality.name else "" }} value="{{ municipality.name }}">{{ municipality.name }}</option>
-                                                {% end %}
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </label>
-                            {% elif node.attributes.name == 'traits.country' %}
-                            <label class="label">
-                                {{ placeholders[node.attributes.name] }}
-                                <div class="field">
-                                    <div class="control">
-                                        <div class="select" style="width: 100%;">
-                                            <select id="{{ node.attributes.name }}" name="{{ node.attributes.name }}" style="width: 100%;" onchange="updateMunicipalities()">
-                                                <option disabled value>Välj ditt land</option>
-                                                {% for country in countries %}
-                                                <option {{ "selected" if node.attributes.value == country.name else "" }} value="{{ country.name }}">{{ country.name }}</option>
-                                                {% end %}
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </label>
-                            {% elif node.attributes.name == 'method' and node.group == 'profile' %}
-                            <input name="method" type="hidden" value="{{ node.attributes.value }}"> 
-                            <div class="field">
-                                <div class="control">
-                                    <button type="submit" class="button is-success is-fullwidth">{{ placeholders[node.attributes.name] }}</button>
-                                </div>
-                            </div>
-                            {% elif node.attributes.name != 'password' and node.group == 'profile' %}
-                            <label class="label">
-                                {{ placeholders[node.attributes.name] }}
-                                {% if node.attributes.name == 'traits.email' %}
-                                {% if current_user.user.verified %}
-                                <span class="icon has-text-success">
-                                    <i title="Verifierad" class="fas fa-check-square"></i>
-                                </span>
-                                {% else %}
-                                <span class="icon has-text-danger">
-                                    <i title="Ej verifierad" class="fas fa-ban"></i>
-                                </span>
-                                <a href="/verify">Du kan verifiera din e-post här</a>
-                                {% end %}
-                                {% end %}
-                            </label>
-                            <div class="field">
-                                <div class="control">
-                                    <input
-                                        class="input"
-                                        name="{{ node.attributes.name }}"
-                                        type="text"
-                                        value="{{ node.attributes.value if hasattr(node.attributes, 'value') else '' }}"
-                                        id=" {{ node.attributes.name }}">
-                                </div>
-                            </div>
-                            {% end %}
-                            {% end %}
-                        </div>
-                    </form>
-                    <br>
-                    <div id="successNotification" class="notification is-success {{ "" if state == "success" else "is-hidden" }}">
-                        <button type="button" class="delete" onclick="hideNotification('successNotification');"></button>
-                        <p id="successText">Ändringar sparade!</p>
-                    </div>
-                    {% for error in errors %}
-                    {% if error.type == 'error' %}
-                    <div id="errorNotification" class="notification is-danger">
-                        <button type="button" class="delete" onclick="hideNotification('errorNotification');"></button>
-                        <p id="errorText">{{ error.text }}</p>
-                    </div>
-                    {% end %}
-                    {% end %}
-                </div>
-
-                <div class="content">
-                    <p><br></p>
-                </div>
-
-                <div class="content">
-                    <a id="prenumerationer"></a>
-                    <h1>Mail- och SMS-prenumerationer</h1>
-                </div>
-
-                <table class="table is-striped is-hoverable">
-                    <thead>
-                        <tr>
-                            <th>Orsak</th>
-                            <th>Mail</th>
-                            <th>SMS</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Medlemskap på väg att löpa ut</td>
-                            <td><button class="button is-success is-light" id="but1"
-                                    onclick="togglebutton('but1');toggleYesNoButton('but11')">
-                                    <p id="but11">Ja</p>
-                                </button></td>
-                            <td><button class="button is-danger is-light" id="but2"
-                                    onclick="togglebutton('but2');toggleYesNoButton('but22')">
-                                    <p id="but22">Nej</p>
-                                </button></td>
-                        </tr>
-                        <tr>
-                            <td>Medlemsmail (varannan vecka)</td>
-                            <td><button class="button is-success is-light" id="but3"
-                                    onclick="togglebutton('but3');toggleYesNoButton('but33')">
-                                    <p id="but33">Ja</p>
-                                </button></td>
-                            <td><button class="button is-danger is-light" id="but8"
-                                    onclick="togglebutton('but8');toggleYesNoButton('but88')">
-                                    <p id="but88">Nej</p>
-                                </button></td>
-                        </tr>
-                        <tr>
-                            <td>Nationella utskick</td>
-                            <td><button class="button is-success is-light" id="but4"
-                                    onclick="togglebutton('but4');toggleYesNoButton('but44')">
-                                    <p id="but44">Ja</p>
-                                </button></td>
-                            <td><button class="button is-danger is-light" id="but5"
-                                    onclick="togglebutton('but5');toggleYesNoButton('but55')">
-                                    <p id="but55">Nej</p>
-                                </button></td>
-                        </tr>
-                        <tr>
-                            <td>Lokala utskick</td>
-                            <td><button class="button is-success is-light" id="but6"
-                                    onclick="togglebutton('but6');toggleYesNoButton('but66')">
-                                    <p id="but66">Ja</p>
-                                </button></td>
-                            <td><button class="button is-danger is-light" id="but7"
-                                    onclick="togglebutton('but7');toggleYesNoButton('but77')">
-                                    <p id="but77">Nej</p>
-                                </button></td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div class="content">
-                    <h1 id="medlemskap">Hantera medlemskap</h1>
-                </div>
-
-                <table class="table is-striped is-hoverable">
-                    <thead>
-                        <tr>
-                            <th>Förening</th>
-                            <th>Medlem sedan</th>
-                            <th>Medlemskap löper ut</th>
-                            <th>Förnya?</th>
-                            <th>Avsluta?</th>
-                        </tr>
-                    </thead>
-                    <tbody id="memberships">
-                        {% for i, membership in enumerate(memberships, start=0) %}
-                        <tr is="membership-row"
-                            id="{{ membership.id }}"
-                            created="{{ membership.created.isoformat(' ', 'seconds') }}"
-                            renewal="{{ membership.renewal.isoformat(' ', 'seconds') }}"
-                            org-name="{{ member_orgs[i].name }}"
-                        >
-                        </tr>
-                        {% end %}
-                    </tbody>
-                </table>
-
-                <div class="columns">
-                    <div class="column is-one-quarter">
-                        <div class="select is-pulled-right">
-                            <select id="joinOrganization" onchange="enableJoinButton();">
-                                <option selected="selected" disabled="disabled">Föreningar du kan gå med i</option>
-                                {% for organization in organizations %}
-                                <option value="{{ organization.id }}">{{ organization.name }}</option>
-                                {% end %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="column">
-                        <button id="joinButton" onclick="joinOrganization('{{ current_user.user.id }}');" class="button is-success is-pulled-left">Gå med i vald förening</button>
-                    </div>
-                </div>
-
-                <div id="joinNotification" class="notification is-success is-hidden">
-                    <button type="button" class="delete" onclick="hideNotification('joinNotification');"></button>
-                    <p id="joinText">Ändringar sparade!</p>
-                </div>
-
-                <div class="content">
-                    <a id="ledare"></a>
-                    <h1>Mina ledare</h1>
-
-                    <h3>Partiledare</h3>
-                    <div class="field is-grouped">
-                        <p class="control">
-                            <button class="button is-static is-outlined">Katarina Stensson</button></p>
-                        <p class="control">
-                            <button class="button is-info is-pulled-left">Kontakta via chatten</button></p>
-                        <p class="control">
-                            <button class="button is-info">Kontakta via mail</button></p>
-                    </div>
-                    <h3>Distriktsledare för södra distriktet</h3>
-                    <div class="field is-grouped">
-                        <p class="control">
-                            <button class="button is-static is-outlined">Greger Gregersson</button></p>
-                        <p class="control">
-                            <button class="button is-info is-pulled-left">Kontakta via chatten</button></p>
-                        <p class="control">
-                            <button class="button is-info">Kontakta via mail</button></p>
-                    </div>
-                    <h3>Kommunledare för Lunds kommun</h3>
-                    <div class="field is-grouped">
-                        <p class="control">
-                            <button class="button is-static is-outlined">Greger Persson</button></p>
-                        <p class="control">
-                            <button class="button is-info is-pulled-left">Kontakta via chatten</button></p>
-                        <p class="control">
-                            <button class="button is-info">Kontakta via mail</button></p>
-                    </div>
-                </div>
-                <div class="content">
-                    <p><br></p>
-                </div>
+                    <textarea name="reason" class="textarea" placeholder="e.g. Jag avslutar mitt medlemskap på grund av att..."></textarea>
+                </section>
+                <footer class="modal-card-foot">
+                    <button id="endMembershipButton" class="button is-danger" onclick="endMembership()">
+                        Avsluta medlemskap
+                    </button>
+                    <button class="button is-success" onclick="toggleModal('reason')">Avbryt</button>
+                </footer>
             </div>
         </div>
+        <div class="content">
+            <h1 id="profil">Min profil</h1>
+        </div>
+        <div class="box">
+            {% module xsrf_form_html() %}
+            <form id="settings" action="{{ action }}" method="{{ method }}">
+                <div class="field">
+                    {% for node in nodes %}
+                    {% if node.attributes.name == 'csrf_token' %}
+                    <input name="{{ node.attributes.name }}" type="hidden" value="{{ node.attributes.value }}" />
+                    {% elif node.attributes.name == 'traits.gender' %}
+                    <label class="label">
+                        {{ placeholders[node.attributes.name] }}
+                        <div class="field">
+                            <div class="control">
+                                <div class="select" style="width: 100%;">
+                                    <select id="{{ node.attributes.name }}" name="{{ node.attributes.name }}"
+                                        style="width: 100%;">
+                                        <option disabled value>Välj självupplevda kön</option>
+                                        <option {{ "selected" if node.attributes.value == "male" else "" }} value="male">Man</option>
+                                        <option {{ "selected" if node.attributes.value == "female" else "" }} value="female">Kvinna</option>
+                                        <option {{ "selected" if node.attributes.value == "other" else "" }} value="other">Annan</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </label>
+                    {% elif node.attributes.name == 'traits.municipality' %}
+                    <label class="label">
+                        {{ placeholders[node.attributes.name] }}
+                        <div class="field">
+                            <div class="control">
+                                <div class="select" style="width: 100%;">
+                                    <select id="{{ node.attributes.name }}" name="{{ node.attributes.name }}"
+                                        style="width: 100%;">
+                                        <option disabled value>Välj din kommun</option>
+                                        {% for municipality in municipalities %}
+                                        <option {{ "selected" if node.attributes.value == municipality.name else "" }}
+                                            value="{{ municipality.name }}">{{ municipality.name }}</option>
+                                        {% end %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </label>
+                    {% elif node.attributes.name == 'traits.country' %}
+                    <label class="label">
+                        {{ placeholders[node.attributes.name] }}
+                        <div class="field">
+                            <div class="control">
+                                <div class="select" style="width: 100%;">
+                                    <select id="{{ node.attributes.name }}" name="{{ node.attributes.name }}" style="width: 100%;" onchange="updateMunicipalities()">
+                                        <option disabled value>Välj ditt land</option>
+                                        {% for country in countries %}
+                                        <option {{ "selected" if node.attributes.value == country.name else "" }} value="{{ country.name }}">{{ country.name }}</option>
+                                        {% end %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </label>
+                    {% elif node.attributes.name == 'method' and node.group == 'profile' %}
+                    <input name="method" type="hidden" value="{{ node.attributes.value }}">
+                    <div class="field">
+                        <div class="control">
+                            <button type="submit" class="button is-success is-fullwidth">{{ placeholders[node.attributes.name] }}</button>
+                        </div>
+                    </div>
+                    {% elif node.attributes.name != 'password' and node.group == 'profile' %}
+                    <label class="label">
+                        {{ placeholders[node.attributes.name] }}
+                        {% if node.attributes.name == 'traits.email' %}
+                        {% if current_user.user.verified %}
+                        <span class="icon has-text-success">
+                            <i title="Verifierad" class="fas fa-check-square"></i>
+                        </span>
+                        {% else %}
+                        <span class="icon has-text-danger">
+                            <i title="Ej verifierad" class="fas fa-ban"></i>
+                        </span>
+                        <a href="/verify">Du kan verifiera din e-post här</a>
+                        {% end %}
+                        {% end %}
+                    </label>
+                    <div class="field">
+                        <div class="control">
+                            <input class="input" name="{{ node.attributes.name }}" type="text"
+                                value="{{ node.attributes.value if hasattr(node.attributes, 'value') else '' }}"
+                                id=" {{ node.attributes.name }}">
+                        </div>
+                    </div>
+                    {% end %}
+                    {% for error in node.messages.value %}
+                    {% if error.type == 'error' %}
+                    <div class="notification is-danger">
+                        <button type="button" class="delete"></button>
+                        {{ error.text }}
+                    </div>
+                    {% end %}
+                    {% end %}
+                    {% end %}
+                </div>
+            </form>
+            <br>
+            <div id="successNotification" class="notification is-success {{ "" if state == "success" else "is-hidden" }}">
+                <button type="button" class="delete" onclick="hideNotification('successNotification');"></button>
+                <p id="successText">Ändringar sparade!</p>
+            </div>
+            {% for error in errors %}
+            {% if error.type == 'error' %}
+            <div id="errorNotification" class="notification is-danger">
+                <button type="button" class="delete" onclick="hideNotification('errorNotification');"></button>
+                <p id="errorText">{{ error.text }}</p>
+            </div>
+            {% end %}
+            {% end %}
+        </div>
+
+        <div class="content">
+            <p><br></p>
+        </div>
+
+        <div class="content">
+            <a id="prenumerationer"></a>
+            <h1>Mail- och SMS-prenumerationer</h1>
+        </div>
+
+        <table class="table is-striped is-hoverable">
+            <thead>
+                <tr>
+                    <th>Orsak</th>
+                    <th>Mail</th>
+                    <th>SMS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Medlemskap på väg att löpa ut</td>
+                    <td><button class="button is-success is-light" id="but1"
+                            onclick="togglebutton('but1');toggleYesNoButton('but11')">
+                            <p id="but11">Ja</p>
+                        </button></td>
+                    <td><button class="button is-danger is-light" id="but2"
+                            onclick="togglebutton('but2');toggleYesNoButton('but22')">
+                            <p id="but22">Nej</p>
+                        </button></td>
+                </tr>
+                <tr>
+                    <td>Medlemsmail (varannan vecka)</td>
+                    <td><button class="button is-success is-light" id="but3"
+                            onclick="togglebutton('but3');toggleYesNoButton('but33')">
+                            <p id="but33">Ja</p>
+                        </button></td>
+                    <td><button class="button is-danger is-light" id="but8"
+                            onclick="togglebutton('but8');toggleYesNoButton('but88')">
+                            <p id="but88">Nej</p>
+                        </button></td>
+                </tr>
+                <tr>
+                    <td>Nationella utskick</td>
+                    <td><button class="button is-success is-light" id="but4"
+                            onclick="togglebutton('but4');toggleYesNoButton('but44')">
+                            <p id="but44">Ja</p>
+                        </button></td>
+                    <td><button class="button is-danger is-light" id="but5"
+                            onclick="togglebutton('but5');toggleYesNoButton('but55')">
+                            <p id="but55">Nej</p>
+                        </button></td>
+                </tr>
+                <tr>
+                    <td>Lokala utskick</td>
+                    <td><button class="button is-success is-light" id="but6"
+                            onclick="togglebutton('but6');toggleYesNoButton('but66')">
+                            <p id="but66">Ja</p>
+                        </button></td>
+                    <td><button class="button is-danger is-light" id="but7"
+                            onclick="togglebutton('but7');toggleYesNoButton('but77')">
+                            <p id="but77">Nej</p>
+                        </button></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="content">
+            <h1 id="medlemskap">Hantera medlemskap</h1>
+        </div>
+
+        <table class="table is-striped is-hoverable">
+            <thead>
+                <tr>
+                    <th>Förening</th>
+                    <th>Medlem sedan</th>
+                    <th>Medlemskap löper ut</th>
+                    <th>Förnya?</th>
+                    <th>Avsluta?</th>
+                </tr>
+            </thead>
+            <tbody id="memberships">
+                {% for i, membership in enumerate(memberships, start=0) %}
+                <tr is="membership-row" id="{{ membership.id }}"
+                    created="{{ membership.created.isoformat(' ', 'seconds') }}"
+                    renewal="{{ membership.renewal.isoformat(' ', 'seconds') }}" org-name="{{ member_orgs[i].name }}">
+                </tr>
+                {% end %}
+            </tbody>
+        </table>
+
+        <div class="columns">
+            <div class="column is-one-quarter">
+                <div class="select is-pulled-right">
+                    <select id="joinOrganization" onchange="enableJoinButton();">
+                        <option selected="selected" disabled="disabled">Föreningar du kan gå med i</option>
+                        {% for organization in organizations %}
+                        <option value="{{ organization.id }}">{{ organization.name }}</option>
+                        {% end %}
+                    </select>
+                </div>
+            </div>
+            <div class="column">
+                <button id="joinButton" onclick="joinOrganization('{{ current_user.user.id }}');" class="button is-success is-pulled-left">Gå med i vald förening</button>
+            </div>
+        </div>
+
+        <div id="joinNotification" class="notification is-success is-hidden">
+            <button type="button" class="delete" onclick="hideNotification('joinNotification');"></button>
+            <p id="joinText">Ändringar sparade!</p>
+        </div>
+
+        <div class="content">
+            <a id="ledare"></a>
+            <h1>Mina ledare</h1>
+
+            <h3>Partiledare</h3>
+            <div class="field is-grouped">
+                <p class="control">
+                    <button class="button is-static is-outlined">Katarina Stensson</button>
+                </p>
+                <p class="control">
+                    <button class="button is-info is-pulled-left">Kontakta via chatten</button>
+                </p>
+                <p class="control">
+                    <button class="button is-info">Kontakta via mail</button>
+                </p>
+            </div>
+            <h3>Distriktsledare för södra distriktet</h3>
+            <div class="field is-grouped">
+                <p class="control">
+                    <button class="button is-static is-outlined">Greger Gregersson</button>
+                </p>
+                <p class="control">
+                    <button class="button is-info is-pulled-left">Kontakta via chatten</button>
+                </p>
+                <p class="control">
+                    <button class="button is-info">Kontakta via mail</button>
+                </p>
+            </div>
+            <h3>Kommunledare för Lunds kommun</h3>
+            <div class="field is-grouped">
+                <p class="control">
+                    <button class="button is-static is-outlined">Greger Persson</button>
+                </p>
+                <p class="control">
+                    <button class="button is-info is-pulled-left">Kontakta via chatten</button>
+                </p>
+                <p class="control">
+                    <button class="button is-info">Kontakta via mail</button>
+                </p>
+            </div>
+        </div>
+        <div class="content">
+            <p><br></p>
+        </div>
+    </div>
+    </div>
     </div>
 </section>
 {% end %}

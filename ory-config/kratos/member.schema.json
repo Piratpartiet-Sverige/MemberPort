@@ -76,6 +76,11 @@
               "via": "email"
             }
           }
+        },
+        "gender": {
+          "title": "Gender",
+          "type": "string",
+          "pattern": "(^fe|^)male$|^other$"
         }
       },
       "required": [

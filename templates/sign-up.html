@@ -23,6 +23,23 @@
                             {% for node in nodes %}
                             {% if node.attributes.name == 'csrf_token' %}
                             <input name="{{ node.attributes.name }}" type="hidden" value="{{ node.attributes.value }}" />
+                            {% elif node.attributes.name == 'traits.gender' %}
+                            <div class="field">
+                                <div class="control">
+                                    <div class="select is-large" style="width: 100%;">
+                                        <select
+                                            id="{{ node.attributes.name }}"
+                                            name="{{ node.attributes.name }}"
+                                            style="width: 100%;"
+                                            data-value="{{ node.attributes.value if hasattr(node.attributes, 'value') else ''}}">
+                                            <option disabled selected value>Välj självupplevda kön</option>
+                                            <option value="male">Man</option>
+                                            <option value="female">Kvinna</option>
+                                            <option value="other">Annan</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                             {% elif node.attributes.name == 'traits.municipality' %}
                             <div class="field">
                                 <div class="control">

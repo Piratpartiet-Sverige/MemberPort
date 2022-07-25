@@ -265,6 +265,7 @@ def ui_placeholders(button_label: str) -> dict:
         "email": "E-post",
         "traits.municipality": "Kommun",
         "traits.country": "Land",
+        "traits.gender": "Kön",
         "method": button_label
     }
 
@@ -282,5 +283,6 @@ def ui_positions() -> dict:
         "traits.postal_address.city": 8,
         "traits.municipality": 9,
         "traits.country": 10,
-        "method": 11
+        "traits.gender": 11,
+        "method": 12
     }
