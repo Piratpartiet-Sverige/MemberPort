@@ -21,22 +21,32 @@ class APIOrganizationHandler(BaseHandler):
     async def post(self):
         name = self.get_argument("name")
         description = self.get_argument("description")
+        parent_id = self.get_argument("parent_id", None)
+        parent_id = self.check_uuid(parent_id)
         active = self.get_argument("active", False)
         active = active == 'true'
 
         org_dao = OrganizationsDao(self.db)
 
-        organization = await org_dao.create_organization(name, description, active)
+        organization = await org_dao.create_organization(name, description, active, parent_id)
 
-        countries_id = self.get_argument("countries", "")
-        areas_id = self.get_argument("areas", "")
-        municipalities_id = self.get_argument("municipalities", "")
+        if organization is None:
+            return self.respond("SOMETHING WENT WRONG WHEN TRYING TO CREATE ORGANIZATION", 500, None)
 
-        if countries_id != "" or areas_id != "" or municipalities_id != "":
+        countries_id = self.get_argument("countries", None)
+        areas_id = self.get_argument("areas", None)
+        municipalities_id = self.get_argument("municipalities", None)
+
+        if countries_id is not None or areas_id is not None or municipalities_id is not None:
             try:
-                countries_id = list(map(UUID, countries_id.split(','))) if countries_id != "" else list()
-                areas_id = list(map(int, areas_id.split(','))) if areas_id != "" else list()
-                municipalities_id = list(map(UUID, municipalities_id.split(','))) if municipalities_id != "" else list()
+                countries_id = list(map(UUID, countries_id.split(','))) if countries_id != "" and countries_id is not None else list()
+                areas_id = list(map(int, areas_id.split(','))) if areas_id != "" and areas_id is not None else list()
+
+                if municipalities_id and municipalities_id is not None != "":
+                    municipalities_id = list(map(UUID, municipalities_id.split(',')))
+                else:
+                    municipalities_id = list()
+
             except ValueError:
                 logger.error(
                     "Recruitment areas contained invalid UUID when trying to set them for org: %s",
@@ -61,6 +71,12 @@ class APIOrganizationHandler(BaseHandler):
         description = self.get_argument("description", None)
         active = self.get_argument("active", False)
         active = active == 'true'
+        update_parent = False
+
+        parent_id = self.get_argument("parent_id", None)
+        if parent_id is not None:
+            update_parent = True
+        parent_id = self.check_uuid(parent_id)
 
         if name is None:
             return self.respond("NAME IS MISSING", 422)
@@ -95,7 +111,7 @@ class APIOrganizationHandler(BaseHandler):
             if success is False:
                 return self.respond("SOMETHING WENT WRONG WHEN TRYING TO SET RECRUITMENT AREAS", 500, None)
 
-        organization = await org_dao.update_organization(org_id, name, description, active)
+        organization = await org_dao.update_organization(org_id, name, description, active, update_parent, parent_id)
 
         return self.respond("ORGANIZATION UPDATED", 200, organization_to_json(organization))
 

@@ -21,6 +21,7 @@ class OrganizationsTest(WebTestCase):
         self.org.description = "Test"
         self.org.active = True
         self.org.created = datetime(2006, 1, 1)
+        self.org.path = self.org.id.__str__()
 
         return super().setUp()
 
@@ -29,7 +30,8 @@ class OrganizationsTest(WebTestCase):
         arguments = {
             "name": self.org.name,
             "description": self.org.description,
-            "active": "true"
+            "active": "true",
+            "path": self.org.path
         }
 
         response = self.fetch(
@@ -49,6 +51,8 @@ class OrganizationsTest(WebTestCase):
         self.assertEqual(json_body["data"]["id"], self.org.id.__str__())
         self.assertEqual(json_body["data"]["name"], self.org.name)
         self.assertEqual(json_body["data"]["description"], self.org.description)
+        self.assertEqual(json_body["data"]["active"], self.org.active.__str__().lower())
+        self.assertEqual(json_body["data"]["path"], self.org.id.__str__())
         self.assert_datetime("created", json_body["data"]["created"])
         self.assertEqual(200, response.code)
 
@@ -58,7 +62,8 @@ class OrganizationsTest(WebTestCase):
             "name": self.org.name,
             "description": self.org.description,
             "active": self.org.active,
-            "created": self.org.created
+            "created": self.org.created,
+            "path": self.org.path
         }
 
         response = self.fetch('/api/organization/' + self.org.id.__str__(), method="GET")
@@ -73,12 +78,14 @@ class OrganizationsTest(WebTestCase):
         self.assertEqual(json_body["data"]["id"], self.org.id.__str__())
         self.assertEqual(json_body["data"]["name"], self.org.name)
         self.assertEqual(json_body["data"]["description"], self.org.description)
+        self.assertEqual(json_body["data"]["active"], self.org.active.__str__().lower())
+        self.assertEqual(json_body["data"]["path"], self.org.path)
         self.assert_datetime("created", json_body["data"]["created"])
         self.assertEqual(200, response.code)
         self.assertEqual(
             '{"success": true, "reason": "RETRIEVED ORGANIZATION", "data": {"id": "4d2b7c7b-0a9e-4b57-8a92-be29f432f429",' +
             ' "name": "Piratpartiet", "description": "Test", "active": "true",' +
-            ' "created": "2006-01-01 00:00:00"}}', body)
+            ' "created": "2006-01-01 00:00:00", "path": "4d2b7c7b-0a9e-4b57-8a92-be29f432f429"}}', body)
         self.assertEqual(200, response.code)
 
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
@@ -89,7 +96,8 @@ class OrganizationsTest(WebTestCase):
             "name": new_name,
             "description": new_description,
             "active": self.org.active,
-            "created": self.org.created
+            "created": self.org.created,
+            "path": self.org.id.__str__()
         }
 
         arguments = {
@@ -121,6 +129,7 @@ class OrganizationsTest(WebTestCase):
         self.assertEqual(json_body["data"]["name"], new_name)
         self.assertEqual(json_body["data"]["description"], new_description)
         self.assertEqual(json_body["data"]["active"], self.org.active.__str__().lower())
+        self.assertEqual(json_body["data"]["path"], self.org.path)
         self.assert_datetime("created", json_body["data"]["created"])
         self.assertEqual(200, response.code)
 
@@ -185,7 +194,8 @@ class OrganizationsTest(WebTestCase):
             "name": new_name,
             "description": new_description,
             "active": self.org.active,
-            "created": self.org.created
+            "created": self.org.created,
+            "path": self.org.id.__str__()
         }
 
         country_ids = uuid4().__str__() + "," + uuid4().__str__()
@@ -220,5 +230,6 @@ class OrganizationsTest(WebTestCase):
         self.assertEqual(json_body["data"]["name"], new_name)
         self.assertEqual(json_body["data"]["description"], new_description)
         self.assertEqual(json_body["data"]["active"], self.org.active.__str__().lower())
+        self.assertEqual(json_body["data"]["path"], self.org.path)
         self.assert_datetime("created", json_body["data"]["created"])
         self.assertEqual(200, response.code)

@@ -12,16 +12,27 @@ from app.database.dao.member_org import MemberOrgDao
 
 
 class OrganizationsDao(MemberOrgDao):
-    async def create_organization(self, name: str, description: str, active: bool, countries: Union[list, None] = None,
-                                  areas: Union[list, None] = None, municipalities: Union[list, None] = None) -> Union[Organization, None]:
-        sql = "INSERT INTO organizations (id, name, description, active, created) VALUES ($1, $2, $3, $4, $5);"
+    async def create_organization(
+        self,
+        name: str,
+        description: str,
+        active: bool,
+        parent_id: Union[UUID, None],
+        countries: Union[list, None] = None,
+        areas: Union[list, None] = None,
+        municipalities: Union[list, None] = None
+    ) -> Union[Organization, None]:
+        sql = "INSERT INTO organizations (id, name, description, active, created, path) VALUES ($1, $2, $3, $4, $5, $6);"
 
         id = uuid4()
         created = datetime.utcnow()
 
+        path = await self._get_path(parent_id, id)
+        path_db = self._convert_to_db_path(path)
+
         try:
             async with self.pool.acquire() as con:  # type: Connection
-                await con.execute(sql, id, name, description, active, created)
+                await con.execute(sql, id, name, description, active, created, path_db)
         except UniqueViolationError as exc:
             logger.debug(exc.__str__())
             logger.warning("Tried to create organization: " + str(id) + " but organization already existed")
@@ -37,8 +48,29 @@ class OrganizationsDao(MemberOrgDao):
         organization.description = description
         organization.active = active
         organization.created = created
+        organization.path = path
 
         return organization
+
+    async def _get_path(self, parent_id: Union[UUID, None], org_id: UUID) -> str:
+        if parent_id is None:
+            return org_id.__str__()
+
+        path = ""
+        sql = 'SELECT path FROM organizations WHERE id = $1;'
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                path_db = await con.fetchval(sql, parent_id)
+                path = self._convert_from_db_path(path_db)
+        except Exception:
+            logger.error("An error occured when trying to retrieve the path for new organization!", stack_info=True)
+            return org_id.__str__()
+
+        path += "." + org_id.__str__()
+        logger.debug("Path for new organization: " + path)
+
+        return path
 
     async def add_recruitment_areas(self, org_id: UUID, areas: Union[list, None]) -> None:
         try:
@@ -163,7 +195,7 @@ class OrganizationsDao(MemberOrgDao):
         return await self.get_organization_by_id(row["default_organization"])
 
     async def get_organization_by_name(self, name: str) -> Union[Organization, None]:
-        sql = "SELECT id, description, created FROM organizations WHERE name = $1"
+        sql = "SELECT id, description, active, created, path FROM organizations WHERE name = $1"
 
         try:
             async with self.pool.acquire() as con:  # type: Connection
@@ -179,8 +211,10 @@ class OrganizationsDao(MemberOrgDao):
         organization = Organization()
         organization.id = row["id"]
         organization.name = name
-        organization.name = row["description"]
-        organization.name = row["created"]
+        organization.description = row["description"]
+        organization.active = row["active"]
+        organization.created = row["created"]
+        organization.path = self._convert_from_db_path(row["path"])
 
         return organization
 
@@ -198,7 +232,7 @@ class OrganizationsDao(MemberOrgDao):
             order_column = "name"
 
         if search == "":
-            sql = """ SELECT o.id, o.name, o.description, o.created, o.active
+            sql = """ SELECT o.id, o.name, o.description, o.created, o.active, o.path
                       FROM organizations o
                       ORDER BY """
             sql = sql + order_column + " " + order_dir + ";"  # order_column and order_dir have fixed values so no SQL injection is possible
@@ -207,7 +241,7 @@ class OrganizationsDao(MemberOrgDao):
                 rows = await con.fetch(sql)
         else:
             search = "%"+search+"%"
-            sql = """ SELECT o.id, o.name, o.description, o.created, o.active
+            sql = """ SELECT o.id, o.name, o.description, o.created, o.active, o.path
                       FROM organizations o
                       WHERE o.name LIKE $1
                       OR o.description LIKE $1
@@ -225,7 +259,7 @@ class OrganizationsDao(MemberOrgDao):
 
     async def get_organizations_in_area(self, country_id: UUID, areas: list, municipality_id: UUID,
                                         filter: Union[list, None] = None) -> list:
-        sql = """SELECT o.id, o.name, o.description, o.active, o.created FROM organization_country
+        sql = """SELECT o.id, o.name, o.description, o.active, o.created o.path FROM organization_country
                  INNER JOIN organizations AS o ON organization_country.organization = o.id WHERE country = $1;"""
         try:
             async with self.pool.acquire() as con:  # type: Connection
@@ -237,7 +271,7 @@ class OrganizationsDao(MemberOrgDao):
 
         self.convert_rows_to_organizations(organizations, rows)
 
-        sql = """SELECT o.id, o.name, o.description, o.active, o.created FROM organization_area
+        sql = """SELECT o.id, o.name, o.description, o.active, o.created, o.path FROM organization_area
                INNER JOIN organizations AS o ON organization_area.organization = o.id WHERE area = $1;"""
 
         for area_id in areas:
@@ -248,7 +282,7 @@ class OrganizationsDao(MemberOrgDao):
                 logger.debug(exc.__str__())
             self.convert_rows_to_organizations(organizations, rows)
 
-        sql = """SELECT o.id, o.name, o.description, o.active, o.created FROM organization_municipality
+        sql = """SELECT o.id, o.name, o.description, o.active, o.created, o.path FROM organization_municipality
                INNER JOIN organizations AS o ON organization_municipality.organization = o.id WHERE municipality = $1;"""
         try:
             async with self.pool.acquire() as con:  # type: Connection
@@ -263,15 +297,40 @@ class OrganizationsDao(MemberOrgDao):
 
         return organizations
 
-    async def update_organization(self, id: UUID, name: str, description: str, active: bool) -> Union[Organization, None]:
+    async def update_organization(
+        self,
+        id:
+        UUID,
+        name:
+        str, description: str,
+        active: bool,
+        update_parent: bool,
+        parent_id: Union[UUID, None]
+    ) -> Union[Organization, None]:
         sql = "UPDATE organizations SET name = $1, description = $2, active = $3 WHERE id = $4"
 
         try:
             async with self.pool.acquire() as con:  # type: Connection
-                await con.execute(sql, name, description, active, id)
+                async with con.transaction():
+                    await con.execute(sql, name, description, active, id)
+
+                    if update_parent is True:
+                        path = await self._get_path(parent_id, id)
+
+                        if path == id.__str__() and parent_id is not None and parent_id != id:
+                            raise ValueError("Organization with ID: " + parent_id.__str__() + " was not found")
+
+                        path_db = self._convert_to_db_path(path)
+                        source_path = await con.fetchval('SELECT path FROM organizations WHERE id = $1;', id)
+                        sql = 'UPDATE organizations SET path = $1 || SUBPATH(path, nlevel($2)-1) WHERE path <@ $2;'
+                        await con.execute(sql, path_db, source_path)
         except UniqueViolationError as exc:
             logger.debug(exc.__str__())
             logger.warning("Tried to update organization: " + str(id))
+            return None
+        except Exception as exc:
+            logger.debug(exc.__str__())
+            logger.warning("Something went wrong when trying to update organization: " + str(id))
             return None
 
         return await self.get_organization_by_id(id)
@@ -303,6 +362,7 @@ class OrganizationsDao(MemberOrgDao):
             organization.description = row["description"]
             organization.active = row["active"]
             organization.created = row["created"]
+            organization.path = self._convert_from_db_path(row["path"])
             organizations.append(organization)
 
         return organizations
