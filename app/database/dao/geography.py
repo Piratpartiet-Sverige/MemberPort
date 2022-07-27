@@ -160,11 +160,11 @@ class GeographyDao(BaseDao):
                     if len(arguments) > 1:  # Only execute update if values have actually been changed
                         await con.execute(sql, *arguments)
                     if path is not None:  # Update paths for the entire branch
-                        path = path.removesuffix('.' + str(area_id))
-                        path_id = path.split('.')
+                        path = "" if str(area_id) == path else path.removesuffix('.' + str(area_id))
+                        path_id = path.split('.') if len(path) > 0 else []
                         path_id = list(map(int, path_id))
 
-                        if area_id in path_id:
+                        if len(path) > 0 and area_id in path_id:
                             logger.error("Path: %s not allowed for area: %i\nAn area can't be a child to itself!", path, area_id)
                             raise ValueError
 

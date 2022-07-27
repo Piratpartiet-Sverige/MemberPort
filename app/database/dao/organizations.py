@@ -55,6 +55,8 @@ class OrganizationsDao(MemberOrgDao):
     async def _get_path(self, parent_id: Union[UUID, None], org_id: UUID) -> str:
         if parent_id is None:
             return org_id.__str__()
+        elif parent_id == org_id:
+            return org_id.__str__()
 
         path = ""
         sql = 'SELECT path FROM organizations WHERE id = $1;'
@@ -315,9 +317,14 @@ class OrganizationsDao(MemberOrgDao):
                     await con.execute(sql, name, description, active, id)
 
                     if update_parent is True:
-                        path = await self._get_path(parent_id, id)
+                        path = (await self._get_path(parent_id, id)).removesuffix('.' + id.__str__())
+                        if path == id.__str__():
+                            path = ""
 
-                        if path == id.__str__() and parent_id is not None and parent_id != id:
+                        if path.find(id.__str__()) != -1:
+                            raise ValueError("Organization can't be a child to itself: " + path)
+
+                        if path == "" and parent_id is not None and parent_id != id:
                             raise ValueError("Organization with ID: " + parent_id.__str__() + " was not found")
 
                         path_db = self._convert_to_db_path(path)
