@@ -112,6 +112,8 @@ class APIOrganizationHandler(BaseHandler):
                 return self.respond("SOMETHING WENT WRONG WHEN TRYING TO SET RECRUITMENT AREAS", 500, None)
 
         organization = await org_dao.update_organization(org_id, name, description, active, update_parent, parent_id)
+        if organization is None:
+            return self.respond("SOMETHING WENT WRONG WHEN TRYING TO UPDATE ORGANIZATION", 500, None)
 
         return self.respond("ORGANIZATION UPDATED", 200, organization_to_json(organization))
 
