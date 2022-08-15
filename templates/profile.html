@@ -151,8 +151,7 @@
         </div>
 
         <div class="content">
-            <a id="prenumerationer"></a>
-            <h1>Mail- och SMS-prenumerationer</h1>
+            <h1 id="subscriptions">Mail- och SMS-prenumerationer</h1>
         </div>
 
         <table class="table is-striped is-hoverable">
@@ -228,16 +227,16 @@
             <tbody id="memberships">
                 {% for i, membership in enumerate(memberships, start=0) %}
                 <tr is="membership-row" id="{{ membership.id }}"
-                    created="{{ membership.created.isoformat(' ', 'seconds') }}"
-                    renewal="{{ membership.renewal.isoformat(' ', 'seconds') }}" org-name="{{ member_orgs[i].name }}">
+                    created="{{ membership.created.strftime('%Y-%m-%d') }}"
+                    renewal="{{ membership.renewal.strftime('%Y-%m-%d') }}" org-name="{{ member_orgs[i].name }}">
                 </tr>
                 {% end %}
             </tbody>
         </table>
 
-        <div class="columns">
-            <div class="column is-one-quarter">
-                <div class="select is-pulled-right">
+        <div class="field is-grouped">
+            <div class="control">
+                <div class="select">
                     <select id="joinOrganization" onchange="enableJoinButton();">
                         <option selected="selected" disabled="disabled">Föreningar du kan gå med i</option>
                         {% for organization in organizations %}
@@ -246,7 +245,7 @@
                     </select>
                 </div>
             </div>
-            <div class="column">
+            <div class="control">
                 <button id="joinButton" onclick="joinOrganization('{{ current_user.user.id }}');" class="button is-success is-pulled-left">Gå med i vald förening</button>
             </div>
         </div>
@@ -257,8 +256,7 @@
         </div>
 
         <div class="content">
-            <a id="ledare"></a>
-            <h1>Mina ledare</h1>
+            <h1 id="leaders">Mina ledare</h1>
 
             <h3>Partiledare</h3>
             <div class="field is-grouped">

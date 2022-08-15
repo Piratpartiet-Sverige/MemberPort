@@ -1,17 +1,33 @@
 {% extends "../base.html" %}
+{% block head %}
+<link rel="stylesheet" href="{{ static_url('css/organizations.bundle.css') }}">
+{% end %}
 {% block content %}
 {% module xsrf_form_html() %}
 <div class="section">
     <div class="container">
         <h1 class="title">Föreningar</h1>
         <div id="organizations" class="ag-theme-alpine" style="margin-bottom: 1rem;"></div>
-        <div class="field is-grouped">
+        <div id="buttonGroup" class="field is-grouped">
             <p class="control">
                 <button type="button" class="button is-success" onclick="location.href='add-organization'"
                     id="saveButton">
                     Lägg till
                 </button>
             </p>
+        </div>
+        <div id="organizationsTree" class="panel is-primary">
+            <p class="panel-heading">
+                Föreningshierarki
+            </p>
+            <div class="panel-block">
+                <p class="control has-icons-left">
+                    <input id="searchOrganization" class="input is-primary" type="text" placeholder="Sök">
+                    <span class="icon is-left">
+                        <i class="fas fa-search" aria-hidden="true"></i>
+                    </span>
+                </p>
+            </div>
         </div>
     </div>
 </div>
@@ -31,6 +47,16 @@
         },
         {% end %}
     ];
+    let orgdata = {};
+    {% for organization in organizations %}
+    orgdata["{{ organization.id }}"] = {
+        id: "{{ organization.id }}",
+        name: "{{ organization.name }}",
+        description: "{{ organization.description }}",
+        active: {{ "true" if organization.active else "false" }},
+        path: "{{ organization.path }}"
+    };
+    {% end %}
 </script>
 <script src="{{ static_url('organizations.bundle.js') }}"></script>
 {% end %}

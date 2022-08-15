@@ -261,7 +261,7 @@ class OrganizationsDao(MemberOrgDao):
 
     async def get_organizations_in_area(self, country_id: UUID, areas: list, municipality_id: UUID,
                                         filter: Union[list, None] = None) -> list:
-        sql = """SELECT o.id, o.name, o.description, o.active, o.created o.path FROM organization_country
+        sql = """SELECT o.id, o.name, o.description, o.active, o.created, o.path FROM organization_country
                  INNER JOIN organizations AS o ON organization_country.organization = o.id WHERE country = $1;"""
         try:
             async with self.pool.acquire() as con:  # type: Connection
@@ -347,19 +347,20 @@ class OrganizationsDao(MemberOrgDao):
         if not success:
             return False
 
-        # NULL default_organization if were removing default
-        try:
-            async with self.pool.acquire() as con:
-                await con.execute("UPDATE settings SET default_organization = NULL WHERE default_organization = $1;", id)
-        except Exception:
-            return False
+        async with self.pool.acquire() as con:
+            try:
+                async with con.transaction():
+                    # NULL default_organization if were removing default
+                    await con.execute("UPDATE settings SET default_organization = NULL WHERE default_organization = $1;", id)
+                    rows = await con.fetch("SELECT id FROM organizations WHERE path <@ (SELECT path FROM organizations WHERE id = $1);", id)
+                    for row in rows:
+                        await self._remove_all_recruitment(row["id"], con)
 
-        try:
-            async with self.pool.acquire() as con:
-                await con.execute("DELETE FROM organizations WHERE id = $1;", id)
-        except Exception:
-            return False
-        return True
+                    await con.execute("DELETE FROM organizations WHERE path <@ (SELECT path FROM organizations WHERE id = $1);", id)
+            except Exception as exc:
+                logger.debug(exc.__str__())
+                return False
+            return True
 
     def convert_rows_to_organizations(self, organizations: list, rows: list) -> list:
         for row in rows:

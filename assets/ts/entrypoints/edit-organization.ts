@@ -3,7 +3,7 @@ import { createMessage } from '../utils/ui'
 import { GeoData, GEO_TYPES } from '../utils/geography/geodata'
 import { addArea, addCountry, addMunicipality, filter, getCheckedCountries, getCheckedAreas, getCheckedMunicipalities } from '../utils/geography/selection'
 import { afterPageLoad } from '../utils/after-page-load'
-import '../../sass/geography-selection.scss'
+import '../../sass/selection.scss'
 
 declare let geodata: { [id: string]: GeoData }
 declare let countryID: string
@@ -88,13 +88,13 @@ afterPageLoad().then(() => {
 
     sendUpdateOrganizationRequest(organizationID, name, description, active, orgParentID, countries, areas, municipalities).then((response: Response) => {
       if (response.ok) {
-        createMessage('Ändringarna är sparade!', 'is-success', 'saveButton')
+        createMessage('Ändringarna är sparade!', 'is-success', 'buttonGroup')
       } else {
-        createMessage('Något gick fel när ändringarna skulle sparas', 'is-danger', 'saveButton')
+        createMessage('Något gick fel när ändringarna skulle sparas', 'is-danger', 'buttonGroup')
       }
     }).catch((reason) => {
       console.log(reason)
-      createMessage('Något gick fel när ändringarna skulle sparas', 'is-danger', 'saveButton')
+      createMessage('Något gick fel när ändringarna skulle sparas', 'is-danger', 'buttonGroup')
     })
   }
 }).catch(console.error)

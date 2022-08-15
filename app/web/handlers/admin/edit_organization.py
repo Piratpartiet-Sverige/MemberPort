@@ -25,9 +25,11 @@ class EditOrganizationHandler(BaseHandler):
         organization = organizations[pos]
         organizations.pop(pos)
 
-        parent_id = organization.path.split('.')[-1]
-        if parent_id == org_id.__str__():
-            parent_id = ""
+        parent_id = organization.path.split('.')
+        if len(parent_id) < 2:
+            parent_id = org_id.__str__()
+        else:
+            parent_id = parent_id[-2]
 
         country_ids = await org_dao.get_recruitment_countries(org_id)
         area_ids = await org_dao.get_recruitment_areas(org_id)

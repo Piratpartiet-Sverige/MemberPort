@@ -21,6 +21,17 @@
                 <input class="input" name="description" type="text" placeholder="Name">
             </div>
         </div>
+        <div class="field">
+            <div class="label" >Medlems/lokalförening i:</div>
+            <div class="control">
+                <select class="input" name="parent_id" type="text">
+                    <option selected value="">Ingen</option>
+                    {% for org in organizations %}
+                    <option value="{{ org.id }}">{{ org.name }}</option>
+                    {% end %}
+                </select>
+            </div>
+        </div>
         <div id="recruitmentArea" class="panel is-primary">
             <p class="panel-heading">
                 Upptagningsområden
@@ -40,8 +51,15 @@
                 Aktiv
             </label>
         </div>
-        <div class="control">
-            <button id="saveButton" type="button" class="button is-success">Spara</button>
+        <div id="buttonGroup" class="field">
+            <div class="buttons">
+                <button type="button" class="button is-success" id="saveButton">
+                    Spara
+                </button>
+                <a class="button is-info" href="/admin/organizations">
+                    Gå tillbaka
+                </a>
+            </div>
         </div>
     </div>
 </div>
