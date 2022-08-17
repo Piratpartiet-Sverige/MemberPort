@@ -80,6 +80,7 @@ class Organization:
     description: str
     active: bool
     created: datetime
+    path: str
 
     def __eq__(self, other):
         return self.id == other.id
@@ -94,7 +95,8 @@ def organization_to_json(organization: Organization) -> dict:
         'name': organization.name,
         'description': organization.description,
         'active': organization.active.__str__().lower(),
-        'created': organization.created.isoformat(' ', 'seconds')
+        'created': organization.created.isoformat(' ', 'seconds'),
+        'path': organization.path
     }
 
 

@@ -22,12 +22,12 @@
                             {% module xsrf_form_html() %}
                             <div class="field">
                                 <div class="control">
-                                    <input name="org.name" class="input is-large" type="text" placeholder="Namn på organisationen" />
+                                    <input name="org.name" class="input is-large" type="text" placeholder="Namn på föreningen" />
                                 </div>
                             </div>
                             <div class="field">
                                 <div class="control">
-                                    <input name="org.description" class="input is-large" type="text" placeholder="Beskrivning av organisationen" />
+                                    <input name="org.description" class="input is-large" type="text" placeholder="Beskrivning av föreningen" />
                                 </div>
                             </div>
                             <div class="field">
@@ -81,7 +81,7 @@
                     if (response.ok) {
                         document.getElementById("errorNotification").classList.add('is-hidden');
                         var successElement = document.getElementById("successText");
-                        successElement.innerHTML = "Första organisationen är nu tillagd! Starta om servern för att slutföra installationen";
+                        successElement.innerHTML = "Första föreningen är nu tillagd! Starta om servern för att slutföra installationen";
                         document.getElementById("successNotification").classList.remove('is-hidden');
 
                         document.getElementById("install").remove();

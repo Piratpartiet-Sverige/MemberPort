@@ -307,6 +307,7 @@ export async function sendCreateOrganizationRequest (
   name: string,
   description: string,
   active: boolean,
+  parentID: string | null,
   countries: string | null,
   areas: string | null,
   municipalities: string | null
@@ -318,6 +319,9 @@ export async function sendCreateOrganizationRequest (
     active: String(active)
   }
 
+  if (parentID != null) {
+    data.parent_id = parentID
+  }
   if (countries != null) {
     data.countries = countries
   }
@@ -350,6 +354,7 @@ export async function sendUpdateOrganizationRequest (
   name: string,
   description: string,
   active: boolean,
+  parentID: string | null,
   countries: string | null,
   areas: string | null,
   municipalities: string | null
@@ -361,6 +366,9 @@ export async function sendUpdateOrganizationRequest (
     active: String(active)
   }
 
+  if (parentID != null) {
+    data.parent_id = parentID
+  }
   if (countries != null) {
     data.countries = countries
   }

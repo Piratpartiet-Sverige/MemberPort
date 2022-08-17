@@ -10,8 +10,11 @@ CREATE TABLE organizations
     name        TEXT UNIQUE NOT NULL,
     description TEXT,
     active      BOOLEAN NOT NULL,
-    created     TIMESTAMP WITHOUT TIME ZONE NOT NULL
+    created     TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    path        ltree
 );
+
+CREATE INDEX organization_path_idx ON organizations USING GIST (path);
 
 CREATE TABLE users
 (
@@ -87,7 +90,7 @@ CREATE TABLE areas
     name      TEXT NOT NULL,
     created   TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     "country" UUID REFERENCES countries(id) NOT NULL,
-    path ltree
+    path      ltree
 );
 
 CREATE INDEX area_path_idx ON areas USING GIST (path);

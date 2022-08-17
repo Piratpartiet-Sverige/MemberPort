@@ -1,8 +1,14 @@
 import { Grid, GridOptions, ModuleRegistry } from '@ag-grid-community/core'
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model'
 import { afterPageLoad } from '../utils/after-page-load'
+import { createMessage } from '../utils/ui'
+import { OrgData } from '../utils/organization/orgdata'
+import { filter, addOrganization } from '../utils/organization/selection'
 import { ButtonRenderer } from '../ag-components/button-renderer'
 import { CheckboxRenderer } from '../ag-components/checkbox-renderer'
+import '../../sass/selection.scss'
+
+declare let orgdata: { [id: string]: OrgData }
 
 ModuleRegistry.register(ClientSideRowModelModule)
 
@@ -11,10 +17,28 @@ declare const _GRID_DATA_: Array<{
   name: string
   description: string
   active: {
-      checked: 'true' | 'false'
-      disabled: boolean
+    checked: 'true' | 'false'
+    disabled: boolean
   }
 }>
+
+function getParentID (id: string, path: string, fallbackID: string): string {
+  let parentID = ''
+
+  if (path === id) {
+    parentID = fallbackID
+  } else {
+    const pathList = path.split('.')
+
+    if (pathList.length < 2) {
+      parentID = fallbackID
+    } else {
+      parentID = pathList[pathList.length - 2]
+    }
+  }
+
+  return parentID
+}
 
 // specify the columns
 const columnDefs = [
@@ -36,7 +60,7 @@ const rowData = _GRID_DATA_.map((row) => ({
     style: 'is-danger',
     label: 'Ta bort',
     onClick: () => {
-      const result = confirm(`Är du säker på att du vill ta bort ${row.name}`)
+      const result = confirm(`Är du säker på att du vill ta bort ${row.name}? Detta tar även bort ALLA underföreningar som tillhör den`)
       if (result) {
         const details: { [key: string]: string } = {
           _xsrf: document.querySelector<HTMLInputElement>('[name=_xsrf]')?.value ?? ''
@@ -58,10 +82,28 @@ const rowData = _GRID_DATA_.map((row) => ({
         })
           .then(response => {
             if (response.status === 204) {
+              const removedOrgs = [{ id: row.id }]
+              for (const id in orgdata) {
+                if (id === row.id) {
+                  continue
+                } else if (orgdata[id].path.includes(row.id)) {
+                  removedOrgs.push({ id: id })
+                }
+              }
+
               const transaction = {
-                remove: [{ id: row.id }]
+                remove: removedOrgs
               }
               gridOptions.api?.applyTransaction(transaction)
+              const orgNode = document.getElementById(row.id)
+
+              if (orgNode !== null) {
+                orgNode.remove()
+              }
+
+              createMessage('Föreningen ' + row.name + ' och dess underföreningar togs bort', 'is-success', 'buttonGroup')
+            } else {
+              createMessage('Någonting gick fel när föreningen skulle raderas', 'is-danger', 'buttonGroup')
             }
           })
           .catch(console.error)
@@ -94,5 +136,18 @@ afterPageLoad().then(() => {
   if (eGridDiv != null) {
     // eslint-disable-next-line no-new
     new Grid(eGridDiv, gridOptions)
+  }
+
+  for (const id in orgdata) {
+    const data = orgdata[id]
+    const parentID = getParentID(data.id, data.path, 'organizationsTree')
+    addOrganization(data.id, data.name, parentID, orgdata, false)
+  }
+
+  const search = document.getElementById('searchOrganization') as HTMLInputElement
+  if (search !== null) {
+    search.oninput = function () {
+      filter(search.value)
+    }
   }
 }).catch(console.error)

@@ -46,7 +46,7 @@ function deleteArea (id: string, name: string): void {
       console.error('Error:', error)
 
       if (error.message === 'ORGANIZATION ACTIVE') {
-        createMessage('Kan inte ta bort området om det finns en organisation kvar i den', 'is-danger')
+        createMessage('Kan inte ta bort området om det finns en förening kvar i den', 'is-danger')
       } else {
         createMessage('Någonting gick fel när området skulle raderas', 'is-danger')
       }
@@ -74,7 +74,7 @@ function deleteCountry (id: string, name: string): void {
       console.error('Error:', error)
 
       if (error.message === 'ORGANIZATION ACTIVE') {
-        createMessage('Kan inte ta bort landet om det finns en organisation kvar i den', 'is-danger')
+        createMessage('Kan inte ta bort landet om det finns en förening kvar i den', 'is-danger')
       } else {
         createMessage('Någonting gick fel när landet skulle raderas', 'is-danger')
       }
@@ -102,7 +102,7 @@ function deleteMunicipality (id: string, name: string): void {
       console.error('Error:', error)
 
       if (error.message === 'ORGANIZATION ACTIVE') {
-        createMessage('Kan inte ta bort kommunen om det finns en organisation kvar i den', 'is-danger')
+        createMessage('Kan inte ta bort kommunen om det finns en förening kvar i den', 'is-danger')
       } else {
         createMessage('Någonting gick fel när kommunen skulle raderas', 'is-danger')
       }

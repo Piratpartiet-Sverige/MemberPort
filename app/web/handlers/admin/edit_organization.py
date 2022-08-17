@@ -3,18 +3,37 @@ import tornado.web
 from app.web.handlers.base import BaseHandler
 from app.database.dao.geography import GeographyDao
 from app.database.dao.organizations import OrganizationsDao
-from uuid import UUID
+from app.models import Organization
 
 
 class EditOrganizationHandler(BaseHandler):
     @tornado.web.authenticated
     async def get(self):
-        id = UUID(self.get_argument("id"))
+        org_id = self.get_argument("id", None)
+        org_id = self.check_uuid(org_id)
+
+        if org_id is None:
+            return self.respond("Organization ID was missing or not valid", 400, None, True)
+
+        organization = Organization()
+        organization.id = org_id
+
         org_dao = OrganizationsDao(self.db)
-        organization = await org_dao.get_organization_by_id(id)
-        country_ids = await org_dao.get_recruitment_countries(id)
-        area_ids = await org_dao.get_recruitment_areas(id)
-        municipality_ids = await org_dao.get_recruitment_municipalities(id)
+        organizations = await org_dao.get_organizations("", "name", False)
+
+        pos = organizations.index(organization)
+        organization = organizations[pos]
+        organizations.pop(pos)
+
+        parent_id = organization.path.split('.')
+        if len(parent_id) < 2:
+            parent_id = org_id.__str__()
+        else:
+            parent_id = parent_id[-2]
+
+        country_ids = await org_dao.get_recruitment_countries(org_id)
+        area_ids = await org_dao.get_recruitment_areas(org_id)
+        municipality_ids = await org_dao.get_recruitment_municipalities(org_id)
 
         geo_dao = GeographyDao(self.db)
         selected_country = await geo_dao.get_default_country()
@@ -26,6 +45,8 @@ class EditOrganizationHandler(BaseHandler):
             admin=True,
             title="Ändra förening",
             organization=organization,
+            organizations=organizations,
+            parent_id=parent_id,
             country=selected_country,
             areas=areas,
             municipalities=municipalities,

@@ -3,7 +3,7 @@ import { createMessage } from '../utils/ui'
 import { GeoData, GEO_TYPES } from '../utils/geography/geodata'
 import { addArea, addCountry, addMunicipality, filter, getCheckedCountries, getCheckedAreas, getCheckedMunicipalities } from '../utils/geography/selection'
 import { afterPageLoad } from '../utils/after-page-load'
-import '../../sass/geography-selection.scss'
+import '../../sass/selection.scss'
 
 declare let geodata: { [id: string]: GeoData }
 declare let countryID: string
@@ -61,19 +61,23 @@ afterPageLoad().then(() => {
     const nameElements = document.getElementsByName('name')
     const descriptionElements = document.getElementsByName('description')
     const activeElements = document.getElementsByName('active')
+    const parentIDElements = document.getElementsByName('parent_id')
 
     let name = ''
     let description = ''
     let active = false
+    let orgParentID = ''
 
     if (nameElements.length > 0 && descriptionElements.length > 0 && activeElements.length > 0) {
       const nameElement = nameElements[0] as HTMLInputElement
       const descriptionElement = descriptionElements[0] as HTMLInputElement
       const activeElement = activeElements[0] as HTMLInputElement
+      const parentIDElement = parentIDElements[0] as HTMLSelectElement
 
       name = nameElement.value
       description = descriptionElement.value
       active = activeElement.checked
+      orgParentID = parentIDElement.value
     } else {
       return
     }
@@ -82,15 +86,15 @@ afterPageLoad().then(() => {
     const areas = getCheckedAreas('recruitmentArea')
     const municipalities = getCheckedMunicipalities('recruitmentArea')
 
-    sendUpdateOrganizationRequest(organizationID, name, description, active, countries, areas, municipalities).then((response: Response) => {
+    sendUpdateOrganizationRequest(organizationID, name, description, active, orgParentID, countries, areas, municipalities).then((response: Response) => {
       if (response.ok) {
-        createMessage('Ändringarna är sparade!', 'is-success', 'saveButton')
+        createMessage('Ändringarna är sparade!', 'is-success', 'buttonGroup')
       } else {
-        createMessage('Något gick fel när ändringarna skulle sparas', 'is-danger', 'saveButton')
+        createMessage('Något gick fel när ändringarna skulle sparas', 'is-danger', 'buttonGroup')
       }
     }).catch((reason) => {
       console.log(reason)
-      createMessage('Något gick fel när ändringarna skulle sparas', 'is-danger', 'saveButton')
+      createMessage('Något gick fel när ändringarna skulle sparas', 'is-danger', 'buttonGroup')
     })
   }
 }).catch(console.error)

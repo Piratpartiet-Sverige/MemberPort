@@ -7,7 +7,7 @@
 <div class="section">
     <div class="container">
         <div class="content">
-            <h1 class="">Redigera organisation - {{ organization.name }}</h1>
+            <h1 class="">Redigera förening - {{ organization.name }}</h1>
         </div>
         <div class="field">
             <div class="label">Namn</div>
@@ -19,6 +19,17 @@
             <div class="label">Beskrivning</div>
             <div class="control">
                 <input class="input" name="description" type="text" value="{{ organization.description }}">
+            </div>
+        </div>
+        <div class="field">
+            <div class="label" >Medlems/lokalförening i:</div>
+            <div class="control">
+                <select class="input" name="parent_id" type="text">
+                    <option {{ "selected" if parent_id == organization.id.__str__() else "" }} value="{{ organization.id }}">Ingen</option>
+                    {% for org in organizations %}
+                    <option {{ "selected" if parent_id == org.id.__str__() else "" }} value="{{ org.id }}">{{ org.name }}</option>
+                    {% end %}
+                </select>
             </div>
         </div>
         <div id="recruitmentArea" class="panel is-primary">
@@ -39,10 +50,15 @@
                 <input type="checkbox" name="active" {{ "checked" if organization.active else None }}>
                 Aktiv
             </label>
-            <div class="control">
+        </div>
+        <div id="buttonGroup" class="field">
+            <div class="buttons">
                 <button type="button" class="button is-success" id="saveButton">
                     Spara
                 </button>
+                <a class="button is-info" href="/admin/organizations">
+                    Gå tillbaka
+                </a>
             </div>
         </div>
     </div>
