@@ -61,41 +61,40 @@ class BaseHandler(RequestHandler):
             logger.critical("Error when retrieving session: %s" % e)
             return None
 
-        try:
-            session = Session()
-            session.id = UUID(api_response["id"])
-            session.hash = session_hash
-            session.issued_at = api_response["issued_at"]
-            session.expires_at = api_response["expires_at"]
+        session = Session()
+        session.id = UUID(api_response["id"])
+        session.hash = session_hash
+        session.issued_at = api_response["issued_at"]
+        session.expires_at = api_response["expires_at"]
 
-            user = User()
-            user.id = UUID(api_response["identity"]["id"])
-            user.name.first = api_response["identity"]["traits"]["name"]["first"]
-            user.name.last = api_response["identity"]["traits"]["name"]["last"]
-            user.email = api_response["identity"]["traits"]["email"]
-            user.phone = api_response["identity"]["traits"]["phone"]  # Ory does not yet support phone numbers
-            user.postal_address.street = api_response["identity"]["traits"]["postal_address"]["street"]
-            user.postal_address.postal_code = api_response["identity"]["traits"]["postal_address"]["postal_code"]
-            user.postal_address.city = api_response["identity"]["traits"]["postal_address"]["city"]
-            user.municipality = api_response["identity"]["traits"]["municipality"]
-            user.country = api_response["identity"]["traits"]["country"]
-            user.verified = api_response["identity"]["verifiable_addresses"][0]["verified"]
-            dao = UsersDao(self.db)
-            user_info = await dao.get_user_info(user.id)
+        identity = api_response.get("identity", {})
+        identity_traits = identity.get("traits", {})
 
-            if user_info is not None:
-                user.created = user_info.created
-                user.number = user_info.number
-            else:
-                user.created = None
-                user.number = None
+        user = User()
+        user.id = UUID(identity["id"])
+        user.name.first = identity_traits["name"]["first"]
+        user.name.last = identity_traits["name"]["last"]
+        user.email = identity_traits["email"]
+        user.phone = identity_traits.get("phone", "")
+        user.postal_address.street = identity_traits["postal_address"]["street"]
+        user.postal_address.postal_code = identity_traits["postal_address"]["postal_code"]
+        user.postal_address.city = identity_traits["postal_address"]["city"]
+        user.municipality = identity_traits["municipality"]
+        user.country = identity_traits["country"]
+        user.verified = identity["verifiable_addresses"][0]["verified"]
+        dao = UsersDao(self.db)
+        user_info = await dao.get_user_info(user.id)
 
-            session.user = user
-            session.logout_url = api_response_logout["logout_url"]
-            logger.debug("Session user: " + str(user.id))
-        except Exception as e:
-            logger.critical("Error when building session and user model: %s" % e)
-            return None
+        if user_info is not None:
+            user.created = user_info.created
+            user.number = user_info.number
+        else:
+            user.created = None
+            user.number = None
+
+        session.user = user
+        session.logout_url = api_response_logout["logout_url"]
+        logger.debug("Session user: " + str(user.id))
 
         return session
 
