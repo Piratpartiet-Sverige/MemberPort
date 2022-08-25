@@ -75,7 +75,7 @@ class BaseHandler(RequestHandler):
         user.name.first = identity_traits["name"]["first"]
         user.name.last = identity_traits["name"]["last"]
         user.email = identity_traits["email"]
-        user.phone = identity_traits.get("phone", "")  # Ory does not yet support phone numbers
+        user.phone = identity_traits.get("phone", "")
         user.postal_address.street = identity_traits["postal_address"]["street"]
         user.postal_address.postal_code = identity_traits["postal_address"]["postal_code"]
         user.postal_address.city = identity_traits["postal_address"]["city"]
