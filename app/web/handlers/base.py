@@ -174,7 +174,7 @@ class BaseHandler(RequestHandler):
 
         return uuid
 
-    async def permission_check(self):
+    async def permission_check(self) -> bool:
         dao = UsersDao(self.db)
         return await dao.check_user_admin(self.current_user.user_id)
 

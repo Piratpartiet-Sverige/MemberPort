@@ -1,0 +1,89 @@
+{% extends "../base.html" %}
+
+{% block head %}
+{% end %}
+
+{% block content %}
+{% autoescape xhtml_escape %}
+<section class="section">
+    <div class="container">
+        <div class="content">
+            <h1>Inställningar för MemberPort</h1>
+        </div>
+        <div id="admin-view-root">
+        </div>
+        <!--
+        <div class="columns">
+            <div class="column">
+                <div class="content">
+                    <h2>Globala inställningar</h2>
+                    <b>Huvudorganisation: </b>{{ default_org.name }}
+                    <br>
+                    <b>Huvudland: </b>{{ default_country.name }}
+                </div>
+            </div>
+            <div class="column">
+                <div class="content">
+                    <h2>Uppgiftskön</h2>
+                    <b>Meddelandehanterare: </b>{{ broker_url }}
+                    <br>
+                    <b>Översikt: </b>{{ monitor_url }}
+                    <br>
+                    {{ overview_message }}
+                    <br>
+                    <h3>Detaljer</h3>
+                    {% if response_json is not None %}
+                    <b>{{ response_json["product_name"] }} version: </b>{{ response_json["rabbitmq_version"] }}
+                    <br>
+                    <b>Cluster name: </b>{{ response_json["cluster_name"] }}
+                    <br>
+                    <b>Connections created: </b>{{ response_json["churn_rates"]["connection_created"] }}
+                    <br>
+                    <b>Connections closed: </b>{{ response_json["churn_rates"]["connection_closed"] }}
+                    <br>
+                    <b>Messages: </b>{{ response_json["queue_totals"]["messages"] }}
+                    <br>
+                    <b>Messages rate: </b>{{ response_json["queue_totals"]["messages_details"]["rate"] }}
+                    <br>
+                    <b>Messages ready: </b>{{ response_json["queue_totals"]["messages_ready"] }}
+                    <br>
+                    <b>Messages unacknowledged: </b>{{ response_json["queue_totals"]["messages_unacknowledged"] }}
+                    <br>
+                    <b>Ack totals: </b>{{ response_json["message_stats"]["ack"] }}
+                    <br>
+                    <b>Get totals: </b>{{ response_json["message_stats"]["get"] }}
+                    <br>
+                    <b>Publish totals: </b>{{ response_json["message_stats"]["publish"] }}
+                    <br>
+                    <b>Redeliver totals: </b>{{ response_json["message_stats"]["redeliver"] }}
+                    <br>
+                    <b>Drop unroutables: </b>{{ response_json["message_stats"]["drop_unroutable"] }}
+                    {% end %}
+                </div>
+            </div>
+            <div class="column">
+                <div class="content">
+                    <h2>Mejlhantering</h2>
+                    <b>SMTP Server: </b>{{ smtp_server }}
+                    <br>
+                    <b>SMTP Port: </b>{{ smtp_port }}
+                </div>
+            </div>
+            <div class="column">
+                <div class="content">
+                    <h2>Statistik</h2>
+                    <b>Kratos status: </b>{{ kratos_body }}
+                    <br>
+                    <b>Identiteter i Kratos: </b>{{ identities_len }}
+                </div>
+            </div>
+        </div>
+        -->
+    </div>
+</section>
+{% end %}
+
+{% block scripts %}
+{% autoescape None %}
+<script src="{{ static_url('admin.bundle.js') }}"></script>
+{% end %}
