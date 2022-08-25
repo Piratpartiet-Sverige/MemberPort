@@ -9,6 +9,7 @@
       "properties": {
         "name": {
           "type": "object",
+          "required": ["first", "last"],
           "properties": {
             "first": {
               "title": "First Name",
@@ -22,6 +23,7 @@
         },
         "postal_address": {
           "type": "object",
+          "required": ["street", "postal_code", "city"],
           "properties": {
             "street": {
               "title": "Street",
@@ -86,9 +88,7 @@
       "required": [
         "country",
         "email",
-        "municipality",
-        "name",
-        "postal_address"
+        "municipality"
       ],
       "additionalProperties": false
     }
