@@ -1,12 +1,15 @@
 import json
+import tornado
 
 from app.database.dao.geography import GeographyDao
 from app.logger import logger
 from app.models import area_to_json
-from app.web.handlers.base import BaseHandler
+from app.web.handlers.base import BaseHandler, has_permissions
 
 
 class APIAreasHandler(BaseHandler):
+    @tornado.web.authenticated
+    @has_permissions("edit_geography")
     async def put(self):
         try:
             data = json.loads(self.request.body)

@@ -3,7 +3,7 @@ import tornado
 from app.database.dao.calendar import CalendarDao
 from app.logger import logger
 from app.models import calendar_to_json
-from app.web.handlers.base import BaseHandler
+from app.web.handlers.base import BaseHandler, has_permissions
 
 
 class APICalendarHandler(BaseHandler):
@@ -59,6 +59,8 @@ class APICalendarHandler(BaseHandler):
 
         return self.flush()
 
+    @tornado.web.authenticated
+    @has_permissions("edit_calendar")
     async def post(self):
         description = self.get_argument("description", None)
         url = self.get_argument("url", None)
@@ -83,6 +85,8 @@ class APICalendarHandler(BaseHandler):
 
         return self.respond("CALENDAR CREATED", 201, calendar_to_json(calendar))
 
+    @tornado.web.authenticated
+    @has_permissions("edit_calendar")
     async def put(self, id: str):
         calendar_id = self.check_uuid(id)
         if calendar_id is None:
@@ -101,6 +105,8 @@ class APICalendarHandler(BaseHandler):
 
         return self.respond("CALENDAR UPDATED", 200, calendar_to_json(calendar))
 
+    @tornado.web.authenticated
+    @has_permissions("edit_calendar")
     async def delete(self, id: str):
         calendar_id = self.check_uuid(id)
         if calendar_id is None:

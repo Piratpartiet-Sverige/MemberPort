@@ -206,6 +206,12 @@ INSERT INTO permissions (id, name)
 VALUES ('delete_organizations', 'Delete organizations');
 
 INSERT INTO permissions (id, name)
+VALUES ('edit_geography', 'Edit geography tree');
+
+INSERT INTO permissions (id, name)
+VALUES ('edit_calendar', 'Edit calendars');
+
+INSERT INTO permissions (id, name)
 VALUES ('global', 'Don''t restrict this user''s permission to an organization or a geographic area');
 
 INSERT INTO role_permissions ("role", "permission")

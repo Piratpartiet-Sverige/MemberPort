@@ -4,11 +4,12 @@ from app.database.dao.organizations import OrganizationsDao
 from app.database.dao.feed import FeedDao
 from app.database.dao.users import UsersDao
 from app.models import post_to_json
-from app.web.handlers.base import BaseHandler
+from app.web.handlers.base import BaseHandler, has_permissions
 
 
 class APIPostHandler(BaseHandler):
     @tornado.web.authenticated
+    @has_permissions("communicate_newsfeed")
     async def post(self):
         users_dao = UsersDao(self.db)
         feed_dao = FeedDao(self.db)

@@ -1,6 +1,8 @@
+import tornado
+
 from app.database.dao.geography import GeographyDao
 from app.models import area_to_json
-from app.web.handlers.base import BaseHandler
+from app.web.handlers.base import BaseHandler, has_permissions
 
 
 class APIAreaHandler(BaseHandler):
@@ -19,6 +21,8 @@ class APIAreaHandler(BaseHandler):
 
         return self.respond("RETRIEVED AREA", 200, area_to_json(area))
 
+    @tornado.web.authenticated
+    @has_permissions("edit_geography")
     async def post(self):
         area_name = self.get_argument("name", None)
         country_id = self.get_argument("country", None)
@@ -35,6 +39,8 @@ class APIAreaHandler(BaseHandler):
 
         return self.respond("AREA CREATED", 201, area_to_json(area))
 
+    @tornado.web.authenticated
+    @has_permissions("edit_geography")
     async def put(self, id: str):
         try:
             area_id = int(id)
@@ -62,6 +68,8 @@ class APIAreaHandler(BaseHandler):
 
         return self.respond("AREA UPDATED", 200, area_to_json(area))
 
+    @tornado.web.authenticated
+    @has_permissions("edit_geography")
     async def delete(self, id: str):
         if id is None or id == "":
             return self.respond("AREA UUID IS MISSING", 400)

@@ -1,6 +1,8 @@
+import tornado
+
 from app.database.dao.geography import GeographyDao
 from app.models import country_to_json
-from app.web.handlers.base import BaseHandler
+from app.web.handlers.base import BaseHandler, has_permissions
 
 
 class APICountryHandler(BaseHandler):
@@ -19,6 +21,8 @@ class APICountryHandler(BaseHandler):
 
         return self.respond("RETRIEVED COUNTRY", 200, country_to_json(country))
 
+    @tornado.web.authenticated
+    @has_permissions("edit_geography")
     async def post(self):
         country_name = self.get_argument("name", None)
 
@@ -33,6 +37,8 @@ class APICountryHandler(BaseHandler):
 
         return self.respond("COUNTRY CREATED", 201, country_to_json(country))
 
+    @tornado.web.authenticated
+    @has_permissions("edit_geography")
     async def put(self, id: str):
         country_id = self.check_uuid(id)
 
@@ -54,6 +60,8 @@ class APICountryHandler(BaseHandler):
 
         return self.respond("COUNTRY UPDATED", 200, country_to_json(country))
 
+    @tornado.web.authenticated
+    @has_permissions("edit_geography")
     async def delete(self, id: str):
         country_id = self.check_uuid(id)
 
