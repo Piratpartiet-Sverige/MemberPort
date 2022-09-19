@@ -15,6 +15,10 @@ from app.models import Session, User
 
 
 def has_permissions(*permissions: str) -> callable:
+    """
+    Decorator that checks if the current user has the permissions listed
+    :returns 403, PERMISSION DENIED, if the current user doesn't have all of the permissions
+    """
     def has_permissions_wrapper(func: coroutine):
         async def permission_check(self, *args, **kwargs):
             roles_dao = RolesDao(self.db)
