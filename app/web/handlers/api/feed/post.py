@@ -2,7 +2,6 @@ import tornado.web
 
 from app.database.dao.organizations import OrganizationsDao
 from app.database.dao.feed import FeedDao
-from app.database.dao.users import UsersDao
 from app.models import post_to_json
 from app.web.handlers.base import BaseHandler, has_permissions
 
@@ -11,13 +10,7 @@ class APIPostHandler(BaseHandler):
     @tornado.web.authenticated
     @has_permissions("communicate_newsfeed")
     async def post(self):
-        users_dao = UsersDao(self.db)
         feed_dao = FeedDao(self.db)
-
-        permissions_check = await users_dao.check_user_admin(self.current_user.user.id)
-
-        if (permissions_check is False):
-            return self.respond("PERMISSION DENIED", 403, None)
 
         title = self.get_argument("title", None)
         content = self.get_argument("content", None)

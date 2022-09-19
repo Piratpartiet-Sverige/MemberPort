@@ -18,7 +18,7 @@ class APIOrganizationHandler(BaseHandler):
         return self.respond("RETRIEVED ORGANIZATION", 200, organization_to_json(organization))
 
     @tornado.web.authenticated
-    @has_permissions("edit_organizations")
+    @has_permissions("create_organizations")
     async def post(self):
         name = self.get_argument("name")
         description = self.get_argument("description")
@@ -120,7 +120,7 @@ class APIOrganizationHandler(BaseHandler):
         return self.respond("ORGANIZATION UPDATED", 200, organization_to_json(organization))
 
     @tornado.web.authenticated
-    @has_permissions("edit_organizations")
+    @has_permissions("delete_organizations")
     async def delete(self, id: str = None):
         org_id = self.check_uuid(id)
         if org_id is None:

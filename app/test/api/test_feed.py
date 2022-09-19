@@ -1,10 +1,10 @@
 import json
 
 from app.models import Post
-from app.test.web_testcase import WebTestCase, get_mock_session
+from app.test.web_testcase import WebTestCase, get_mock_session, set_permissions
 from datetime import datetime
 from urllib.parse import urlencode
-from uuid import uuid4, UUID
+from uuid import UUID
 from unittest.mock import patch
 
 
@@ -20,15 +20,13 @@ class FeedsTest(WebTestCase):
 
         return super().setUp()
 
+    @set_permissions("communicate_newsfeed")
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_create_post(self, get_current_user):
         arguments = {
             "title": self.post.title,
             "content": self.post.content
         }
-
-        # User permissions
-        self.connection.fetch.side_effect = [[{"role": uuid4()}], ["admin"]]
 
         response = self.fetch(
             '/api/feed/post',

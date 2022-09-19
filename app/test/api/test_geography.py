@@ -1,7 +1,7 @@
 import json
 
 from app.models import Area, Country, Municipality
-from app.test.web_testcase import MagicMockContext, WebTestCase, get_mock_session
+from app.test.web_testcase import MagicMockContext, WebTestCase, get_mock_session, set_permissions
 from asyncpg.exceptions import ForeignKeyViolationError
 from asyncpg.transaction import Transaction
 from datetime import datetime
@@ -33,6 +33,7 @@ class GeographyTest(WebTestCase):
 
         return super().setUp()
 
+    @set_permissions("edit_geography")
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_create_country(self, get_current_user):
         new_country = "Atlantis"
@@ -81,6 +82,7 @@ class GeographyTest(WebTestCase):
         self.assert_datetime("created", json_body["data"]["created"])
         self.assertEqual(200, response.code)
 
+    @set_permissions("edit_geography")
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_update_country_name(self, get_current_user):
         new_name = "Norge"
@@ -118,6 +120,7 @@ class GeographyTest(WebTestCase):
         self.assert_datetime("created", json_body["data"]["created"])
         self.assertEqual(200, response.code)
 
+    @set_permissions("edit_geography")
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_delete_country(self, get_current_user):
         self.connection.transaction.return_value = MagicMockContext(Transaction)
@@ -134,6 +137,7 @@ class GeographyTest(WebTestCase):
         self.assertEqual(response.reason, "COUNTRY DELETED")
         self.assertEqual(204, response.code)
 
+    @set_permissions("edit_geography")
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_delete_fail_country(self, get_current_user):
         self.connection.transaction.return_value = MagicMockContext(Transaction)
@@ -153,6 +157,7 @@ class GeographyTest(WebTestCase):
         self.assertEqual(json_body["data"], None)
         self.assertEqual(403, response.code)
 
+    @set_permissions("edit_geography")
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_create_area(self, get_current_user):
         new_id = 5
@@ -207,6 +212,7 @@ class GeographyTest(WebTestCase):
         self.assert_datetime("created", json_body["data"]["created"])
         self.assertEqual(200, response.code)
 
+    @set_permissions("edit_geography")
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_update_area_name(self, get_current_user):
         new_name = "Södra distriktet"
@@ -244,6 +250,7 @@ class GeographyTest(WebTestCase):
         self.assert_datetime("created", json_body["data"]["created"])
         self.assertEqual(200, response.code)
 
+    @set_permissions("edit_geography")
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_delete_area(self, get_current_user):
         self.connection.transaction.return_value = MagicMockContext(Transaction)
@@ -260,6 +267,7 @@ class GeographyTest(WebTestCase):
         self.assertEqual(response.reason, "AREA DELETED")
         self.assertEqual(204, response.code)
 
+    @set_permissions("edit_geography")
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_delete_fail_area(self, get_current_user):
         self.connection.transaction.return_value = MagicMockContext(Transaction)
@@ -279,6 +287,7 @@ class GeographyTest(WebTestCase):
         self.assertEqual(json_body["data"], None)
         self.assertEqual(403, response.code)
 
+    @set_permissions("edit_geography")
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_create_municipality(self, get_current_user):
         new_municipality = "Oslo"
@@ -334,6 +343,7 @@ class GeographyTest(WebTestCase):
         self.assertEqual(json_body["data"]["area_id"], self.municipality.area_id.__str__())
         self.assertEqual(200, response.code)
 
+    @set_permissions("edit_geography")
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_update_municipality_name(self, get_current_user):
         new_name = "Luleå"
@@ -373,6 +383,7 @@ class GeographyTest(WebTestCase):
         self.assertEqual(json_body["data"]["area_id"], self.municipality.area_id.__str__())
         self.assertEqual(200, response.code)
 
+    @set_permissions("edit_geography")
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_delete_municipality(self, get_current_user):
         response = self.fetch(
@@ -387,6 +398,7 @@ class GeographyTest(WebTestCase):
         self.assertEqual(response.reason, "MUNICIPALITY DELETED")
         self.assertEqual(204, response.code)
 
+    @set_permissions("edit_geography")
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_delete_fail_municipality(self, get_current_user):
         self.connection.execute.side_effect = ForeignKeyViolationError()
@@ -405,6 +417,7 @@ class GeographyTest(WebTestCase):
         self.assertEqual(json_body["data"], None)
         self.assertEqual(403, response.code)
 
+    @set_permissions("edit_geography")
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_update_areas_path(self, get_current_user):
         self.connection.fetchrow.side_effect = [
@@ -446,6 +459,7 @@ class GeographyTest(WebTestCase):
         self.assertEqual(json_body["data"]["1"]["path"], "3.2.1")
         self.assertEqual(200, response.code)
 
+    @set_permissions("edit_geography")
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_update_municipalities_areas(self, get_current_user):
         municipality_id = uuid4()
