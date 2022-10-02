@@ -1,6 +1,6 @@
 import tornado.web
 
-from app.web.handlers.base import BaseHandler
+from app.web.handlers.base import BaseHandler, has_permissions
 from app.database.dao.organizations import OrganizationsDao
 from app.logger import logger
 from app.models import organization_to_json
@@ -18,6 +18,7 @@ class APIOrganizationHandler(BaseHandler):
         return self.respond("RETRIEVED ORGANIZATION", 200, organization_to_json(organization))
 
     @tornado.web.authenticated
+    @has_permissions("create_organizations")
     async def post(self):
         name = self.get_argument("name")
         description = self.get_argument("description")
@@ -62,6 +63,7 @@ class APIOrganizationHandler(BaseHandler):
         return self.respond("ORGANIZATION CREATED", 200, organization_to_json(organization))
 
     @tornado.web.authenticated
+    @has_permissions("edit_organizations")
     async def put(self, id: UUID = None):
         org_id = self.check_uuid(id)
         if org_id is None:
@@ -118,6 +120,7 @@ class APIOrganizationHandler(BaseHandler):
         return self.respond("ORGANIZATION UPDATED", 200, organization_to_json(organization))
 
     @tornado.web.authenticated
+    @has_permissions("delete_organizations")
     async def delete(self, id: str = None):
         org_id = self.check_uuid(id)
         if org_id is None:

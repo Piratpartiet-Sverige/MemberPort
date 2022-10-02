@@ -1,5 +1,6 @@
 import json
 
+from asyncio.coroutines import coroutine
 from typing import Union
 from uuid import UUID
 
@@ -9,7 +10,25 @@ from tornado.httpclient import AsyncHTTPClient, HTTPRequest
 
 from app.logger import logger
 from app.database.dao.users import UsersDao
+from app.database.dao.roles import RolesDao
 from app.models import Session, User
+
+
+def has_permissions(*permissions: str) -> callable:
+    """
+    Decorator that checks if the current user has the permissions listed
+    :returns 403, PERMISSION DENIED, if the current user doesn't have all of the permissions
+    """
+    def has_permissions_wrapper(func: coroutine):
+        async def permission_check(self, *args, **kwargs):
+            roles_dao = RolesDao(self.db)
+            for permission in permissions:
+                if not await roles_dao.check_user_permission(self.current_user.user.id, permission):
+                    return self.respond("PERMISSION DENIED", 403, None)
+
+            return await func(self, *args, **kwargs)
+        return permission_check
+    return has_permissions_wrapper
 
 
 class BaseHandler(RequestHandler):

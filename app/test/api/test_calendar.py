@@ -1,7 +1,7 @@
 import json
 
 from app.models import Calendar
-from app.test.web_testcase import WebTestCase, get_mock_session
+from app.test.web_testcase import WebTestCase, get_mock_session, set_permissions
 from datetime import datetime
 from urllib.parse import urlencode
 from uuid import UUID
@@ -18,6 +18,7 @@ class CalendarsTest(WebTestCase):
 
         return super().setUp()
 
+    @set_permissions("edit_calendar")
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_create_calendar(self, get_current_user):
         arguments = {
@@ -73,6 +74,7 @@ class CalendarsTest(WebTestCase):
         self.assertEqual(200, response.code)
         self.connection.fetchrow.assert_called_once()
 
+    @set_permissions("edit_calendar")
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_delete_calendar(self, get_current_user):
         self.connection.fetchrow.return_value = {
@@ -96,6 +98,7 @@ class CalendarsTest(WebTestCase):
         self.assertEqual(204, response.code)
         self.connection.execute.assert_called_once()
 
+    @set_permissions("edit_calendar")
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_update_calendar(self, get_current_user):
         new_description = "New description here"

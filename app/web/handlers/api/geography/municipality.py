@@ -1,6 +1,8 @@
+import tornado
+
 from app.database.dao.geography import GeographyDao
 from app.models import municipality_to_json
-from app.web.handlers.base import BaseHandler
+from app.web.handlers.base import BaseHandler, has_permissions
 
 
 class APIMunicipalityHandler(BaseHandler):
@@ -19,6 +21,8 @@ class APIMunicipalityHandler(BaseHandler):
 
         return self.respond("RETRIEVED MUNICIPALITY", 200, municipality_to_json(municipality))
 
+    @tornado.web.authenticated
+    @has_permissions("edit_geography")
     async def post(self):
         municipality_name = self.get_argument("name", None)
         country_id = self.get_argument("country", None)
@@ -43,6 +47,8 @@ class APIMunicipalityHandler(BaseHandler):
 
         return self.respond("MUNICIPALITY CREATED", 201, municipality_to_json(municipality))
 
+    @tornado.web.authenticated
+    @has_permissions("edit_geography")
     async def put(self, id: str):
         municipality_id = self.check_uuid(id)
 
@@ -64,6 +70,8 @@ class APIMunicipalityHandler(BaseHandler):
 
         return self.respond("MUNICIPALITY UPDATED", 200, municipality_to_json(municipality))
 
+    @tornado.web.authenticated
+    @has_permissions("edit_geography")
     async def delete(self, id: str):
         municipality_id = self.check_uuid(id)
 

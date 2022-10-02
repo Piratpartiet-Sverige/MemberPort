@@ -1,7 +1,7 @@
 import json
 
 from app.models import Organization
-from app.test.web_testcase import WebTestCase, get_mock_session
+from app.test.web_testcase import WebTestCase, get_mock_session, set_permissions
 from datetime import datetime
 from urllib.parse import urlencode
 from uuid import uuid4, UUID
@@ -25,6 +25,7 @@ class OrganizationsTest(WebTestCase):
 
         return super().setUp()
 
+    @set_permissions("create_organizations")
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_create_organization(self, get_current_user):
         arguments = {
@@ -88,6 +89,7 @@ class OrganizationsTest(WebTestCase):
             ' "created": "2006-01-01 00:00:00", "path": "4d2b7c7b-0a9e-4b57-8a92-be29f432f429"}}', body)
         self.assertEqual(200, response.code)
 
+    @set_permissions("edit_organizations")
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_update_organization(self, get_current_user):
         new_name = "Ung Pirat"
@@ -133,8 +135,9 @@ class OrganizationsTest(WebTestCase):
         self.assert_datetime("created", json_body["data"]["created"])
         self.assertEqual(200, response.code)
 
+    @set_permissions("edit_organizations")
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
-    def test_update_fail_organization(self, get_current_user):
+    def test_update_fail_organization_invalid_uuid(self, get_current_user):
         new_name = "Ung Pirat"
         new_description = "Pizza, polare, politik"
         self.maxDiff = None
@@ -150,7 +153,6 @@ class OrganizationsTest(WebTestCase):
             'Content-Length': len(urlencode(arguments))
         }
 
-        # Invalid UUID
         response = response = self.fetch(
             '/api/organization/' + self.org.id.__str__() + "1",
             method="PUT",
@@ -166,9 +168,19 @@ class OrganizationsTest(WebTestCase):
         self.assertEqual(json_body["data"], None)
         self.assertEqual(400, response.code)
 
-        # No description
+    @set_permissions("edit_organizations")
+    @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
+    def test_update_fail_organization_no_description(self, get_current_user):
+        new_name = "Ung Pirat"
+        self.maxDiff = None
+
         arguments = {
             "name": new_name
+        }
+
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'Content-Length': len(urlencode(arguments))
         }
 
         response = response = self.fetch(
@@ -186,6 +198,7 @@ class OrganizationsTest(WebTestCase):
         self.assertEqual(json_body["data"], None)
         self.assertEqual(422, response.code)
 
+    @set_permissions("edit_organizations")
     @patch('app.web.handlers.base.BaseHandler.get_current_user', return_value=get_mock_session())
     def test_update_organization_with_recruitment(self, get_current_user):
         new_name = "Ung Pirat"
