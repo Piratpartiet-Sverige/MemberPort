@@ -24,7 +24,7 @@ class UsersDao(BaseDao):
         :returns An user_info object
         """
 
-        sql = 'SELECT member_number, created FROM users WHERE kratos_id = $1;'
+        sql = 'SELECT member_number, created FROM mp_users WHERE kratos_id = $1;'
 
         async with self.pool.acquire() as con:  # type: Connection
             row = await con.fetchrow(sql, user_id)
@@ -45,18 +45,18 @@ class UsersDao(BaseDao):
 
         created = datetime.utcnow()
 
-        sql = 'INSERT INTO users (kratos_id, created) VALUES ($1, $2);'
+        sql = 'INSERT INTO mp_users (kratos_id, created) VALUES ($1, $2);'
 
         async with self.pool.acquire() as con:  # type: Connection
             await con.execute(sql, user_id, created)
 
-        sql = 'SELECT member_number FROM users WHERE kratos_id = $1'
+        sql = 'SELECT member_number FROM mp_users WHERE kratos_id = $1'
 
         async with self.pool.acquire() as con:  # type: Connection
             row = await con.fetchrow(sql, user_id)
 
         if row["member_number"] == 1:
-            sql = 'INSERT INTO user_roles ("user", "role") VALUES ($1, $2);'
+            sql = 'INSERT INTO mp_user_roles ("user", "role") VALUES ($1, $2);'
 
             async with self.pool.acquire() as con:  # type: Connection
                 await con.execute(sql, user_id, UUID('00000000-0000-0000-0000-000000000000'))
@@ -69,13 +69,13 @@ class UsersDao(BaseDao):
         :returns A boolean, true if user needs access to admin view
         """
 
-        sql = 'SELECT "role" FROM user_roles WHERE "user" = $1'
+        sql = 'SELECT "role" FROM mp_user_roles WHERE "user" = $1'
 
         async with self.pool.acquire() as con:  # type: Connection
             rows = await con.fetch(sql, user_id)
 
         for role in rows:
-            sql = 'SELECT "permission" FROM role_permissions WHERE "role" = $1'
+            sql = 'SELECT "permission" FROM mp_role_permissions WHERE "role" = $1'
 
             async with self.pool.acquire() as con:  # type: Connection
                 permissions = await con.fetch(sql, role["role"])
@@ -86,7 +86,7 @@ class UsersDao(BaseDao):
         return False
 
     async def create_user(self, id: UUID) -> bool:
-        sql = "INSERT INTO users (id, created) VALUES ($1, $2);"
+        sql = "INSERT INTO mp_users (id, created) VALUES ($1, $2);"
 
         created = datetime.utcnow()
 
@@ -101,7 +101,7 @@ class UsersDao(BaseDao):
         return True
 
     async def remove_user(self, user_id: UUID) -> None:
-        sql = 'DELETE FROM users WHERE id = $1;'
+        sql = 'DELETE FROM mp_users WHERE id = $1;'
         async with self.pool.acquire() as con:  # type: Connection
             await con.execute(sql, user_id)
 
@@ -150,7 +150,7 @@ class UsersDao(BaseDao):
         :return: An int with the current user count
         """
         if global_search is None:
-            sql = "SELECT count(*) as users FROM users;"
+            sql = "SELECT count(*) as users FROM mp_users;"
 
             async with self.pool.acquire() as con:  # type: Connection
                 row = await con.fetchrow(sql)
@@ -159,7 +159,7 @@ class UsersDao(BaseDao):
         else:
             global_search = "%" + global_search + "%"
 
-            sql = """SELECT count(*) AS users FROM users
+            sql = """SELECT count(*) AS users FROM mp_users
                      WHERE name LIKE $1
                      OR email LIKE $1
                      OR to_char(created, 'YYYY-MM-DD HH24:MI:SS.US') LIKE $1;"""

@@ -115,7 +115,7 @@ def main():
         elif municipality in gotland:
             area = "26"
 
-        print('INSERT INTO municipalities (id, name, created, "country", "area")')
+        print('INSERT INTO mp_municipalities (id, name, created, "country", "area")')
         print("VALUES (uuid_generate_v4(), '{}', localtimestamp, '00000000-0000-0000-0000-000000000000', {});".format(municipality, area))
         print("")
 
@@ -140,7 +140,7 @@ def main():
             else:
                 wiki_file.readline()  # Skip year line
 
-            print('INSERT INTO countries (id, name, created)')
+            print('INSERT INTO mp_countries (id, name, created)')
             print("VALUES (uuid_generate_v4(), '{}', localtimestamp);".format(name))
             print("")
             line = wiki_file.readline()

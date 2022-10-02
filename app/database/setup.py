@@ -10,9 +10,9 @@ async def db_setup(pool: Pool, handlers: list):
     new_version = get_new_version_number()
     current_version = 0
 
-    sql = """SELECT s.version FROM settings s JOIN (
+    sql = """SELECT s.version FROM mp_settings s JOIN (
                 SELECT version, MAX(created) AS created
-                FROM settings se
+                FROM mp_settings se
                 GROUP BY version
             ) lastEntry ON s.version = lastEntry.version AND s.created = lastEntry.created;"""
 
@@ -45,9 +45,9 @@ async def db_setup(pool: Pool, handlers: list):
 
 
 async def first_setup(pool, handlers):
-    sql = """SELECT s.initialized FROM settings s JOIN (
+    sql = """SELECT s.initialized FROM mp_settings s JOIN (
                 SELECT initialized, MAX(created) AS created
-                FROM settings se
+                FROM mp_settings se
                 GROUP BY initialized
             ) lastEntry ON s.initialized = lastEntry.initialized AND s.created = lastEntry.created;"""
 

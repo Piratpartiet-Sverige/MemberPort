@@ -21,7 +21,7 @@ class FeedDao(BaseDao):
         areas: Union[list, None] = None,
         municipalities: Union[list, None] = None
     ) -> Union[Post, None]:
-        sql = "INSERT INTO posts (id, title, content, author, created, updated) VALUES ($1, $2, $3, $4, $5, $5);"
+        sql = "INSERT INTO mp_posts (id, title, content, author, created, updated) VALUES ($1, $2, $3, $4, $5, $5);"
 
         post_id = uuid4()
         created = datetime.utcnow()
@@ -98,7 +98,7 @@ class FeedDao(BaseDao):
 
     async def get_posts(self) -> list:
         posts = list()
-        sql = "SELECT id, title, content, author, created, updated FROM posts ORDER BY created DESC;"
+        sql = "SELECT id, title, content, author, created, updated FROM mp_posts ORDER BY created DESC;"
 
         try:
             async with self.pool.acquire() as con:

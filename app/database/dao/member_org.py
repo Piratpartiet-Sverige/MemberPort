@@ -11,13 +11,13 @@ class MemberOrgDao(BaseDao):
     async def remove_memberships_from_org(self, organization_id: UUID) -> bool:
         try:
             async with self.pool.acquire() as con:
-                await con.execute("DELETE FROM memberships WHERE organization = $1;", organization_id)
+                await con.execute("DELETE FROM mp_memberships WHERE organization = $1;", organization_id)
         except Exception:
             return False
         return True
 
     async def get_organization_by_id(self, id: UUID) -> Union[Organization, None]:
-        sql = "SELECT name, description, active, created, path FROM organizations WHERE id = $1;"
+        sql = "SELECT name, description, active, created, path FROM mp_organizations WHERE id = $1;"
 
         try:
             async with self.pool.acquire() as con:  # type: Connection
