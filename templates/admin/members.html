@@ -19,10 +19,14 @@
     var _GRID_DATA_ = [
         {% for member in members %}
         {
-            number: "{{ member.traits['member_number'] }}",
+            {% if member.metadata_public is not None %}
+            number: "{{ member.metadata_public.get('member_number', '-1') }}",
+            {% else %}
+            number: "-1",
+            {% end %}
             name: "{{ member.traits['name']['first'] + " " + member.traits['name']['last'] }}",
             email: "{{ member.traits['email'] }}",
-            phone: "{{ member.traits['phone'] }}",
+            phone: "{{ member.traits.get('phone', '') }}",
             postalCode: "{{ member.traits['postal_address']['postal_code'] }}",
             city: "{{ member.traits['postal_address']['city'] }}",
             street: "{{ member.traits['postal_address']['street'] }}",

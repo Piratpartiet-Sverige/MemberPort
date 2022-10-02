@@ -1,3 +1,3 @@
 function(ctx) {
-    kratos_id: ctx.identity.id
+    identity: ctx.identity.id
 }

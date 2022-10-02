@@ -16,18 +16,13 @@ CREATE TABLE mp_organizations
 
 CREATE INDEX mp_organization_path_idx ON mp_organizations USING GIST (path);
 
-CREATE TABLE mp_users
-(
-    kratos_id     UUID PRIMARY KEY,
-    member_number SERIAL UNIQUE NOT NULL,
-    created       TIMESTAMP WITHOUT TIME ZONE NOT NULL
-);
+CREATE SEQUENCE mp_membernumber MINVALUE 1;
 
 CREATE TABLE mp_memberships
 (
     id             UUID UNIQUE NOT NULL,
     "organization" UUID REFERENCES mp_organizations(id),
-    "user"         UUID REFERENCES mp_users(kratos_id),
+    "user"         UUID REFERENCES identities(id),
     created        TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     renewal        TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     PRIMARY KEY ("organization", "user")
@@ -56,7 +51,7 @@ CREATE TABLE mp_permissions
 
 CREATE TABLE mp_user_roles
 (
-    "user" UUID REFERENCES mp_users(kratos_id),
+    "user" UUID REFERENCES identities(id),
     "role" UUID REFERENCES mp_roles(id),
     PRIMARY KEY ("user", "role")
 );
@@ -130,7 +125,7 @@ CREATE TABLE mp_posts
     id      UUID PRIMARY KEY,
     title   TEXT NOT NULL,
     content TEXT NOT NULL,
-    author  UUID REFERENCES mp_users(kratos_id) NOT NULL,
+    author  UUID REFERENCES identities(id) NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     updated TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
