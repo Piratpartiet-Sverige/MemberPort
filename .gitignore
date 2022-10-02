@@ -1,5 +1,5 @@
 .vscode/*
-venv/* 
+venv/*
 .idea/*
 tornado*.log
 server*.log
@@ -16,3 +16,4 @@ node_modules
 *bundle.css*
 db_data/*
 static/tinymce/*
+*.code-workspace
