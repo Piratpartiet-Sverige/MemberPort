@@ -10,7 +10,7 @@
 <body>
     <section class="hero is-dark is-fullheight">
         <div class="hero-body">
-            <div class="container has-text-centered">
+            <div class="container">
                 <div class="column is-4 is-offset-4">
                     <h3 class="title has-text-white">MemberPort</h3>
                     <p class="subtitle has-text-grey">Member management</p>
@@ -39,12 +39,13 @@
                                         </select>
                                     </div>
                                 </div>
+                                <p class="help">Läs om varför vi behöver denna uppgift <a href="#">här</a>.</p>
                             </div>
                             {% elif node.attributes.name == 'traits.municipality' %}
                             <div class="field">
                                 <div class="control">
                                     <div class="select is-large" style="width: 100%;">
-                                        <select 
+                                        <select
                                             id="{{ node.attributes.name }}"
                                             name="{{ node.attributes.name }}"
                                             style="width: 100%;"
@@ -85,7 +86,7 @@
                                 </div>
                             </div>
                             {% else %}
-                            <input name="method" type="hidden" value="{{ node.attributes.value }}"> 
+                            <input name="method" type="hidden" value="{{ node.attributes.value }}">
                             <button type="submit" class="button is-block is-info is-large is-fullwidth">
                                 Registrera
                             </button>

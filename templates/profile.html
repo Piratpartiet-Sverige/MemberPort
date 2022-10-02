@@ -39,22 +39,20 @@
                     {% if node.attributes.name == 'csrf_token' %}
                     <input name="{{ node.attributes.name }}" type="hidden" value="{{ node.attributes.value }}" />
                     {% elif node.attributes.name == 'traits.gender' %}
-                    <label class="label">
-                        {{ placeholders[node.attributes.name] }}
-                        <div class="field">
-                            <div class="control">
-                                <div class="select" style="width: 100%;">
-                                    <select id="{{ node.attributes.name }}" name="{{ node.attributes.name }}"
-                                        style="width: 100%;">
-                                        <option disabled value>Välj självupplevda kön</option>
-                                        <option {{ "selected" if node.attributes.value == "male" else "" }} value="male">Man</option>
-                                        <option {{ "selected" if node.attributes.value == "female" else "" }} value="female">Kvinna</option>
-                                        <option {{ "selected" if node.attributes.value == "other" else "" }} value="other">Annan</option>
-                                    </select>
-                                </div>
+                    <div class="field">
+                        <label class="label" for="{{ node.attributes.name }}">{{ placeholders[node.attributes.name] }}</label>
+                        <div class="control">
+                            <div class="select" style="width: 100%;">
+                                <select id="{{ node.attributes.name }}" name="{{ node.attributes.name }}" style="width: 100%;">
+                                    <option {{ "selected" if node.attributes.get('value', '') == "" else "" }} disabled value>Välj självupplevda kön</option>
+                                    <option {{ "selected" if node.attributes.get('value', '') == "male" else "" }} value="male">Man</option>
+                                    <option {{ "selected" if node.attributes.get('value', '') == "female" else "" }} value="female">Kvinna</option>
+                                    <option {{ "selected" if node.attributes.get('value', '') == "other" else "" }} value="other">Annan</option>
+                                </select>
                             </div>
                         </div>
-                    </label>
+                        <p class="help">Läs om varför vi behöver denna uppgift <a href="#">här</a>.</p>
+                    </div>
                     {% elif node.attributes.name == 'traits.municipality' %}
                     <label class="label">
                         {{ placeholders[node.attributes.name] }}
