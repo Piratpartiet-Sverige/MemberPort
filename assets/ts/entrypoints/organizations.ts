@@ -2,11 +2,11 @@ import { Grid, GridOptions, ModuleRegistry } from '@ag-grid-community/core'
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model'
 import { afterPageLoad } from '../utils/after-page-load'
 import { createMessage } from '../utils/ui'
-import { OrgData } from '../utils/organization/orgdata'
 import { filter, addOrganization } from '../utils/organization/selection'
 import { ButtonRenderer } from '../ag-components/button-renderer'
 import { CheckboxRenderer } from '../ag-components/checkbox-renderer'
 import '../../sass/selection.scss'
+import type { OrgData } from 'assets/ts/utils/organization/orgdata'
 
 declare let orgdata: { [id: string]: OrgData }
 

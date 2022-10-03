@@ -51,7 +51,11 @@ module.exports = {
 
   resolve: {
     // Add '.ts' and '.tsx' as resolvable extensions.
-    extensions: ['.ts', '.tsx', '.js', '.json']
+    extensions: ['.ts', '.tsx', '.js', '.json'],
+    alias: {
+        'assets': path.resolve(__dirname, 'assets'),
+        '@memberport': path.resolve(__dirname, 'web-client')
+    }
   },
   module: {
     rules: [

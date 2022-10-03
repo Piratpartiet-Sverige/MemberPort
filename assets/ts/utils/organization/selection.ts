@@ -1,4 +1,4 @@
-import { OrgData } from './orgdata'
+import type { OrgData } from './orgdata'
 
 const pendingNodes: { [id: string]: HTMLDivElement[] } = {}
 

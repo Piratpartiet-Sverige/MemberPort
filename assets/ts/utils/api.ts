@@ -1,4 +1,4 @@
-import { GeoData } from './geography/geodata'
+import type { GeoData } from './geography/geodata'
 
 interface DataBody {
   [index: string]: string
@@ -84,7 +84,7 @@ export async function sendMembershipRequest (userID: string, orgID: string): Pro
 }
 
 export async function sendEndMembershipRequest (membershipID: string, reason: string): Promise<Response> {
-  let data = null
+  let data: {[k: string]: any} | string | null = null
 
   if (reason !== undefined && reason != null && reason !== '') {
     data = {
@@ -420,12 +420,35 @@ export async function sendCreatePostRequest (title: string, content: string): Pr
   return response
 }
 
-export async function sendCreateCalendarRequest (description: string, url: string): Promise<Response> {
+export async function sendFetchCalendarsRequest (): Promise<Response> {
   const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
-  const data = {
-    description,
-    url
+
+  const response = await fetch('/api/calendar/list', {
+    method: 'GET',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-XSRFToken': xsrf.value
+    },
+    redirect: 'follow',
+    referrerPolicy: 'no-referrer'
+  })
+
+  return response
+}
+
+export async function sendCreateCalendarRequest (description: string | null, url: string | null): Promise<Response> {
+  const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
+  const data: DataBody = {}
+
+  if (description !== null) {
+    data.description = description
   }
+  if (url !== null) {
+    data.url = url
+  }
+
   const body = convertDictToBody(data)
 
   const response = await fetch('/api/calendar', {

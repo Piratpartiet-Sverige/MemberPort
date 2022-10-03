@@ -13,16 +13,19 @@ module.exports = {
     ecmaFeatures: {
       jsx: true // Allows for the parsing of JSX
     },
-    project: "./tsconfig.json"
+    project: './tsconfig.json'
   },
   ignorePatterns: ['*.spec.ts', '*.spec.tsx'],
   rules: {
     // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
-    // e.g. "@typescript-eslint/explicit-function-return-type": "off",
+    // e.g. '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/indent': 'off', // This is the job of StandardJS, they are competing rules so we turn off the Typescript one.
+    '@typescript-eslint/no-explicit-any': ['off'],
+    '@typescript-eslint/strict-boolean-expressions': ['off'],
     //'dot-notation': 'off',
     'no-use-before-define': 'off',
     'react/jsx-curly-newline': 'off',
+    'jsx-quotes': ['error', 'prefer-double'],
     'react/no-deprecated': 'off',
     '@typescript-eslint/no-use-before-define': ['error']
   },

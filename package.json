@@ -9,6 +9,8 @@
     "lint": "eslint './assets/**/*.{js,ts,tsx}'"
   },
   "devDependencies": {
+    "@types/react": "^18.0.21",
+    "@types/react-dom": "^18.0.6",
     "@typescript-eslint/eslint-plugin": "^5.30.6",
     "@typescript-eslint/parser": "^5.30.6",
     "bulma": "^0.9.4",
@@ -33,6 +35,9 @@
     "@fullcalendar/core": "^5.11.0",
     "@fullcalendar/daygrid": "^5.11.0",
     "@fullcalendar/icalendar": "^5.11.0",
+    "classnames": "^2.3.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "tinymce": "^6.1.0"
   }
 }

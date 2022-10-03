@@ -1,4 +1,4 @@
-import { GeoData } from './geodata'
+import type { GeoData } from './geodata'
 import { selectAndMoveNode, openDeleteModal, openEditModal, shrinkList } from './ui'
 
 const pendingNodes: { [id: string]: HTMLDivElement[] } = {}
