@@ -9,6 +9,7 @@ declare const _GRID_DATA_: Array<{
   name: string
   email: string
   phone: string
+  birthday: string
   postalCode: string
   city: string
   street: string
@@ -26,6 +27,7 @@ const columnDefs = [
   { headerName: 'Namn', field: 'name' },
   { headerName: 'E-mail', field: 'email' },
   { headerName: 'Telefon', field: 'phone' },
+  { headerName: 'Födelsedag', field: 'birthday' },
   { headerName: 'Postkod', field: 'postalCode' },
   { headerName: 'Stad', field: 'city' },
   { headerName: 'Adress', field: 'street' },

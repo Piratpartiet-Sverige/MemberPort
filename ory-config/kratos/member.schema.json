@@ -83,12 +83,19 @@
           "title": "Gender",
           "type": "string",
           "pattern": "(^fe|^)male$|^other$"
+        },
+        "birthday": {
+          "title": "Birthday",
+          "type": "string",
+          "format": "date"
         }
       },
       "required": [
         "country",
         "email",
-        "municipality"
+        "municipality",
+        "gender",
+        "birthday"
       ],
       "additionalProperties": false
     }
