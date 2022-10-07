@@ -4,9 +4,9 @@ import ory_kratos_client
 from ory_kratos_client.api import v0alpha2_api
 from ory_kratos_client.rest import ApiException
 from ory_kratos_client.configuration import Configuration
-from app.logger import logger
-from app.database.dao.users import UsersDao
+
 from app.database.dao.organizations import OrganizationsDao
+from app.logger import logger
 from app.web.handlers.base import BaseHandler
 
 
@@ -29,16 +29,5 @@ class MembersHandler(BaseHandler):
                 members = api_response.value
             except ApiException as e:
                 logger.error("Exception when calling AdminApi->list_identities: %s\n" % e)
-
-        user_dao = UsersDao(self.db)
-
-        for member in members:
-            user_info = await user_dao.get_user_info(member.id)
-            if user_info is not None:
-                member.traits["member_number"] = user_info.number
-                member.traits["created"] = user_info.created
-            else:
-                member.traits["member_number"] = ""
-                member.traits["created"] = "Unknown"
 
         await self.render("admin/members.html", admin=True, title="Members", members=members, organizations=organizations)

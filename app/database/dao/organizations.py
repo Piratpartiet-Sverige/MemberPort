@@ -22,7 +22,7 @@ class OrganizationsDao(MemberOrgDao):
         areas: Union[list, None] = None,
         municipalities: Union[list, None] = None
     ) -> Union[Organization, None]:
-        sql = "INSERT INTO organizations (id, name, description, active, created, path) VALUES ($1, $2, $3, $4, $5, $6);"
+        sql = "INSERT INTO mp_organizations (id, name, description, active, created, path) VALUES ($1, $2, $3, $4, $5, $6);"
 
         id = uuid4()
         created = datetime.utcnow()
@@ -59,7 +59,7 @@ class OrganizationsDao(MemberOrgDao):
             return org_id.__str__()
 
         path = ""
-        sql = 'SELECT path FROM organizations WHERE id = $1;'
+        sql = 'SELECT path FROM mp_organizations WHERE id = $1;'
 
         try:
             async with self.pool.acquire() as con:  # type: Connection
@@ -99,7 +99,7 @@ class OrganizationsDao(MemberOrgDao):
         if con is None:
             con = await self.pool.acquire()
 
-        sql = 'INSERT INTO organization_country ("organization", "country") VALUES ($1, $2);'
+        sql = 'INSERT INTO mp_organization_country ("organization", "country") VALUES ($1, $2);'
         sql = sql.replace("country", area_type)
 
         for area in areas:
@@ -110,7 +110,7 @@ class OrganizationsDao(MemberOrgDao):
                 logger.warning("Tried to insert recruitment area: " + str(area) + " but the relation already existed")
 
     async def get_recruitment_countries(self, org_id: UUID) -> list:
-        sql = 'SELECT "country" FROM organization_country WHERE "organization" = $1;'
+        sql = 'SELECT "country" FROM mp_organization_country WHERE "organization" = $1;'
         country_ids = list()
 
         try:
@@ -126,7 +126,7 @@ class OrganizationsDao(MemberOrgDao):
         return country_ids
 
     async def get_recruitment_areas(self, org_id: UUID) -> list:
-        sql = 'SELECT "area" FROM organization_area WHERE "organization" = $1;'
+        sql = 'SELECT "area" FROM mp_organization_area WHERE "organization" = $1;'
         area_ids = list()
 
         try:
@@ -142,7 +142,7 @@ class OrganizationsDao(MemberOrgDao):
         return area_ids
 
     async def get_recruitment_municipalities(self, org_id: UUID) -> list:
-        sql = 'SELECT "municipality" FROM organization_municipality WHERE "organization" = $1;'
+        sql = 'SELECT "municipality" FROM mp_organization_municipality WHERE "organization" = $1;'
         municipality_ids = list()
 
         try:
@@ -172,9 +172,9 @@ class OrganizationsDao(MemberOrgDao):
         return True
 
     async def _remove_all_recruitment(self, org_id: UUID, con: Connection) -> bool:
-        sql_country = 'DELETE FROM organization_country WHERE "organization" = $1;'
-        sql_area = 'DELETE FROM organization_area WHERE "organization" = $1;'
-        sql_municipality = 'DELETE FROM organization_municipality WHERE "organization" = $1;'
+        sql_country = 'DELETE FROM mp_organization_country WHERE "organization" = $1;'
+        sql_area = 'DELETE FROM mp_organization_area WHERE "organization" = $1;'
+        sql_municipality = 'DELETE FROM mp_organization_municipality WHERE "organization" = $1;'
 
         await con.execute(sql_country, org_id)
         await con.execute(sql_area, org_id)
@@ -197,7 +197,7 @@ class OrganizationsDao(MemberOrgDao):
         return await self.get_organization_by_id(row["default_organization"])
 
     async def get_organization_by_name(self, name: str) -> Union[Organization, None]:
-        sql = "SELECT id, description, active, created, path FROM organizations WHERE name = $1"
+        sql = "SELECT id, description, active, created, path FROM mp_organizations WHERE name = $1"
 
         try:
             async with self.pool.acquire() as con:  # type: Connection
@@ -235,7 +235,7 @@ class OrganizationsDao(MemberOrgDao):
 
         if search == "":
             sql = """ SELECT o.id, o.name, o.description, o.created, o.active, o.path
-                      FROM organizations o
+                      FROM mp_organizations o
                       ORDER BY """
             sql = sql + order_column + " " + order_dir + ";"  # order_column and order_dir have fixed values so no SQL injection is possible
 
@@ -244,7 +244,7 @@ class OrganizationsDao(MemberOrgDao):
         else:
             search = "%"+search+"%"
             sql = """ SELECT o.id, o.name, o.description, o.created, o.active, o.path
-                      FROM organizations o
+                      FROM mp_organizations o
                       WHERE o.name LIKE $1
                       OR o.description LIKE $1
                       OR to_char(o.created, 'YYYY-MM-DD HH24:MI:SS.US') LIKE $1
@@ -261,8 +261,8 @@ class OrganizationsDao(MemberOrgDao):
 
     async def get_organizations_in_area(self, country_id: UUID, areas: list, municipality_id: UUID,
                                         filter: Union[list, None] = None) -> list:
-        sql = """SELECT o.id, o.name, o.description, o.active, o.created, o.path FROM organization_country
-                 INNER JOIN organizations AS o ON organization_country.organization = o.id WHERE country = $1;"""
+        sql = """SELECT o.id, o.name, o.description, o.active, o.created, o.path FROM mp_organization_country
+                 INNER JOIN mp_organizations AS o ON mp_organization_country.organization = o.id WHERE country = $1;"""
         try:
             async with self.pool.acquire() as con:  # type: Connection
                 rows = await con.fetch(sql, country_id)
@@ -273,8 +273,8 @@ class OrganizationsDao(MemberOrgDao):
 
         self.convert_rows_to_organizations(organizations, rows)
 
-        sql = """SELECT o.id, o.name, o.description, o.active, o.created, o.path FROM organization_area
-               INNER JOIN organizations AS o ON organization_area.organization = o.id WHERE area = $1;"""
+        sql = """SELECT o.id, o.name, o.description, o.active, o.created, o.path FROM mp_organization_area
+               INNER JOIN mp_organizations AS o ON mp_organization_area.organization = o.id WHERE area = $1;"""
 
         for area_id in areas:
             try:
@@ -284,8 +284,8 @@ class OrganizationsDao(MemberOrgDao):
                 logger.debug(exc.__str__())
             self.convert_rows_to_organizations(organizations, rows)
 
-        sql = """SELECT o.id, o.name, o.description, o.active, o.created, o.path FROM organization_municipality
-               INNER JOIN organizations AS o ON organization_municipality.organization = o.id WHERE municipality = $1;"""
+        sql = """SELECT o.id, o.name, o.description, o.active, o.created, o.path FROM mp_organization_municipality
+               INNER JOIN mp_organizations AS o ON mp_organization_municipality.organization = o.id WHERE municipality = $1;"""
         try:
             async with self.pool.acquire() as con:  # type: Connection
                 rows = await con.fetch(sql, municipality_id)
@@ -309,7 +309,7 @@ class OrganizationsDao(MemberOrgDao):
         update_parent: bool,
         parent_id: Union[UUID, None]
     ) -> Union[Organization, None]:
-        sql = "UPDATE organizations SET name = $1, description = $2, active = $3 WHERE id = $4"
+        sql = "UPDATE mp_organizations SET name = $1, description = $2, active = $3 WHERE id = $4"
 
         try:
             async with self.pool.acquire() as con:  # type: Connection
@@ -328,8 +328,8 @@ class OrganizationsDao(MemberOrgDao):
                             raise ValueError("Organization with ID: " + parent_id.__str__() + " was not found")
 
                         path_db = self._convert_to_db_path(path)
-                        source_path = await con.fetchval('SELECT path FROM organizations WHERE id = $1;', id)
-                        sql = 'UPDATE organizations SET path = $1 || SUBPATH(path, nlevel($2)-1) WHERE path <@ $2;'
+                        source_path = await con.fetchval('SELECT path FROM mp_organizations WHERE id = $1;', id)
+                        sql = 'UPDATE mp_organizations SET path = $1 || SUBPATH(path, nlevel($2)-1) WHERE path <@ $2;'
                         await con.execute(sql, path_db, source_path)
         except UniqueViolationError as exc:
             logger.debug(exc.__str__())
@@ -352,11 +352,14 @@ class OrganizationsDao(MemberOrgDao):
                 async with con.transaction():
                     # NULL default_organization if were removing default
                     await con.execute("UPDATE settings SET default_organization = NULL WHERE default_organization = $1;", id)
-                    rows = await con.fetch("SELECT id FROM organizations WHERE path <@ (SELECT path FROM organizations WHERE id = $1);", id)
+                    rows = await con.fetch(
+                        "SELECT id FROM mp_organizations WHERE path <@ (SELECT path FROM mp_organizations WHERE id = $1);",
+                        id
+                    )
                     for row in rows:
                         await self._remove_all_recruitment(row["id"], con)
 
-                    await con.execute("DELETE FROM organizations WHERE path <@ (SELECT path FROM organizations WHERE id = $1);", id)
+                    await con.execute("DELETE FROM mp_organizations WHERE path <@ (SELECT path FROM mp_organizations WHERE id = $1);", id)
             except Exception as exc:
                 logger.debug(exc.__str__())
                 return False

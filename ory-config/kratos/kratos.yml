@@ -1,6 +1,4 @@
-version: v0.9.0-alpha.3
-
-dsn: sqlite:///home/ory/sqlite/db.sqlite?_fk=true
+version: v0.10.1
 
 identity:
   default_schema_id: member

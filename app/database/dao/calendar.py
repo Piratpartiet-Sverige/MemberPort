@@ -9,7 +9,7 @@ from typing import Union
 
 class CalendarDao(BaseDao):
     async def get_calendar_by_id(self, id: UUID) -> Union[Calendar, None]:
-        sql = "SELECT description, ics_url, created FROM ics_links WHERE id = $1;"
+        sql = "SELECT description, ics_url, created FROM mp_ics_links WHERE id = $1;"
         try:
             async with self.pool.acquire() as con:
                 row = await con.fetchrow(sql, id)
@@ -31,7 +31,7 @@ class CalendarDao(BaseDao):
 
     async def get_calendars(self) -> list:
         calendars = list()
-        sql = "SELECT id, description, ics_url, created FROM ics_links;"
+        sql = "SELECT id, description, ics_url, created FROM mp_ics_links;"
 
         try:
             async with self.pool.acquire() as con:
@@ -51,7 +51,7 @@ class CalendarDao(BaseDao):
         return calendars
 
     async def create_calendar(self, description: str, url: str) -> Union[Calendar, None]:
-        sql = "INSERT INTO ics_links (id, description, ics_url, created) VALUES ($1, $2, $3, $4);"
+        sql = "INSERT INTO mp_ics_links (id, description, ics_url, created) VALUES ($1, $2, $3, $4);"
         id = uuid4()
         created = datetime.now()
 
@@ -87,7 +87,7 @@ class CalendarDao(BaseDao):
         return calendar
 
     def _prepare_sql_for_update_calendar(self, arguments: list, description: Union[str, None], url: Union[str, None]) -> str:
-        sql = 'UPDATE ics_links SET'
+        sql = 'UPDATE mp_ics_links SET'
         values_updated = 0
 
         if description is not None:
@@ -106,7 +106,7 @@ class CalendarDao(BaseDao):
         return sql
 
     async def delete_calendar(self, id: UUID) -> bool:
-        sql = "DELETE FROM ics_links WHERE id = $1;"
+        sql = "DELETE FROM mp_ics_links WHERE id = $1;"
 
         try:
             async with self.pool.acquire() as con:

@@ -6,9 +6,9 @@ from app.database.dao.base import BaseDao
 
 class SettingsDao(BaseDao):
     async def is_initialized(self) -> bool:
-        sql = """SELECT s.initialized FROM settings s JOIN (
+        sql = """SELECT s.initialized FROM mp_settings s JOIN (
                     SELECT initialized, MAX(created) AS created
-                    FROM settings se
+                    FROM mp_settings se
                     GROUP BY initialized
                 ) lastEntry ON s.initialized = lastEntry.initialized AND s.created = lastEntry.created;"""
 
@@ -23,9 +23,9 @@ class SettingsDao(BaseDao):
         return initialized
 
     async def get_feed_url(self) -> str:
-        sql = """SELECT s.feed_url FROM settings s JOIN (
+        sql = """SELECT s.feed_url FROM mp_settings s JOIN (
             SELECT feed_url, MAX(created) AS created
-            FROM settings se
+            FROM mp_settings se
             GROUP BY feed_url
         ) lastEntry ON s.feed_url = lastEntry.feed_url AND s.created = lastEntry.created;"""
 
@@ -37,7 +37,7 @@ class SettingsDao(BaseDao):
         return feed_url
 
     async def set_feed_url(self, url: str) -> bool:
-        sql = 'UPDATE settings SET feed_url = $1;'
+        sql = 'UPDATE mp_settings SET feed_url = $1;'
 
         try:
             async with self.pool.acquire() as con:  # type: Connection
@@ -49,7 +49,7 @@ class SettingsDao(BaseDao):
         return True
 
     async def set_default_organization(self, org_id: UUID) -> bool:
-        sql = 'UPDATE settings SET default_organization = $1;'
+        sql = 'UPDATE mp_settings SET default_organization = $1;'
 
         try:
             async with self.pool.acquire() as con:  # type: Connection
@@ -61,7 +61,7 @@ class SettingsDao(BaseDao):
         return True
 
     async def set_initialized(self, initialized: bool):
-        sql = 'UPDATE settings SET initialized = $1;'
+        sql = 'UPDATE mp_settings SET initialized = $1;'
 
         try:
             async with self.pool.acquire() as con:  # type: Connection

@@ -4,14 +4,9 @@ services:
   pirate-kratos-migrate:
     image: oryd/kratos:v0.10.1
     environment:
-      - DSN=sqlite:///var/lib/sqlite/db.sqlite?_fk=true&mode=rwc
+      - DSN=postgres://super:super@postgres-db:5432/memberportdb?sslmode=disable&max_conns=20&max_idle_conns=4
       - SQA_OPT_OUT=true
     volumes:
-      -
-        type: volume
-        source: kratos-sqlite
-        target: /var/lib/sqlite
-        read_only: false
       -
         type: bind
         source: ./ory-config/kratos
@@ -136,16 +131,11 @@ services:
       - "4434:4434" # admin
     restart: unless-stopped
     environment:
-      - DSN=sqlite:///var/lib/sqlite/db.sqlite?_fk=true&mode=rwc
+      - DSN=postgres://super:super@postgres-db:5432/memberportdb?sslmode=disable&max_conns=20&max_idle_conns=4
       - SQA_OPT_OUT=true
     command:
       serve -c /etc/pirate-config/kratos.yml --dev --watch-courier
     volumes:
-      -
-        type: volume
-        source: kratos-sqlite
-        target: /var/lib/sqlite
-        read_only: false
       -
         type: bind
         source: ./ory-config/kratos
@@ -166,5 +156,4 @@ networks:
 
 volumes:
   rabbitmq:
-  kratos-sqlite:
   postgres:

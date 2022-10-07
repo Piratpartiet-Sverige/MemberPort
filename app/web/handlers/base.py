@@ -1,6 +1,7 @@
 import json
 
 from asyncio.coroutines import coroutine
+from datetime import datetime
 from typing import Union
 from uuid import UUID
 
@@ -80,14 +81,19 @@ class BaseHandler(RequestHandler):
             logger.critical("Error when retrieving session: %s" % e)
             return None
 
+        time_format = "%Y-%m-%dT%H:%M:%S.%fZ"
+
         session = Session()
         session.id = UUID(api_response["id"])
         session.hash = session_hash
-        session.issued_at = api_response["issued_at"]
-        session.expires_at = api_response["expires_at"]
+        session.issued_at = datetime.strptime(api_response["issued_at"], time_format)
+        session.expires_at = datetime.strptime(api_response["expires_at"], time_format)
 
         identity = api_response.get("identity", {})
         identity_traits = identity.get("traits", {})
+        metadata = identity.get("metadata_public", {})
+        if metadata is None:
+            metadata = {}
 
         user = User()
         user.id = UUID(identity["id"])
@@ -101,15 +107,8 @@ class BaseHandler(RequestHandler):
         user.municipality = identity_traits["municipality"]
         user.country = identity_traits["country"]
         user.verified = identity["verifiable_addresses"][0]["verified"]
-        dao = UsersDao(self.db)
-        user_info = await dao.get_user_info(user.id)
-
-        if user_info is not None:
-            user.created = user_info.created
-            user.number = user_info.number
-        else:
-            user.created = None
-            user.number = None
+        user.created = datetime.strptime(identity["created_at"], time_format)
+        user.number = metadata.get("member_number", -1)
 
         session.user = user
         session.logout_url = api_response_logout["logout_url"]

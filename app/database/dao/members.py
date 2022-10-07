@@ -13,7 +13,7 @@ from app.database.dao.member_org import MemberOrgDao
 
 class MembersDao(MemberOrgDao):
     async def create_membership(self, user_id: UUID, organization_id: UUID) -> Union[Membership, None]:
-        sql = "INSERT INTO memberships (id, \"user\", \"organization\", created, renewal) VALUES ($1, $2, $3, $4, $5);"
+        sql = "INSERT INTO mp_memberships (id, \"user\", \"organization\", created, renewal) VALUES ($1, $2, $3, $4, $5);"
 
         membership_id = uuid4()
         created = datetime.utcnow()
@@ -41,7 +41,7 @@ class MembersDao(MemberOrgDao):
         return membership
 
     async def get_membership_by_id(self, membership_id: UUID) -> Union[UUID, None]:
-        sql = 'SELECT "organization", "user", created, renewal FROM memberships WHERE id = $1;'
+        sql = 'SELECT "organization", "user", created, renewal FROM mp_memberships WHERE id = $1;'
 
         try:
             async with self.pool.acquire() as con:  # type: Connection
@@ -84,7 +84,7 @@ class MembersDao(MemberOrgDao):
 
     def _construct_sql_string_update(self, created: Union[datetime, None] = None,
                                      renewal: Union[datetime, None] = None) -> Union[str, None]:
-        sql = "UPDATE memberships SET ("
+        sql = "UPDATE mp_memberships SET ("
 
         value_count = 0
 
@@ -113,7 +113,7 @@ class MembersDao(MemberOrgDao):
         return sql
 
     async def remove_membership(self, user_id: UUID, organization_id: UUID, reason: Union[str, None]) -> bool:
-        sql = 'DELETE FROM memberships WHERE "user" = $1 AND "organization" = $2;'
+        sql = 'DELETE FROM mp_memberships WHERE "user" = $1 AND "organization" = $2;'
         try:
             async with self.pool.acquire() as con:  # type: Connection
                 await con.execute(sql, user_id, organization_id)
@@ -121,7 +121,7 @@ class MembersDao(MemberOrgDao):
             logger.error("An error occured when trying to delete a membership!", stack_info=True)
             return False
 
-        sql = 'INSERT INTO ended_memberships (id, "organization", reason, ended) VALUES ($1, $2, $3, $4);'
+        sql = 'INSERT INTO mp_ended_memberships (id, "organization", reason, ended) VALUES ($1, $2, $3, $4);'
 
         id = uuid4()
         ended = datetime.utcnow()
@@ -141,7 +141,7 @@ class MembersDao(MemberOrgDao):
         Get how many users are currently registered
         :return: An int with the current user count
         """
-        sql = "SELECT count(*) as members FROM memberships WHERE \"organization\" = $1;"
+        sql = "SELECT count(*) as members FROM mp_memberships WHERE \"organization\" = $1;"
 
         async with self.pool.acquire() as con:  # type: Connection
             row = await con.fetchrow(sql, organization_id)
@@ -149,7 +149,7 @@ class MembersDao(MemberOrgDao):
         return row["members"]
 
     async def get_memberships_for_user(self, user_id: UUID) -> list:
-        sql = "SELECT id, \"organization\", created, renewal FROM memberships WHERE \"user\" = $1"
+        sql = "SELECT id, \"organization\", created, renewal FROM mp_memberships WHERE \"user\" = $1"
 
         try:
             async with self.pool.acquire() as con:  # type: Connection
@@ -175,7 +175,7 @@ class MembersDao(MemberOrgDao):
         return memberships
 
     async def count_expired_memberships(self) -> int:
-        sql = "SELECT COUNT(\"id\") FROM memberships WHERE renewal < $1;"
+        sql = "SELECT COUNT(\"id\") FROM mp_memberships WHERE renewal < $1;"
         current_date = datetime.utcnow()
 
         try:
@@ -188,7 +188,7 @@ class MembersDao(MemberOrgDao):
         return count
 
     async def remove_expired_memberships(self):
-        sql = "DELETE FROM memberships WHERE renewal < $1;"
+        sql = "DELETE FROM mp_memberships WHERE renewal < $1;"
         current_date = datetime.utcnow()
 
         try:

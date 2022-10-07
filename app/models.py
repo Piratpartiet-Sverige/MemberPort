@@ -62,18 +62,6 @@ def user_to_json(user: User) -> dict:
     }
 
 
-class UserInfo:
-    id: UUID
-    number: int
-    created: datetime
-
-    def __eq__(self, other):
-        return self.id == other.id
-
-    def __hash__(self):
-        return hash(self.id)
-
-
 class Organization:
     id: UUID
     name: str
