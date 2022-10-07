@@ -8,11 +8,6 @@ services:
       - SQA_OPT_OUT=true
     volumes:
       -
-        type: volume
-        source: kratos-sqlite
-        target: /var/lib/sqlite
-        read_only: false
-      -
         type: bind
         source: ./ory-config/kratos
         target: /etc/pirate-config
@@ -142,11 +137,6 @@ services:
       serve -c /etc/pirate-config/kratos.yml --dev --watch-courier
     volumes:
       -
-        type: volume
-        source: kratos-sqlite
-        target: /var/lib/sqlite
-        read_only: false
-      -
         type: bind
         source: ./ory-config/kratos
         target: /etc/pirate-config
@@ -166,5 +156,4 @@ networks:
 
 volumes:
   rabbitmq:
-  kratos-sqlite:
   postgres:
