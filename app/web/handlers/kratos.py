@@ -48,6 +48,9 @@ class KratosHandler(RequestHandler):
 
     @tornado.gen.coroutine
     def post(self, url: str = ""):
+        if url == "kratos/self-service/registration":
+            logger.debug("Handle signing up for organization here")
+
         url = "http://pirate-kratos:4433/" + url + "?" + self.request.query
 
         logger.debug("POST to Kratos: " + url)

@@ -26,10 +26,12 @@ class APIOrganizationHandler(BaseHandler):
         parent_id = self.check_uuid(parent_id)
         active = self.get_argument("active", False)
         active = active == 'true'
+        show_on_signup = self.get_argument("show_on_signup", False)
+        show_on_signup = show_on_signup == 'true'
 
         org_dao = OrganizationsDao(self.db)
 
-        organization = await org_dao.create_organization(name, description, active, parent_id)
+        organization = await org_dao.create_organization(name, description, active, show_on_signup, parent_id)
 
         if organization is None:
             return self.respond("SOMETHING WENT WRONG WHEN TRYING TO CREATE ORGANIZATION", 500, None)
@@ -73,6 +75,8 @@ class APIOrganizationHandler(BaseHandler):
         description = self.get_argument("description", None)
         active = self.get_argument("active", False)
         active = active == 'true'
+        show_on_signup = self.get_argument("show_on_signup", False)
+        show_on_signup = show_on_signup == 'true'
         update_parent = False
 
         parent_id = self.get_argument("parent_id", None)
@@ -113,7 +117,15 @@ class APIOrganizationHandler(BaseHandler):
             if success is False:
                 return self.respond("SOMETHING WENT WRONG WHEN TRYING TO SET RECRUITMENT AREAS", 500, None)
 
-        organization = await org_dao.update_organization(org_id, name, description, active, update_parent, parent_id)
+        organization = await org_dao.update_organization(
+            org_id,
+            name,
+            description,
+            active,
+            show_on_signup,
+            update_parent,
+            parent_id
+        )
         if organization is None:
             return self.respond("SOMETHING WENT WRONG WHEN TRYING TO UPDATE ORGANIZATION", 500, None)
 

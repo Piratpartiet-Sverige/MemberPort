@@ -17,12 +17,14 @@ class OrganizationsDao(MemberOrgDao):
         name: str,
         description: str,
         active: bool,
+        show_on_signup: bool,
         parent_id: Union[UUID, None],
         countries: Union[list, None] = None,
         areas: Union[list, None] = None,
         municipalities: Union[list, None] = None
     ) -> Union[Organization, None]:
-        sql = "INSERT INTO mp_organizations (id, name, description, active, created, path) VALUES ($1, $2, $3, $4, $5, $6);"
+        sql = """INSERT INTO mp_organizations (id, name, description, active, created, show_on_signup, path)
+                 VALUES ($1, $2, $3, $4, $5, $6, $7);"""
 
         id = uuid4()
         created = datetime.utcnow()
@@ -32,7 +34,7 @@ class OrganizationsDao(MemberOrgDao):
 
         try:
             async with self.pool.acquire() as con:  # type: Connection
-                await con.execute(sql, id, name, description, active, created, path_db)
+                await con.execute(sql, id, name, description, active, created, show_on_signup, path_db)
         except UniqueViolationError as exc:
             logger.debug(exc.__str__())
             logger.warning("Tried to create organization: " + str(id) + " but organization already existed")
@@ -47,6 +49,7 @@ class OrganizationsDao(MemberOrgDao):
         organization.name = name
         organization.description = description
         organization.active = active
+        organization.show_on_signup = show_on_signup
         organization.created = created
         organization.path = path
 
@@ -197,7 +200,7 @@ class OrganizationsDao(MemberOrgDao):
         return await self.get_organization_by_id(row["default_organization"])
 
     async def get_organization_by_name(self, name: str) -> Union[Organization, None]:
-        sql = "SELECT id, description, active, created, path FROM mp_organizations WHERE name = $1"
+        sql = "SELECT id, description, active, created, show_on_signup, path FROM mp_organizations WHERE name = $1"
 
         try:
             async with self.pool.acquire() as con:  # type: Connection
@@ -216,6 +219,7 @@ class OrganizationsDao(MemberOrgDao):
         organization.description = row["description"]
         organization.active = row["active"]
         organization.created = row["created"]
+        organization.show_on_signup = row["show_on_signup"]
         organization.path = self._convert_from_db_path(row["path"])
 
         return organization
@@ -234,7 +238,7 @@ class OrganizationsDao(MemberOrgDao):
             order_column = "name"
 
         if search == "":
-            sql = """ SELECT o.id, o.name, o.description, o.created, o.active, o.path
+            sql = """ SELECT o.id, o.name, o.description, o.created, o.active, o.show_on_signup, o.path
                       FROM mp_organizations o
                       ORDER BY """
             sql = sql + order_column + " " + order_dir + ";"  # order_column and order_dir have fixed values so no SQL injection is possible
@@ -243,7 +247,7 @@ class OrganizationsDao(MemberOrgDao):
                 rows = await con.fetch(sql)
         else:
             search = "%"+search+"%"
-            sql = """ SELECT o.id, o.name, o.description, o.created, o.active, o.path
+            sql = """ SELECT o.id, o.name, o.description, o.created, o.active, o.show_on_signup, o.path
                       FROM mp_organizations o
                       WHERE o.name LIKE $1
                       OR o.description LIKE $1
@@ -273,7 +277,7 @@ class OrganizationsDao(MemberOrgDao):
 
         self.convert_rows_to_organizations(organizations, rows)
 
-        sql = """SELECT o.id, o.name, o.description, o.active, o.created, o.path FROM mp_organization_area
+        sql = """SELECT o.id, o.name, o.description, o.active, o.created, o.show_on_signup, o.path FROM mp_organization_area
                INNER JOIN mp_organizations AS o ON mp_organization_area.organization = o.id WHERE area = $1;"""
 
         for area_id in areas:
@@ -284,7 +288,7 @@ class OrganizationsDao(MemberOrgDao):
                 logger.debug(exc.__str__())
             self.convert_rows_to_organizations(organizations, rows)
 
-        sql = """SELECT o.id, o.name, o.description, o.active, o.created, o.path FROM mp_organization_municipality
+        sql = """SELECT o.id, o.name, o.description, o.active, o.created, o.show_on_signup, o.path FROM mp_organization_municipality
                INNER JOIN mp_organizations AS o ON mp_organization_municipality.organization = o.id WHERE municipality = $1;"""
         try:
             async with self.pool.acquire() as con:  # type: Connection
@@ -306,15 +310,16 @@ class OrganizationsDao(MemberOrgDao):
         name:
         str, description: str,
         active: bool,
+        show_on_signup: bool,
         update_parent: bool,
         parent_id: Union[UUID, None]
     ) -> Union[Organization, None]:
-        sql = "UPDATE mp_organizations SET name = $1, description = $2, active = $3 WHERE id = $4"
+        sql = "UPDATE mp_organizations SET name = $1, description = $2, active = $3, show_on_signup = $4 WHERE id = $5"
 
         try:
             async with self.pool.acquire() as con:  # type: Connection
                 async with con.transaction():
-                    await con.execute(sql, name, description, active, id)
+                    await con.execute(sql, name, description, active, show_on_signup, id)
 
                     if update_parent is True:
                         path = (await self._get_path(parent_id, id)).removesuffix('.' + id.__str__())
@@ -373,7 +378,22 @@ class OrganizationsDao(MemberOrgDao):
             organization.description = row["description"]
             organization.active = row["active"]
             organization.created = row["created"]
+            organization.show_on_signup = row["show_on_signup"]
             organization.path = self._convert_from_db_path(row["path"])
             organizations.append(organization)
+
+        return organizations
+
+    async def get_organizations_for_signup(self):
+        sql = """SELECT o.id, o.name, o.description, o.created, o.active, o.show_on_signup, o.path
+                 FROM mp_organizations o
+                 WHERE o.show_on_signup is TRUE
+                 ORDER BY name ASC;"""
+
+        async with self.pool.acquire() as con:  # type: Connection
+            rows = await con.fetch(sql)
+
+        organizations = list()
+        self.convert_rows_to_organizations(organizations, rows)
 
         return organizations

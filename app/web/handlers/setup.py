@@ -27,7 +27,7 @@ class SetupHandler(BaseHandler):
         countries.append(UUID('00000000-0000-0000-0000-000000000000'))
 
         org_dao = OrganizationsDao(self.db)
-        organization = await org_dao.create_organization(org_name, org_description, True, None, countries)
+        organization = await org_dao.create_organization(org_name, org_description, True, True, None, countries)
 
         if organization is None:
             return self.respond("Something went wrong when creating organization", 500)

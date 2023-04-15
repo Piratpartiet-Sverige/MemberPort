@@ -35,6 +35,7 @@ from app.web.handlers.error import Error404Handler
 from app.web.handlers.error_kratos import ErrorKratosHandler
 from app.web.handlers.feed.feed import FeedHandler
 from app.web.handlers.feed.post import PostHandler
+from app.web.handlers.integrity import IntegrityHandler
 from app.web.handlers.kratos import KratosHandler
 from app.web.handlers.main import MainHandler
 from app.web.handlers.new_member import NewMemberHandler
@@ -125,6 +126,7 @@ def configure_application(options: WebAppOptions):
         (r"/error", ErrorKratosHandler),
         (r"/feed", FeedHandler),
         (r"/feed/post", PostHandler),
+        (r"/integrity", IntegrityHandler),
         (r"/login", tornado.web.RedirectHandler, dict(url=r"/auth/login")),
         (r"/new-member", NewMemberHandler),
         (r"/profile", ProfileHandler),

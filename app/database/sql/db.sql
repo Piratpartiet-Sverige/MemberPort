@@ -6,12 +6,13 @@ CREATE EXTENSION IF NOT EXISTS ltree;
 
 CREATE TABLE mp_organizations
 (
-    id          UUID PRIMARY KEY,
-    name        TEXT UNIQUE NOT NULL,
-    description TEXT,
-    active      BOOLEAN NOT NULL,
-    created     TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    path        ltree
+    id             UUID PRIMARY KEY,
+    name           TEXT UNIQUE NOT NULL,
+    description    TEXT,
+    active         BOOLEAN NOT NULL,
+    created        TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    show_on_signup BOOLEAN NOT NULL,
+    path           ltree
 );
 
 CREATE INDEX mp_organization_path_idx ON mp_organizations USING GIST (path);

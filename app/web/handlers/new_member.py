@@ -21,7 +21,7 @@ class NewMemberHandler(BaseHandler):
 
     async def post(self):
         logger.debug("Setting up new user")
-        identity = self.args["identity"]
+        identity = self.args.get("identity", None)
         identity = self.check_uuid(identity)
 
         if identity is None:
