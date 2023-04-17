@@ -82,12 +82,15 @@
         "gender": {
           "title": "Gender",
           "type": "string",
-          "pattern": "(^fe|^)male$|^other$"
+          "pattern": "(^fe|^)male$|^other$|^unknown$"
         },
         "birthday": {
           "title": "Birthday",
           "type": "string",
           "format": "date"
+        },
+        "accept_tos": {
+          "const": true
         }
       },
       "required": [
@@ -95,7 +98,8 @@
         "email",
         "municipality",
         "gender",
-        "birthday"
+        "birthday",
+        "accept_tos"
       ],
       "additionalProperties": false
     }

@@ -29,7 +29,7 @@ const columnDefs = [
   { headerName: 'Telefon', field: 'phone' },
   { headerName: 'Födelsedag', field: 'birthday' },
   { headerName: 'Postkod', field: 'postalCode' },
-  { headerName: 'Stad', field: 'city' },
+  { headerName: 'Postort', field: 'city' },
   { headerName: 'Adress', field: 'street' },
   { headerName: 'Land', field: 'country' }
 ]
