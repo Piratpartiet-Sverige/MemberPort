@@ -12,8 +12,16 @@ afterPageLoad().then(() => {
     acceptToS.onclick = () => { acceptToS.value = acceptToS.checked.toString() }
   }
 
-  const organizations = document.getElementById('organizations') as HTMLInputElement
-  const orgElements = document.getElementsByName('orgIDs')
+  const organizationsElement = document.getElementById('organizations')
+
+  if (organizationsElement === null) {
+    console.error('Could not find element "organizations"')
+    return
+  }
+
+  const organizations = organizationsElement as HTMLInputElement
+
+  const orgElements = Array.from(document.getElementsByClassName('organization')) as HTMLElement[]
   orgElements.forEach((element) => {
     const checkOrg = element as HTMLInputElement
     const orgID = checkOrg.getAttribute('org-id') as string
@@ -26,7 +34,8 @@ afterPageLoad().then(() => {
 
         organizations.value += orgID
       } else {
-        organizations.value.replace(orgID, '')
+        const regExp = new RegExp('^' + orgID + ',?|,?' + orgID, 'g');
+        organizations.value = organizations.value.replace(regExp, '')
       }
     }
   })

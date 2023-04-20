@@ -46,22 +46,28 @@ class KratosHandler(RequestHandler):
         self.write(response.body)
         self.finish()
 
+    def handle_memberships_for_registration(self, organizations: str):
+        pass
+
     @tornado.gen.coroutine
     def post(self, url: str = ""):
-        if url == "kratos/self-service/registration":
-            logger.debug("Handle signing up for organization here")
+        organizations = None
+        if url == 'kratos/self-service/registration':
+            organizations = self.get_argument('organizations', None)
 
-        url = "http://pirate-kratos:4433/" + url + "?" + self.request.query
+        url = 'http://pirate-kratos:4433/' + url + '?' + self.request.query
 
         logger.debug("POST to Kratos: " + url)
 
-        req = tornado.httpclient.HTTPRequest(url, method="POST", body=self.request.body,
+        req = tornado.httpclient.HTTPRequest(url, method='POST', body=self.request.body,
                                              follow_redirects=False, headers=self.request.headers)
 
         client = tornado.httpclient.AsyncHTTPClient()
         response = yield client.fetch(req, raise_error=False)
 
         self.set_status(response.code)
+        if organizations is not None and response.code >= 200 and response.code < 300:
+            self.handle_memberships_for_registration(organizations)
 
         for header in response.headers:
             if header.lower() == 'content-length':

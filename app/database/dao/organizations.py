@@ -265,7 +265,7 @@ class OrganizationsDao(MemberOrgDao):
 
     async def get_organizations_in_area(self, country_id: UUID, areas: list, municipality_id: UUID,
                                         filter: Union[list, None] = None) -> list:
-        sql = """SELECT o.id, o.name, o.description, o.active, o.created, o.path FROM mp_organization_country
+        sql = """SELECT o.id, o.name, o.description, o.active, o.created, o.show_on_signup, o.path FROM mp_organization_country
                  INNER JOIN mp_organizations AS o ON mp_organization_country.organization = o.id WHERE country = $1;"""
         try:
             async with self.pool.acquire() as con:  # type: Connection

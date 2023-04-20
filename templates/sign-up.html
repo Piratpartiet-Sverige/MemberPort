@@ -12,8 +12,8 @@
     <section class="hero is-dark is-fullheight">
         <div class="hero-body">
             <div class="container is-max-desktop">
-                <h3 class="title has-text-white">MemberPort</h3>
-                <p class="subtitle has-text-grey">Member management</p>
+                <h3 class="title has-text-white has-text-centered">MemberPort</h3>
+                <p class="subtitle has-text-grey has-text-centered">Member management</p>
                 <div class="box">
                     {% module xsrf_form_html() %}
                     <form id="signUpForm" action="{{ action }}" method="{{ method }}">
@@ -100,7 +100,7 @@
                             </div>
                         </div>
                         {% else %}
-                        <input name="organizations" type="hidden" value="{{ node.attributes.value }}" />
+                        <input name="organizations" id="organizations" type="hidden" value="" />
                         <div class="field">
                             <label class="label">Föreningar jag vill bli medlem i:</label>
                             {% for org in organizations %}
@@ -137,9 +137,6 @@
                 </div>
                 {% end %}
                 {% end %}
-                <p class="has-text-grey">
-                    <a href="/auth/login">Logga in</a>
-                </p>
             </div>
         </div>
     </section>
