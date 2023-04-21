@@ -68,6 +68,7 @@ class Organization:
     description: str
     active: bool
     created: datetime
+    show_on_signup: bool
     path: str
 
     def __eq__(self, other):
@@ -84,6 +85,7 @@ def organization_to_json(organization: Organization) -> dict:
         'description': organization.description,
         'active': organization.active.__str__().lower(),
         'created': organization.created.isoformat(' ', 'seconds'),
+        'show_on_signup': organization.show_on_signup.__str__().lower(),
         'path': organization.path
     }
 
@@ -249,13 +251,14 @@ def ui_placeholders(button_label: str) -> dict:
         "traits.name.last": "Efternamn",
         "traits.postal_address.street": "Gatuadress",
         "traits.postal_address.postal_code": "Postnummer",
-        "traits.postal_address.city": "Stad",
+        "traits.postal_address.city": "Postort",
         "traits.phone": "Telefonnummer",
         "traits.email": "E-post",
         "email": "E-post",
         "traits.municipality": "Kommun",
         "traits.country": "Land",
-        "traits.gender": "Kön",
+        "traits.gender": "Självupplevt kön",
+        "traits.birthday": "Födelsedag",
         "method": button_label
     }
 
@@ -273,6 +276,7 @@ def ui_positions() -> dict:
         "traits.postal_address.city": 8,
         "traits.municipality": 9,
         "traits.country": 10,
-        "traits.gender": 11,
-        "method": 12
+        "traits.birthday": 11,
+        "traits.gender": 12,
+        "method": 14
     }

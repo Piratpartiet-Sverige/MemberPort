@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MemberPort | Logga in</title>
     <link rel="stylesheet" href="{{ static_url('css/app.bundle.css') }}">
 </head>
@@ -10,58 +11,56 @@
 <body>
     <section class="hero is-dark is-fullheight">
         <div class="hero-body">
-            <div class="container has-text-centered">
-                <div class="column is-4 is-offset-4">
-                    <h3 class="title has-text-white">MemberPort</h3>
-                    <p class="subtitle has-text-grey">Member management</p>
-                    <div class="box">
-                        <figure class="avatar">
-                            <img src="{{ static_url('img/logo.svg') }}" >
-                        </figure>
-                        <form action="{{ action }}" method="{{ method }}">
-                            {% for node in nodes %}
-                            {% if node.attributes.type != "submit" %}
-                            <div class="field">
-                                <div class="control">
-                                    <input
-                                        name="{{ node.attributes.name }}"
-                                        class="input is-large"
-                                        type="{{ node.attributes.type }}"
-                                        placeholder="{{ node.meta.label.text if hasattr(node.meta, 'label') else ''  }}"
-                                        value="{{  node.attributes.value if hasattr(node.attributes, 'value') else '' }}"
-                                    />
-                                </div>
+            <div class="container is-max-desktop has-text-centered">
+                <h3 class="title has-text-white">MemberPort</h3>
+                <p class="subtitle has-text-grey">Member management</p>
+                <div class="box">
+                    <figure class="avatar">
+                        <img src="{{ static_url('img/logo.svg') }}" >
+                    </figure>
+                    <form action="{{ action }}" method="{{ method }}">
+                        {% for node in nodes %}
+                        {% if node.attributes.type != "submit" %}
+                        <div class="field">
+                            <div class="control">
+                                <input
+                                    name="{{ node.attributes.name }}"
+                                    class="input is-large"
+                                    type="{{ node.attributes.type }}"
+                                    placeholder="{{ node.meta.label.text if hasattr(node.meta, 'label') else ''  }}"
+                                    value="{{  node.attributes.value if hasattr(node.attributes, 'value') else '' }}"
+                                />
                             </div>
-                            {% for error in node.messages.value %}
-                            {% if error.type == 'error' %}
-                            <div class="notification is-danger">
-                                <button type="button" class="delete"></button>
-                                {{ error.text }}
-                            </div>
-                            {% end %}
-                            {% end %}
-                            {% else %}
-                            <input type="hidden" name="{{ node.attributes.name }}" value="{{ node.attributes.value}}" >
-                            <button type="submit" class="button is-block is-info is-large is-fullwidth">
-                                Logga in
-                            </button>
-                            {% end %}
-                            {% end %}
-                        </form>
-                    </div>
-                    {% for error in errors %}
-                    {% if error.type == 'error' %}
-                    <div class="notification is-danger">
-                        <button class="delete"></button>
-                        {{ error.text }}
-                    </div>
-                    {% end %}
-                    {% end %}
-                    <p class="has-text-grey">
-                        <a href="/auth/registration">Bli medlem</a> &nbsp;·&nbsp;
-                        <a href="/recovery">Glömt lösenord</a>
-                    </p>
+                        </div>
+                        {% for error in node.messages.value %}
+                        {% if error.type == 'error' %}
+                        <div class="notification is-danger">
+                            <button type="button" class="delete"></button>
+                            {{ error.text }}
+                        </div>
+                        {% end %}
+                        {% end %}
+                        {% else %}
+                        <input type="hidden" name="{{ node.attributes.name }}" value="{{ node.attributes.value}}" >
+                        <button type="submit" class="button is-block is-info is-large is-fullwidth">
+                            Logga in
+                        </button>
+                        {% end %}
+                        {% end %}
+                    </form>
                 </div>
+                {% for error in errors %}
+                {% if error.type == 'error' %}
+                <div class="notification is-danger">
+                    <button class="delete"></button>
+                    {{ error.text }}
+                </div>
+                {% end %}
+                {% end %}
+                <p class="has-text-grey">
+                    <a href="/auth/registration">Bli medlem</a> &nbsp;·&nbsp;
+                    <a href="/recovery">Glömt lösenord</a>
+                </p>
             </div>
         </div>
     </section>

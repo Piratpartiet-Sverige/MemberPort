@@ -17,7 +17,7 @@ class MemberOrgDao(BaseDao):
         return True
 
     async def get_organization_by_id(self, id: UUID) -> Union[Organization, None]:
-        sql = "SELECT name, description, active, created, path FROM mp_organizations WHERE id = $1;"
+        sql = "SELECT name, description, active, created, show_on_signup, path FROM mp_organizations WHERE id = $1;"
 
         try:
             async with self.pool.acquire() as con:  # type: Connection
@@ -36,6 +36,7 @@ class MemberOrgDao(BaseDao):
         organization.description = row["description"]
         organization.active = row["active"]
         organization.created = row["created"]
+        organization.show_on_signup = row["show_on_signup"]
         organization.path = self._convert_from_db_path(row["path"])
 
         return organization
