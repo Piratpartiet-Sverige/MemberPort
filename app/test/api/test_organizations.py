@@ -64,6 +64,7 @@ class OrganizationsTest(WebTestCase):
             "description": self.org.description,
             "active": self.org.active,
             "created": self.org.created,
+            "show_on_signup": False,
             "path": self.org.path
         }
 
@@ -86,7 +87,7 @@ class OrganizationsTest(WebTestCase):
         self.assertEqual(
             '{"success": true, "reason": "RETRIEVED ORGANIZATION", "data": {"id": "4d2b7c7b-0a9e-4b57-8a92-be29f432f429",' +
             ' "name": "Piratpartiet", "description": "Test", "active": "true",' +
-            ' "created": "2006-01-01 00:00:00", "path": "4d2b7c7b-0a9e-4b57-8a92-be29f432f429"}}', body)
+            ' "created": "2006-01-01 00:00:00", "show_on_signup": "false", "path": "4d2b7c7b-0a9e-4b57-8a92-be29f432f429"}}', body)
         self.assertEqual(200, response.code)
 
     @set_permissions("edit_organizations")
@@ -99,6 +100,7 @@ class OrganizationsTest(WebTestCase):
             "description": new_description,
             "active": self.org.active,
             "created": self.org.created,
+            "show_on_signup": False,
             "path": self.org.id.__str__()
         }
 
@@ -208,6 +210,7 @@ class OrganizationsTest(WebTestCase):
             "description": new_description,
             "active": self.org.active,
             "created": self.org.created,
+            "show_on_signup": False,
             "path": self.org.id.__str__()
         }
 

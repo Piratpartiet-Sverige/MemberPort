@@ -48,6 +48,7 @@
                                     <option {{ "selected" if node.attributes.get('value', '') == "male" else "" }} value="male">Man</option>
                                     <option {{ "selected" if node.attributes.get('value', '') == "female" else "" }} value="female">Kvinna</option>
                                     <option {{ "selected" if node.attributes.get('value', '') == "other" else "" }} value="other">Annan</option>
+                                    <option {{ "selected" if node.attributes.get('value', '') == "unknown" else "" }} value="other">Vill inte uppge</option>
                                 </select>
                             </div>
                         </div>
@@ -112,7 +113,7 @@
                     </label>
                     <div class="field">
                         <div class="control">
-                            <input class="input" name="{{ node.attributes.name }}" type="text"
+                            <input class="input" name="{{ node.attributes.name }}" type="{{ node.attributes.type }}"
                                 value="{{ node.attributes.value if hasattr(node.attributes, 'value') else '' }}"
                                 id=" {{ node.attributes.name }}">
                         </div>
