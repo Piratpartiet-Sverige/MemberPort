@@ -50,6 +50,7 @@ class ModelsTest(TestCase):
         org.description = "Omtänksamhet istället för misstänksamhet"
         org.active = True
         org.created = created
+        org.show_on_signup = False
         org.path = id.__str__()
 
         json = organization_to_json(org)
@@ -58,6 +59,7 @@ class ModelsTest(TestCase):
         self.assertEqual(org.description, json["description"])
         self.assertEqual("true", json["active"])
         self.assertEqual(created.isoformat(' ', 'seconds'), json["created"])
+        self.assertEqual("false", json["show_on_signup"])
         self.assertEqual(id.__str__(), json["path"])
 
     def test_membership_model(self):

@@ -34,7 +34,7 @@ afterPageLoad().then(() => {
 
         organizations.value += orgID
       } else {
-        const regExp = new RegExp('^' + orgID + ',?|,?' + orgID, 'g');
+        const regExp = new RegExp('^' + orgID + ',?|,?' + orgID, 'g')
         organizations.value = organizations.value.replace(regExp, '')
       }
     }
