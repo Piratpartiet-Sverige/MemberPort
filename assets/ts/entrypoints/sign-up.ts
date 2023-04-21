@@ -5,7 +5,7 @@ afterPageLoad().then(() => {
   updateMunicipalities()
   const queryParams = new URLSearchParams(window.location.search)
 
-  const elements = document.getElementsByName('traits.accept_tos')
+  const elements = document.getElementsByName('accept_tos')
   if (elements.length > 0) {
     const acceptToS = elements.item(0) as HTMLInputElement
     acceptToS.value = acceptToS.checked.toString()

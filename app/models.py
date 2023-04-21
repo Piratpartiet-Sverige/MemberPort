@@ -259,7 +259,6 @@ def ui_placeholders(button_label: str) -> dict:
         "traits.country": "Land",
         "traits.gender": "Självupplevt kön",
         "traits.birthday": "Födelsedag",
-        "traits.accept_tos": "Acceptera användarvillkoren",
         "method": button_label
     }
 
@@ -279,6 +278,5 @@ def ui_positions() -> dict:
         "traits.country": 10,
         "traits.birthday": 11,
         "traits.gender": 12,
-        "traits.accept_tos": 13,
         "method": 14
     }

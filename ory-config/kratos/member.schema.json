@@ -88,9 +88,6 @@
           "title": "Birthday",
           "type": "string",
           "format": "date"
-        },
-        "accept_tos": {
-          "const": true
         }
       },
       "required": [
@@ -98,8 +95,7 @@
         "email",
         "municipality",
         "gender",
-        "birthday",
-        "accept_tos"
+        "birthday"
       ],
       "additionalProperties": false
     }

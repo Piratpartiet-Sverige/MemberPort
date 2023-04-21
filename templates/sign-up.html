@@ -73,18 +73,6 @@
                                 </div>
                             </div>
                         </div>
-                        {% elif node.attributes.name == 'traits.accept_tos' %}
-                        <div class="field">
-                            <div class="control">
-                                <label class="checkbox">
-                                    <input
-                                        name="{{ node.attributes.name }}"
-                                        type="{{ node.attributes.type }}"
-                                        />
-                                    Jag har läst och godkänner att mina uppgifter samlas in enligt <a href="/integrity">integritetspolicyn</a>.
-                                </label>
-                            </div>
-                        </div>
                         {% elif node.attributes.name != 'method' %}
                         <div class="field">
                             <label class="label">{{ placeholders[node.attributes.name] }}</label>
@@ -113,7 +101,18 @@
                             {% end %}
                             </div>
                         </div>
+                        När du klickar på registreringsknappen godkänner du att dina uppgifter samlas in enligt <a class="has-text-link" href="/integrity">integritetspolicyn</a>.
                         <input name="method" type="hidden" value="{{ node.attributes.value }}">
+
+                        {% for error in errors %}
+                        {% if error.type == 'error' %}
+                        <div class="notification is-danger">
+                            <button class="delete"></button>
+                            {{ error.text }}
+                        </div>
+                        {% end %}
+                        {% end %}
+
                         <button type="submit" class="button is-block is-info is-large is-fullwidth">
                             Registrera
                         </button>
@@ -129,14 +128,6 @@
                         {% end %}
                     </form>
                 </div>
-                {% for error in errors %}
-                {% if error.type == 'error' %}
-                <div class="notification is-danger">
-                    <button class="delete"></button>
-                    {{ error.text }}
-                </div>
-                {% end %}
-                {% end %}
             </div>
         </div>
     </section>
