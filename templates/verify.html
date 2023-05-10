@@ -1,68 +1,125 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block content %}
-<section class="section">
-    <div class="container">
-        <div class="content">
-            <h1>Verifiera din e-post</h1>
-        </div>
-        <div class="box">
-            <form action="{{ action }}" method="{{ method }}">
-                {% for node in nodes %}
-                {% if node.attributes.name == "csrf_token" %}
-                <input type="hidden" name="csrf_token" value="{{ node.attributes.value }}">
-                {% elif node.attributes.name == "email" %}
-                <label class="label">
-                    E-post
-                    <span class="icon">
-                        <i title="En länk kommer skickas till din e-post, när du klickar på den så kommer din e-post att markeras som verifierad"
-                            class="fas fa-info-circle"></i>
-                    </span>
-                </label>
-                <div class="field">
-                    <div class="control">
-                        <input type="email" name="email" class="input" required value="{{ user.email }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MemberPort | Logga in</title>
+    <link rel="stylesheet" href="{{ static_url('css/app.bundle.css') }}">
+</head>
+
+<body>
+    <section class="hero is-dark is-fullheight">
+        <div class="hero-body">
+            <div class="container is-max-desktop has-text-centered">
+                <h3 class="title has-text-white">Verifiera din e-post</h3>
+                <p class="subtitle has-text-grey">Om du har registrerat dig så har det kommit en kod till din mejl redan, annars kan du skicka en ny kod här</p>
+                <div class="box">
+                    {% if state == "passed_challenge" %}
+                    {% for node in nodes %}
+                    {% if hasattr(node.attributes, 'href') %}
+                    <div class="content">
+                        <h2>Din e-post är nu verifierad</h2>
                     </div>
-                </div>
-                {% elif node.attributes.name == "method" and state == "choose_method" %}
-                <input type="hidden" name="{{ node.attributes.name }}" value="{{ node.attributes.value }}">
-                <div class="field">
-                    <div class="control">
-                        <button type="submit" class="button is-success is-fullwidth">Skicka verifikationslänk</button>
+                    <div class="field">
+                        <div class="control">
+                            <a href="{{ node.attributes.href }}">
+                                <button class="button is-block is-info is-large is-fullwidth">
+                                    Fortsätt
+                                </button>
+                            </a>
+                        </div>
                     </div>
+                    {% end %}
+                    {% end %}
+                    {% else %}
+                    <form action="{{ action }}" method="{{ method }}">
+                        {% for node in nodes %}
+                        {% if hasattr(node.attributes, 'type') and node.attributes.type == "email" %}
+                        <div class="field">
+                            <div class="control">
+                                <input
+                                    name="{{ node.attributes.name }}"
+                                    class="input is-large"
+                                    type="{{ node.attributes.type }}"
+                                    placeholder="{{ node.meta.label.text if hasattr(node.meta, 'label') else ''  }}"
+                                    {{ 'required' if hasattr(node.attributes, 'required') and node.attributes.required else '' }}
+                                    value="{{ email }}"
+                                />
+                            </div>
+                        </div>
+                        {% elif node.attributes.type != "submit" %}
+                        <div class="field">
+                            <div class="control">
+                                <input
+                                    name="{{ node.attributes.name }}"
+                                    class="input is-large"
+                                    type="{{ node.attributes.type }}"
+                                    placeholder="{{ node.meta.label.text if hasattr(node.meta, 'label') else ''  }}"
+                                    {{ 'required' if hasattr(node.attributes, 'required') and node.attributes.required else '' }}
+                                    value="{{  node.attributes.value if hasattr(node.attributes, 'value') else '' }}"
+                                />
+                            </div>
+                        </div>
+                        {% for error in node.messages.value %}
+                        {% if error.type == 'error' %}
+                        <div class="notification is-danger">
+                            <button type="button" class="delete"></button>
+                            {{ error.text }}
+                        </div>
+                        {% end %}
+                        {% end %}
+                        {% elif state == "choose_method" %}
+                        <input type="hidden" name="{{ node.attributes.name }}" value="{{ node.attributes.value}}" >
+                        <button type="submit" class="button is-block is-info is-large is-fullwidth">
+                            Skicka verifikationskod
+                        </button>
+                        {% elif state == "sent_email" and node.attributes.name == "method" %}
+                        <input type="hidden" name="{{ node.attributes.name }}" value="{{ node.attributes.value}}" >
+                        <button type="submit" class="button is-block is-info is-large is-fullwidth">
+                            Verifiera kod
+                        </button>
+                        {% end %}
+                        {% end %}
+                    </form>
+                    {% end %}
+                    {% if state == "sent_email" %}
+                    <br>
+                    <form action="{{ action }}" method="{{ method }}">
+                        <input type="hidden" name="method" value="code" >
+                        {% for node in nodes %}
+                        {% if node.attributes.name == "email" %}
+                        <input type="hidden" name="{{ node.attributes.name }}" value="{{ node.attributes.value}}" >
+                        <button type="submit" class="button is-block is-info is-large is-fullwidth">
+                            Skicka ny verifikationskod
+                        </button>
+                        {% elif node.attributes.name == "csrf_token" %}
+                        <input
+                            name="{{ node.attributes.name }}"
+                            class="input is-large"
+                            type="{{ node.attributes.type }}"
+                            placeholder="{{ node.meta.label.text if hasattr(node.meta, 'label') else ''  }}"
+                            {{ 'required' if hasattr(node.attributes, 'required') and node.attributes.required else '' }}
+                            value="{{  node.attributes.value if hasattr(node.attributes, 'value') else '' }}"
+                        />
+                        {% end %}
+                        {% end %}
+                    </form>
+                    {% end %}
                 </div>
-                {% end %}
-                {% for error in node.messages.value %}
-                {% if error.type == "error" %}
+                {% for error in errors %}
+                {% if error.type == 'error' %}
                 <div class="notification is-danger">
                     <button class="delete"></button>
                     {{ error.text }}
                 </div>
                 {% end %}
                 {% end %}
-                {% end %}
-            </form>
-            <br>
-            {% for error in errors %}
-            {% if error.type == "error" %}
-            <div class="notification is-danger">
-                <button class="delete"></button>
-                {{ error.text }}
+                <p class="has-text-grey">
+                    <a href="/">Gå till startsidan</a> &nbsp;·&nbsp;
+                </p>
             </div>
-            {% end %}
-            {% end %}
-            {% if state == "sent_email" %}
-            <div class="notification is-info">
-                <button class="delete"></button>
-                Verifikationslänk har skickats
-            </div>
-            {% elif state == "passed_challenge" %}
-            <div class="notification is-success">
-                <button class="delete"></button>
-                Mailadressen är verifierad!
-            </div>
-            {% end %}
         </div>
-    </div>
-</section>
-{% end %}
+    </section>
+</body>
+</html>

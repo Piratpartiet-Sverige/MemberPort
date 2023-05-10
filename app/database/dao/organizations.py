@@ -184,7 +184,7 @@ class OrganizationsDao(MemberOrgDao):
         await con.execute(sql_municipality, org_id)
 
     async def get_default_organization(self) -> Union[Organization, None]:
-        sql = "SELECT default_organization FROM settings"
+        sql = "SELECT default_organization FROM mp_settings;"
 
         try:
             async with self.pool.acquire() as con:  # type: Connection

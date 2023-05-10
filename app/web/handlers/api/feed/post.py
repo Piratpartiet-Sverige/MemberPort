@@ -30,7 +30,7 @@ class APIPostHandler(BaseHandler):
         post = await feed_dao.create_post(
             title,
             content,
-            self.current_user.user.id,
+            self.current_user.user_id,
             [org]
         )
 

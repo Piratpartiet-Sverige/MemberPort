@@ -4,7 +4,6 @@ from uuid import UUID
 from app.models import Role
 from app.models import Permission
 
-from asyncpg import Connection
 from asyncpg.exceptions import UniqueViolationError
 from app.database.dao.base import BaseDao
 
@@ -30,6 +29,18 @@ class RolesDao(BaseDao):
             roles.append(role)
 
         return roles
+
+    async def add_role_to_user(self, user_id: UUID, role_id: UUID) -> bool:
+        sql = 'INSERT INTO mp_user_roles ("user", "role") VALUES ($1, $2);'
+
+        try:
+            async with self.pool.acquire() as con:  # type: Connection
+                await con.execute(sql, user_id, role_id)
+        except Exception:
+            logger.error("An error occured when trying to add role to user!", stack_info=True)
+            return False
+
+        return True
 
     async def get_permissions(self) -> list:
         sql = "SELECT id, name FROM mp_permissions;"

@@ -1,4 +1,4 @@
-from asyncpg import Connection, UndefinedTableError
+from asyncpg import UndefinedTableError
 from asyncpg.pool import Pool
 from app.logger import logger
 from app.web.handlers.error import ErrorDatabase

@@ -41,9 +41,9 @@ class APIMemberShipHandler(BaseHandler):
         dao = MembersDao(self.db)
         membership = await dao.get_membership_by_id(membership_id)
 
-        if membership is None or membership.user_id.int != self.current_user.user.id.int:
-            if membership.user_id.int != self.current_user.user.id.int:
-                logger.warning("Member " + self.current_user.user.id.__str__() + " tried to end a membership for another user, "
+        if membership is None or membership.user_id.int != self.current_user.user_id.int:
+            if membership.user_id.int != self.current_user.user_id.int:
+                logger.warning("Member " + self.current_user.user_id.__str__() + " tried to end a membership for another user, "
                                + membership.user_id.__str__() + ", with no permission to do so.")
 
             return self.respond("MEMBERSHIP WITH SPECIFIED ID NOT FOUND", 404)

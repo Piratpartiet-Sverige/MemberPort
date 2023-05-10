@@ -1,6 +1,6 @@
 import ory_kratos_client
 
-from ory_kratos_client.api import v0alpha2_api
+from ory_kratos_client.api import frontend_api
 from ory_kratos_client.configuration import Configuration
 from ory_kratos_client.rest import ApiException
 from app.database.dao.geography import GeographyDao
@@ -29,15 +29,15 @@ class SignInHandler(BaseHandler):
         errors = []
 
         with ory_kratos_client.ApiClient(configuration) as api_client:
-            api_instance = v0alpha2_api.V0alpha2Api(api_client)
+            api_instance = frontend_api.FrontendApi(api_client)
             try:
-                api_response = api_instance.get_self_service_login_flow(flow, cookie=cookie)
+                api_response = api_instance.get_login_flow(flow, cookie=cookie)
                 nodes = api_response.ui.nodes.value
                 errors = api_response.ui.messages.value if hasattr(api_response.ui, 'messages') else []
                 action = api_response.ui.action
                 method = api_response.ui.method
             except ApiException as e:
-                logger.error("Exception when calling v0alpha2_api->get_self_service_login_flow: %s\n" % e)
+                logger.error("Exception when calling FrontendApi->get_login_flow: %s\n" % e)
                 logger.error(e.status)
                 if e.status == 410:
                     return self.redirect("/kratos/self-service/login/browser")
@@ -69,15 +69,15 @@ class SignUpHandler(BaseHandler):
         errors = []
 
         with ory_kratos_client.ApiClient(configuration) as api_client:
-            api_instance = v0alpha2_api.V0alpha2Api(api_client)
+            api_instance = frontend_api.FrontendApi(api_client)
             try:
-                api_response = api_instance.get_self_service_registration_flow(flow, cookie=cookie)
+                api_response = api_instance.get_registration_flow(flow, cookie=cookie)
                 nodes = api_response.ui.nodes.value
                 errors = api_response.ui.messages.value if hasattr(api_response.ui, 'messages') else []
                 action = api_response.ui.action
                 method = api_response.ui.method
             except ApiException as e:
-                logger.error("Exception when calling V0alpha2Api->get_self_service_registration_flow: %s\n" % e)
+                logger.error("Exception when calling FrontendApi->get_registration_flow: %s\n" % e)
 
                 if e.status == 410:
                     return self.redirect("/kratos/self-service/registration/browser")
@@ -126,16 +126,16 @@ class RecoveryHandler(BaseHandler):
         state = ""
 
         with ory_kratos_client.ApiClient(configuration) as api_client:
-            api_instance = v0alpha2_api.V0alpha2Api(api_client)
+            api_instance = frontend_api.FrontendApi(api_client)
             try:
-                api_response = api_instance.get_self_service_recovery_flow(flow, cookie=cookie)
+                api_response = api_instance.get_recovery_flow(flow, cookie=cookie)
                 nodes = api_response.ui.nodes.value
                 errors = api_response.ui.messages.value if hasattr(api_response.ui, 'messages') else []
                 action = api_response.ui.action
                 method = api_response.ui.method
                 state = api_response.state.value
             except ApiException as e:
-                logger.error("Exception when calling V0alpha2Api->get_self_service_recovery_flow: %s\n" % e)
+                logger.error("Exception when calling FrontendApi->get_recovery_flow: %s\n" % e)
 
         placeholders = ui_placeholders("Registrera")
 

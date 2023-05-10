@@ -1,4 +1,3 @@
-from asyncpg import Connection
 from app.database.dao.base import BaseDao
 from app.logger import logger
 from app.models import Organization

@@ -4,7 +4,6 @@ from datetime import datetime
 from typing import Union
 from uuid import UUID, uuid4
 
-from asyncpg import Connection
 from asyncpg.exceptions import UniqueViolationError
 
 from app.models import Membership

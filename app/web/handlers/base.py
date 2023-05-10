@@ -1,6 +1,5 @@
 import json
 
-from asyncio.coroutines import coroutine
 from datetime import datetime
 from typing import Union
 from uuid import UUID
@@ -12,7 +11,7 @@ from tornado.httpclient import AsyncHTTPClient, HTTPRequest
 from app.logger import logger
 from app.database.dao.users import UsersDao
 from app.database.dao.roles import RolesDao
-from app.models import Session, User
+from app.models import Bot, Session, User
 
 
 def has_permissions(*permissions: str) -> callable:
@@ -20,11 +19,12 @@ def has_permissions(*permissions: str) -> callable:
     Decorator that checks if the current user has the permissions listed
     :returns 403, PERMISSION DENIED, if the current user doesn't have all of the permissions
     """
-    def has_permissions_wrapper(func: coroutine):
+    def has_permissions_wrapper(func):
         async def permission_check(self, *args, **kwargs):
             roles_dao = RolesDao(self.db)
+
             for permission in permissions:
-                if not await roles_dao.check_user_permission(self.current_user.user.id, permission):
+                if not await roles_dao.check_user_permission(self.current_user.user_id, permission):
                     return self.respond("PERMISSION DENIED", 403, None)
 
             return await func(self, *args, **kwargs)
@@ -90,29 +90,50 @@ class BaseHandler(RequestHandler):
         session.expires_at = datetime.strptime(api_response["expires_at"], time_format)
 
         identity = api_response.get("identity", {})
+        schema_id = identity.get("schema_id", "")
         identity_traits = identity.get("traits", {})
         metadata = identity.get("metadata_public", {})
         if metadata is None:
             metadata = {}
 
-        user = User()
-        user.id = UUID(identity["id"])
-        user.name.first = identity_traits["name"]["first"]
-        user.name.last = identity_traits["name"]["last"]
-        user.email = identity_traits["email"]
-        user.phone = identity_traits.get("phone", "")
-        user.postal_address.street = identity_traits["postal_address"]["street"]
-        user.postal_address.postal_code = identity_traits["postal_address"]["postal_code"]
-        user.postal_address.city = identity_traits["postal_address"]["city"]
-        user.municipality = identity_traits["municipality"]
-        user.country = identity_traits["country"]
-        user.verified = identity["verifiable_addresses"][0]["verified"]
-        user.created = datetime.strptime(identity["created_at"], time_format)
-        user.number = metadata.get("member_number", -1)
+        if schema_id == "bot":
+            session.user = None
+            bot = Bot()
+            bot.id = UUID(identity["id"])
+            bot.email = identity_traits["email"]
+            bot.verified = identity["verifiable_addresses"][0]["verified"]
+            bot.created = datetime.strptime(identity["created_at"], time_format)
+            bot.name = identity_traits["name"]
 
-        session.user = user
+            session.user_id = bot.id
+            session.created = bot.created
+            session.verified = bot.verified
+            session.bot = bot
+        else:
+            session.bot = None
+
+            user = User()
+            user.id = UUID(identity["id"])
+            user.email = identity_traits["email"]
+            user.verified = identity["verifiable_addresses"][0]["verified"]
+            user.created = datetime.strptime(identity["created_at"], time_format)
+            user.name.first = identity_traits["name"]["first"]
+            user.name.last = identity_traits["name"]["last"]
+            user.phone = identity_traits.get("phone", "")
+            user.postal_address.street = identity_traits["postal_address"]["street"]
+            user.postal_address.postal_code = identity_traits["postal_address"]["postal_code"]
+            user.postal_address.city = identity_traits["postal_address"]["city"]
+            user.municipality = identity_traits["municipality"]
+            user.country = identity_traits["country"]
+            user.number = metadata.get("member_number", -1)
+
+            session.user_id = user.id
+            session.created = user.created
+            session.verified = user.verified
+            session.user = user
+
         session.logout_url = api_response_logout["logout_url"]
-        logger.debug("Session user: " + str(user.id))
+        logger.debug("Session user: " + str(session.user_id))
 
         return session
 
@@ -155,7 +176,7 @@ class BaseHandler(RequestHandler):
 
     async def permission_check(self):
         dao = UsersDao(self.db)
-        return await dao.check_user_admin(self.current_user.user.id)
+        return await dao.check_user_admin(self.current_user.user_id)
 
     def respond(self, message: str, status_code: int = 200, json_data: Union[None, dict] = None,
                 show_error_page: bool = False):

@@ -1,3 +1,3 @@
 function(ctx) {
-    identity: ctx.identity.id
+    flow: ctx.flow.id
 }

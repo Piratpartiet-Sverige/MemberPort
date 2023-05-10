@@ -1,4 +1,4 @@
-version: v0.10.1
+version: v0.13.0
 
 identity:
   default_schema_id: member
@@ -49,6 +49,17 @@ selfservice:
                 url: http://memberport:8888/new-member
                 method: POST
                 body: file:///etc/pirate-config/new.member.jsonnet
+                response:
+                  ignore: false
+                  parse: true
+            - hook: web_hook
+              config:
+                url: http://memberport:8888/new-membership
+                method: POST
+                body: file:///etc/pirate-config/new.membership.jsonnet
+                response:
+                  ignore: true
+                  parse: false
 
     recovery:
       enabled: true

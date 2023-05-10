@@ -1,6 +1,5 @@
 from app.logger import logger
 from uuid import UUID
-from asyncpg import Connection
 from app.database.dao.base import BaseDao
 
 

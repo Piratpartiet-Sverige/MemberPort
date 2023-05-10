@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import Union
 from uuid import uuid4, UUID
 
-from asyncpg import Connection
 from asyncpg.exceptions import DataError, UniqueViolationError
 
 from app.logger import logger
