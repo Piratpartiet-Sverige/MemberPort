@@ -6,7 +6,7 @@
   "scripts": {
     "watch": "npx webpack watch --mode development",
     "build": "npx webpack",
-    "lint": "eslint './assets/**/*.{js,ts,tsx}'"
+    "lint": "eslint './frontend/**/*.{js,ts,tsx}'"
   },
   "devDependencies": {
     "@types/react": "^18.0.21",

@@ -7,7 +7,7 @@ import React, {
 } from 'react'
 import classNames from 'classnames'
 import CalendarTable from './CalendarTable'
-import { sendCreateCalendarRequest, sendDeleteCalendarRequest, sendFetchCalendarsRequest, sendUpdateCalendarRequest } from 'assets/ts/utils/api'
+import { sendCreateCalendarRequest, sendDeleteCalendarRequest, sendFetchCalendarsRequest, sendUpdateCalendarRequest } from '@memberport/utils/api'
 import type CalendarItem from './CalendarItem'
 
 interface CalendarsViewProps {

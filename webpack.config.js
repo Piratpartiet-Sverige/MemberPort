@@ -21,13 +21,13 @@ function walk (dir) {
 }
 
 function dirname (file) {
-  const relative = path.relative('./assets/ts/entrypoints', file)
+  const relative = path.relative('./frontend/entrypoints', file)
   const ext = path.extname(file)
 
   return relative.replace(ext, '')
 }
 
-const entryPoints = walk('./assets/ts/entrypoints').reduce((acc, cur) => {
+const entryPoints = walk('./frontend/entrypoints').reduce((acc, cur) => {
   const ext = path.extname(cur)
   const directory = dirname(cur)
 
@@ -53,8 +53,7 @@ module.exports = {
     // Add '.ts' and '.tsx' as resolvable extensions.
     extensions: ['.ts', '.tsx', '.js', '.json'],
     alias: {
-        'assets': path.resolve(__dirname, 'assets'),
-        '@memberport': path.resolve(__dirname, 'web-client')
+        '@memberport': path.resolve(__dirname, 'frontend')
     }
   },
   module: {
@@ -81,7 +80,7 @@ module.exports = {
         test: /\.(png|svg|woff|woff2|eot|ttf|otf)$/,
         loader: 'url-loader',
         options: {
-          name: 'assets/[name].[hash].[ext]',
+          name: 'frontend/[name].[hash].[ext]',
           silent: true
         }
       }

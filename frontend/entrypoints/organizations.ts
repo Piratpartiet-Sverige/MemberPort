@@ -5,8 +5,8 @@ import { createMessage } from '../utils/ui'
 import { filter, addOrganization } from '../utils/organization/selection'
 import { ButtonRenderer } from '../ag-components/button-renderer'
 import { CheckboxRenderer } from '../ag-components/checkbox-renderer'
-import '../../sass/selection.scss'
-import type { OrgData } from 'assets/ts/utils/organization/orgdata'
+import '../sass/selection.scss'
+import type { OrgData } from '@memberport/utils/organization/orgdata'
 
 declare let orgdata: { [id: string]: OrgData }
 

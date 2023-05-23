@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { afterPageLoad } from '../utils/after-page-load'
-import CalendarsView from '@memberport/admin/CalendarsView'
+import CalendarsView from '@memberport/views/calendar/CalendarsView'
 
 let calendarsViewRootEl: HTMLElement | null = null
 
