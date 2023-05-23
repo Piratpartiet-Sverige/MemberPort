@@ -1,4 +1,4 @@
-import '../../sass/geography.scss'
+import '../sass/geography.scss'
 import { GeoData, GEO_TYPES } from '../utils/geography/geodata'
 import { addArea, addCountry, addMunicipality } from '../utils/geography/add'
 import * as ui from '../utils/geography/ui'

@@ -1,4 +1,5 @@
-import { GeoData, GEO_TYPES } from './geodata'
+import type { GeoData } from './geodata'
+import { GEO_TYPES } from './geodata'
 
 const pendingNodes: { [id: string]: HTMLDivElement[] } = {}
 

@@ -3,7 +3,7 @@ import { createMessage } from '../utils/ui'
 import { GeoData, GEO_TYPES } from '../utils/geography/geodata'
 import { addArea, addCountry, addMunicipality, filter, getCheckedCountries, getCheckedAreas, getCheckedMunicipalities } from '../utils/geography/selection'
 import { afterPageLoad } from '../utils/after-page-load'
-import '../../sass/selection.scss'
+import '../sass/selection.scss'
 
 declare let geodata: { [id: string]: GeoData }
 declare let countryID: string

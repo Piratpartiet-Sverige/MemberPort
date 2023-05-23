@@ -31,7 +31,7 @@ class CalendarDao(BaseDao):
 
     async def get_calendars(self) -> list:
         calendars = list()
-        sql = "SELECT id, description, ics_url, created FROM mp_ics_links;"
+        sql = "SELECT id, description, ics_url, created FROM mp_ics_links ORDER BY created;"
 
         try:
             async with self.pool.acquire() as con:

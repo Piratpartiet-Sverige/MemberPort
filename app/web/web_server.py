@@ -18,7 +18,7 @@ from app.web.handlers.admin.organizations import OrganizationsHandler
 from app.web.handlers.admin.add_organization import AddOrganizationHandler
 from app.web.handlers.admin.edit_organization import EditOrganizationHandler
 from app.web.handlers.admin.roles import RolesHandler
-from app.web.handlers.api.calendar import APICalendarHandler
+from app.web.handlers.api.calendar import APICalendarHandler, APICalendarsHandler
 from app.web.handlers.api.feed.post import APIPostHandler
 from app.web.handlers.api.geography.area import APIAreaHandler
 from app.web.handlers.api.geography.areas import APIAreasHandler
@@ -104,6 +104,7 @@ def configure_application(options: WebAppOptions):
         (r"/admin/roles", RolesHandler),
         (r"/api/calendar", APICalendarHandler),
         (r"/api/calendar/(?P<id>[^\/]+)", APICalendarHandler),
+        (r"/api/calendars", APICalendarsHandler),
         (r"/api/member", APIMemberHandler),
         (r"/api/membership", APIMemberShipHandler),
         (r"/api/membership/(?P<id>[^\/]+)", APIMemberShipHandler),

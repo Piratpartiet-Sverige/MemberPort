@@ -6,6 +6,12 @@ from app.models import calendar_to_json
 from app.web.handlers.base import BaseHandler, has_permissions
 
 
+class APICalendarsHandler(BaseHandler):
+    async def get(self):
+        calendars = await CalendarDao(self.db).get_calendars()
+        return self.respond("RETRIEVED CALENDARS", 200, list(map(calendar_to_json, calendars)))
+
+
 class APICalendarHandler(BaseHandler):
     async def get(self, id: str = None):
         if id is None:
@@ -96,7 +102,18 @@ class APICalendarHandler(BaseHandler):
         url = self.get_argument("url", None)
 
         if description is None and url is None:
-            return self.respond("DESCRIPTION OR URL IS MISSING", 400)
+            return self.respond("DESCRIPTION AND URL IS MISSING", 400)
+
+        if url is not None:
+            req = tornado.httpclient.HTTPRequest(url, follow_redirects=False)
+            client = tornado.httpclient.AsyncHTTPClient()
+
+            try:
+                await client.fetch(req, raise_error=False)
+            except Exception as exc:
+                logger.debug(exc.__str__())
+                logger.error("Exception raised when trying URL: " + url + ". Is the URL correct?")
+                return self.respond("INVALID URL", 400)
 
         calendar = await CalendarDao(self.db).update_calendar(calendar_id, description, url)
 
