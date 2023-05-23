@@ -423,7 +423,7 @@ export async function sendCreatePostRequest (title: string, content: string): Pr
 export async function sendFetchCalendarsRequest (): Promise<Response> {
   const xsrf = document.getElementsByName('_xsrf')[0] as HTMLInputElement
 
-  const response = await fetch('/api/calendar/list', {
+  const response = await fetch('/api/calendars', {
     method: 'GET',
     cache: 'no-cache',
     credentials: 'same-origin',

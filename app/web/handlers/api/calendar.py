@@ -6,14 +6,16 @@ from app.models import calendar_to_json
 from app.web.handlers.base import BaseHandler, has_permissions
 
 
+class APICalendarsHandler(BaseHandler):
+    async def get(self):
+        calendars = await CalendarDao(self.db).get_calendars()
+        return self.respond("RETRIEVED CALENDARS", 200, list(map(calendar_to_json, calendars)))
+
+
 class APICalendarHandler(BaseHandler):
     async def get(self, id: str = None):
         if id is None:
             return await self.return_ical()
-
-        if id == "list":
-            calendars = await CalendarDao(self.db).get_calendars()
-            return self.respond("RETRIEVED CALENDARS", 200, list(map(calendar_to_json, calendars)))
 
         calendar_id = self.check_uuid(id)
         if calendar_id is None:
