@@ -4,7 +4,6 @@ from datetime import datetime
 from typing import Union
 from uuid import UUID, uuid4
 
-from asyncpg import Connection
 from asyncpg.exceptions import UniqueViolationError
 
 from app.models import Membership
@@ -20,7 +19,7 @@ class MembersDao(MemberOrgDao):
         renewal = datetime(created.year + 1, created.month, created.day)
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 await con.execute(sql, membership_id, user_id, organization_id, created, renewal)
         except UniqueViolationError as exc:
             logger.debug(exc.__str__())
@@ -44,7 +43,7 @@ class MembersDao(MemberOrgDao):
         sql = 'SELECT "organization", "user", created, renewal FROM mp_memberships WHERE id = $1;'
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 row = await con.fetchrow(sql, membership_id)
         except Exception:
             logger.error("An error occured when trying to retrieve membership!", stack_info=True)
@@ -68,13 +67,13 @@ class MembersDao(MemberOrgDao):
 
         try:
             if created is not None and renewal is None:
-                async with self.pool.acquire() as con:  # type: Connection
+                async with self.pool.acquire() as con:
                     await con.execute(sql, user_id, organization_id, created)
             elif renewal is not None and created is None:
-                async with self.pool.acquire() as con:  # type: Connection
+                async with self.pool.acquire() as con:
                     await con.execute(sql, user_id, organization_id, renewal)
             else:
-                async with self.pool.acquire() as con:  # type: Connection
+                async with self.pool.acquire() as con:
                     await con.execute(sql, user_id, organization_id, created, renewal)
         except Exception:
             logger.error("An error occured when trying to update a membership!", stack_info=True)
@@ -115,7 +114,7 @@ class MembersDao(MemberOrgDao):
     async def remove_membership(self, user_id: UUID, organization_id: UUID, reason: Union[str, None]) -> bool:
         sql = 'DELETE FROM mp_memberships WHERE "user" = $1 AND "organization" = $2;'
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 await con.execute(sql, user_id, organization_id)
         except Exception:
             logger.error("An error occured when trying to delete a membership!", stack_info=True)
@@ -128,7 +127,7 @@ class MembersDao(MemberOrgDao):
         reason = "" if reason is None else reason
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 await con.execute(sql, id, organization_id, reason, ended)
         except Exception:
             logger.error("An error occured when trying to delete a membership!", stack_info=True)
@@ -143,7 +142,7 @@ class MembersDao(MemberOrgDao):
         """
         sql = "SELECT count(*) as members FROM mp_memberships WHERE \"organization\" = $1;"
 
-        async with self.pool.acquire() as con:  # type: Connection
+        async with self.pool.acquire() as con:
             row = await con.fetchrow(sql, organization_id)
 
         return row["members"]
@@ -152,7 +151,7 @@ class MembersDao(MemberOrgDao):
         sql = "SELECT id, \"organization\", created, renewal FROM mp_memberships WHERE \"user\" = $1"
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 rows = await con.fetch(sql, user_id)
         except Exception:
             logger.error("An error occured when trying to retrieve memberships for an user!", stack_info=True)
@@ -179,7 +178,7 @@ class MembersDao(MemberOrgDao):
         current_date = datetime.utcnow()
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 count = await con.fetchval(sql, current_date)
         except Exception:
             logger.critical("An error occured when trying to count expired memberships!")
@@ -192,7 +191,7 @@ class MembersDao(MemberOrgDao):
         current_date = datetime.utcnow()
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 await con.execute(sql, current_date)
         except Exception:
             logger.critical("An error occured when trying to delete expired memberships!")

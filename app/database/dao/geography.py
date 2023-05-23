@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import Union
 from uuid import uuid4, UUID
 
-from asyncpg import Connection
 from asyncpg.exceptions import DataError, UniqueViolationError
 
 from app.logger import logger
@@ -24,7 +23,7 @@ class GeographyDao(BaseDao):
         path = await self._get_path(parent_id)
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 area_id = await con.fetchval(sql, name, created, country_id, path)
         except Exception:
             logger.error("An error occured when trying to create new area!", stack_info=True)
@@ -46,7 +45,7 @@ class GeographyDao(BaseDao):
         sql_area = 'DELETE FROM mp_areas WHERE path <@ (SELECT path FROM mp_areas WHERE id = $1);'
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 async with con.transaction():
                     await con.execute(sql_municipality, area_id)
                     await con.execute(sql_area, area_id)
@@ -60,7 +59,7 @@ class GeographyDao(BaseDao):
         sql = 'SELECT name, created, "country", path FROM mp_areas WHERE id = $1;'
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 row = await con.fetchrow(sql, area_id)
         except DataError:
             logger.error("area_id was not an integer", stack_info=True)
@@ -85,7 +84,7 @@ class GeographyDao(BaseDao):
         sql = 'SELECT id, name, created, path FROM mp_areas WHERE "country" = $1;'
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 rows = await con.fetch(sql, country_id)
         except Exception:
             logger.error("An error occured when trying to create new area!", stack_info=True)
@@ -107,7 +106,7 @@ class GeographyDao(BaseDao):
     async def get_parent_areas_from_municipality(self, municipality_id) -> list:
         sql = 'SELECT "area" FROM mp_municipalities WHERE id = $1;'
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 row = await con.fetchrow(sql, municipality_id)
         except Exception:
             logger.warning("No municipality with ID: " + str(municipality_id) + " was found!")
@@ -115,7 +114,7 @@ class GeographyDao(BaseDao):
 
         sql = 'SELECT id FROM mp_areas WHERE path @> (SELECT path FROM mp_areas WHERE id = $1);'
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 rows = await con.fetch(sql, row["area"])
         except Exception:
             logger.warning("No area with ID: " + str(row["area"]) + " was found!")
@@ -136,7 +135,7 @@ class GeographyDao(BaseDao):
         sql = 'SELECT path FROM mp_areas WHERE id = $1;'
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 path = await con.fetchval(sql, parent_id)
         except Exception:
             logger.error("An error occured when trying to retrieve the path for new area!", stack_info=True)
@@ -155,7 +154,7 @@ class GeographyDao(BaseDao):
             return False
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 async with con.transaction():
                     if len(arguments) > 1:  # Only execute update if values have actually been changed
                         await con.execute(sql, *arguments)
@@ -210,7 +209,7 @@ class GeographyDao(BaseDao):
         municipality_id = uuid4()
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 await con.execute(sql, municipality_id, name, created, country_id, area_id)
         except UniqueViolationError as exc:
             logger.debug(exc.__str__())
@@ -235,7 +234,7 @@ class GeographyDao(BaseDao):
         sql = 'DELETE FROM mp_municipalities WHERE id = $1;'
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 await con.execute(sql, municipality_id)
         except Exception:
             logger.error("An error occured when trying to delete a municipality!", exc_info=True)
@@ -246,7 +245,7 @@ class GeographyDao(BaseDao):
     async def get_municipality_by_id(self, municipality_id: UUID) -> Union[Municipality, None]:
         sql = 'SELECT name, created, "country", "area" FROM mp_municipalities WHERE id = $1;'
 
-        async with self.pool.acquire() as con:  # type: Connection
+        async with self.pool.acquire() as con:
             row = await con.fetchrow(sql, municipality_id)
 
         municipality = Municipality()
@@ -265,7 +264,7 @@ class GeographyDao(BaseDao):
     async def get_municipality_by_name(self, name: str) -> Union[Municipality, None]:
         sql = 'SELECT id, created, "country", "area" FROM mp_municipalities WHERE name = $1;'
 
-        async with self.pool.acquire() as con:  # type: Connection
+        async with self.pool.acquire() as con:
             row = await con.fetchrow(sql, name)
 
         municipality = Municipality()
@@ -284,7 +283,7 @@ class GeographyDao(BaseDao):
     async def get_municipalities_by_country(self, country_id: str) -> list:
         sql = 'SELECT id, name, created, "area" FROM mp_municipalities WHERE "country" = $1;'
 
-        async with self.pool.acquire() as con:  # type: Connection
+        async with self.pool.acquire() as con:
             rows = await con.fetch(sql, country_id)
 
         municipalities = []
@@ -303,7 +302,7 @@ class GeographyDao(BaseDao):
     async def get_municipalities(self) -> list:
         sql = 'SELECT id, name, created, "country", "area" FROM mp_municipalities;'
 
-        async with self.pool.acquire() as con:  # type: Connection
+        async with self.pool.acquire() as con:
             rows = await con.fetch(sql)
 
         municipalities = []
@@ -333,7 +332,7 @@ class GeographyDao(BaseDao):
             return False
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 await con.execute(sql, *arguments)
         except Exception:
             logger.error(arguments)
@@ -382,7 +381,7 @@ class GeographyDao(BaseDao):
         country_id = uuid4()
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 await con.execute(sql, country_id, name, created)
         except UniqueViolationError as exc:
             logger.debug(exc.__str__())
@@ -407,7 +406,7 @@ class GeographyDao(BaseDao):
         sql = 'DELETE FROM mp_countries WHERE id = $1;'
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 async with con.transaction():
                     await con.execute(sql_municipality, country_id)
                     await con.execute(sql_area, country_id)
@@ -421,7 +420,7 @@ class GeographyDao(BaseDao):
     async def get_country_by_id(self, country_id: UUID) -> Union[Country, None]:
         sql = 'SELECT name, created FROM mp_countries WHERE id = $1;'
 
-        async with self.pool.acquire() as con:  # type: Connection
+        async with self.pool.acquire() as con:
             row = await con.fetchrow(sql, country_id)
 
         country = Country()
@@ -438,7 +437,7 @@ class GeographyDao(BaseDao):
     async def get_country_by_name(self, country_name: str) -> Union[Country, None]:
         sql = 'SELECT id, created FROM mp_countries WHERE name = $1;'
 
-        async with self.pool.acquire() as con:  # type: Connection
+        async with self.pool.acquire() as con:
             row = await con.fetchrow(sql, country_name)
 
         country = Country()
@@ -455,7 +454,7 @@ class GeographyDao(BaseDao):
     async def get_default_country(self) -> Union[Country, None]:
         sql = 'SELECT id, name, created FROM mp_countries WHERE id = $1;'
 
-        async with self.pool.acquire() as con:  # type: Connection
+        async with self.pool.acquire() as con:
             row = await con.fetchrow(sql, UUID('00000000-0000-0000-0000-000000000000'))
 
         country = Country()
@@ -472,7 +471,7 @@ class GeographyDao(BaseDao):
     async def get_countries(self) -> list:
         sql = 'SELECT id, name, created FROM mp_countries;'
 
-        async with self.pool.acquire() as con:  # type: Connection
+        async with self.pool.acquire() as con:
             rows = await con.fetch(sql)
 
         countries = []
@@ -490,7 +489,7 @@ class GeographyDao(BaseDao):
         sql = 'UPDATE mp_countries SET name = $2 WHERE id = $1;'
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 await con.execute(sql, country_id, name)
         except Exception:
             logger.error("Something wen't wrong when trying to update name for country with ID: " + country_id.__str__(), stack_info=True)

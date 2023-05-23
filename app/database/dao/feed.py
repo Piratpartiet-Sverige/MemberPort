@@ -36,7 +36,7 @@ class FeedDao(BaseDao):
         try:
             sanitized_content = bleach.clean(
                 content,
-                tags=[
+                tags={
                     'a',
                     'abbr',
                     'acronym',
@@ -62,7 +62,7 @@ class FeedDao(BaseDao):
                     'span',
                     'strong',
                     'ul'
-                ],
+                },
                 attributes=attributes,
                 css_sanitizer=css_sanitizer
             )

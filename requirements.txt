@@ -1,7 +1,7 @@
-asyncpg==0.26
-tornado==6.2
-pytz==2022.1
-ory-kratos-client==0.10.1
-aiosmtplib==1.1.6
+asyncpg==0.27
+tornado==6.3.2
+pytz==2023.3
+ory-kratos-client==0.13.1
+aiosmtplib==2.0.1
 celery==5.2.7
-bleach[css]==5.0.1
+bleach[css]==6.0.0

@@ -1,6 +1,5 @@
 from app.logger import logger
 from uuid import UUID
-from asyncpg import Connection
 from app.database.dao.base import BaseDao
 
 
@@ -12,7 +11,7 @@ class SettingsDao(BaseDao):
                     GROUP BY initialized
                 ) lastEntry ON s.initialized = lastEntry.initialized AND s.created = lastEntry.created;"""
 
-        async with self.pool.acquire() as con:  # type: Connection
+        async with self.pool.acquire() as con:
             row = await con.fetchrow(sql)
 
         initialized = row["initialized"]
@@ -29,7 +28,7 @@ class SettingsDao(BaseDao):
             GROUP BY feed_url
         ) lastEntry ON s.feed_url = lastEntry.feed_url AND s.created = lastEntry.created;"""
 
-        async with self.pool.acquire() as con:  # type: Connection
+        async with self.pool.acquire() as con:
             row = await con.fetchrow(sql)
 
         feed_url = row["feed_url"]
@@ -40,7 +39,7 @@ class SettingsDao(BaseDao):
         sql = 'UPDATE mp_settings SET feed_url = $1;'
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 await con.execute(sql, url)
         except Exception:
             logger.error("An error occured when trying to set the feed url!", stack_info=True)
@@ -52,7 +51,7 @@ class SettingsDao(BaseDao):
         sql = 'UPDATE mp_settings SET default_organization = $1;'
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 await con.execute(sql, org_id)
         except Exception:
             logger.error("An error occured when trying to set the default organization!", stack_info=True)
@@ -64,7 +63,7 @@ class SettingsDao(BaseDao):
         sql = 'UPDATE mp_settings SET initialized = $1;'
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 await con.execute(sql, initialized)
         except Exception:
             logger.error("An error occured when trying to set the initalized state!", stack_info=True)

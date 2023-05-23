@@ -18,6 +18,7 @@
 <script type="text/javascript">
     var _GRID_DATA_ = [
         {% for member in members %}
+        {% if member.schema_id != "bot" %}
         {
             {% if member.metadata_public is not None %}
             number: "{{ member.metadata_public.get('member_number', '-1') }}",
@@ -33,6 +34,7 @@
             street: "{{ member.traits['postal_address']['street'] }}",
             country: "{{ member.traits['country'] }}"
         },
+        {% end %%}
         {% end %}
     ];
 </script>

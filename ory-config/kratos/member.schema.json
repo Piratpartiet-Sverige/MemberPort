@@ -97,7 +97,7 @@
         "gender",
         "birthday"
       ],
-      "additionalProperties": false
+      "additionalProperties": true
     }
   }
 }

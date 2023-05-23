@@ -10,7 +10,11 @@
                 <div class="media-content">
                     <div class="content">
                         <h3>{{ xhtml_escape(post.title) }}</h3>
+                        {% if hasattr(authors[post.author].name, 'first') %}
                         <b>{{ xhtml_escape(authors[post.author].name.first) + " " + xhtml_escape(authors[post.author].name.last) }}</b>
+                        {% else %}
+                        <b>{{ xhtml_escape(authors[post.author].name) }}</b>
+                        {% end %}
                         <hr>
                         {{ post.content }}
                         <br>

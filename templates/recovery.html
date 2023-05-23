@@ -10,59 +10,76 @@
 <body>
     <section class="hero is-dark is-fullheight">
         <div class="hero-body">
-            <div class="container has-text-centered">
-                <div class="column is-4 is-offset-4">
-                    <h3 class="title has-text-white">MemberPort</h3>
-                    <p class="subtitle has-text-grey">Member management</p>
-                    <div class="box">
-                        <figure class="avatar">
-                            <img src="{{ static_url('img/logo.svg') }}" >
-                        </figure>
-                        <form action="{{ action }}" method="{{ method }}">
-                            {% module xsrf_form_html() %}
-                            {% for node in nodes %}
-                            {% if node.attributes.name == "csrf_token" %}
-                            <input name="{{ node.attributes.name }}" type="hidden" value="{{ node.attributes.value }}" />
-                            {% elif node.attributes.name != "method" %}
-                            <div class="field">
-                                <div class="control">
-                                    <input
-                                        name="{{ node.attributes.name }}"
-                                        class="input is-large"
-                                        type="{{ node.attributes.type }}"
-                                        placeholder="{{ placeholders[node.attributes.name] }}"
-                                        value="{{ node.attributes.value if hasattr(node.attributes, 'value') else '' }}"
-                                        />
-                                </div>
+            <div class="container is-max-desktop has-text-centered">
+                <h3 class="title has-text-white">Glömt lösenord</h3>
+                <p class="subtitle has-text-grey">Ange din e-post så kommer en länk för att återställa lösenordet skickas till den</p>
+                <div class="box">
+                    <form action="{{ action }}" method="{{ method }}">
+                        {% module xsrf_form_html() %}
+                        {% for node in nodes %}
+                        {% if node.attributes.name != "method" and (state != "sent_email" or (state == "sent_email" and node.attributes.name != "email")) %}
+                        <div class="field">
+                            <div class="control">
+                                <input
+                                    name="{{ node.attributes.name }}"
+                                    class="input is-large"
+                                    type="{{ node.attributes.type }}"
+                                    placeholder="{{ node.meta.label.text if hasattr(node.meta, 'label') else '' }}"
+                                    value="{{ node.attributes.value if hasattr(node.attributes, 'value') else '' }}"
+                                    />
                             </div>
-                            {% else %}
-                            <input name="method" type="hidden" value="{{ node.attributes.value }}">
-                            <button type="submit" class="button is-block is-info is-large is-fullwidth">
-                                Skicka länk
-                            </button>
-                            {% end %}
-                            {% end %}
-                        </form>
-                    </div>
-                    {% for error in errors %}
-                    {% if error.type == 'error' %}
-                    <div class="notification is-danger">
-                        <button class="delete"></button>
-                        {{ error.text }}
-                    </div>
-                    {% end %}
-                    {% end %}
+                        </div>
+                        {% elif node.attributes.name == "method" %}
+                        {% if state == "sent_email" and hasattr(node.meta, 'label') %}
+                        <input name="method" type="hidden" value="{{ node.attributes.value }}">
+                        <button type="submit" class="button is-block is-info is-large is-fullwidth">
+                            Verifiera kod
+                        </button>
+                        {% elif state != "sent_email" %}
+                        <input name="method" type="hidden" value="{{ node.attributes.value }}">
+                        <button type="submit" class="button is-block is-info is-large is-fullwidth">
+                            Skicka länk
+                        </button>
+                        {% end %}
+                        {% end %}
+                        {% end %}
+                    </form>
                     {% if state == "sent_email" %}
-                    <div class="notification is-success">
-                        <button class="delete"></button>
-                        Länk för att återställa lösenordet har skickats iväg!
-                    </div>
+                    <br>
+                    <form action="{{ action }}" method="{{ method }}">
+                    {% for node in nodes %}
+                    {% if node.attributes.name == "method" and hasattr(node.meta, 'label') is False %}
+                    <input name="method" type="hidden" value="{{ node.attributes.value }}">
+                    {% elif node.attributes.name == "email" %}
+                    <input name="email" type="hidden" value="{{ node.attributes.value }}">
+                    <button type="submit" class="button is-block is-info is-large is-fullwidth">
+                        Skicka ny verifikationskod
+                    </button>
+                    {% elif node.attributes.name == "csrf_token" %}
+                    <input name="csrf_token" type="hidden" value="{{ node.attributes.value }}">
                     {% end %}
-                    <p class="has-text-grey">
-                        <a href="/auth/login">Logga in</a> &nbsp;·&nbsp;
-                        <a href="/auth/registration">Bli medlem</a>
-                    </p>
+                    {% end %}
+                    </form>
+                    {% end %}
                 </div>
+                {% for error in errors %}
+                {% if error.type == 'error' %}
+                <div class="notification is-danger">
+                    <button class="delete"></button>
+                    {{ error.text }}
+                </div>
+                {% end %}
+                {% end %}
+                {% if state == "sent_email" %}
+                <div class="notification is-success">
+                    <button class="delete"></button>
+                    Länk för att återställa lösenordet har skickats iväg!
+                </div>
+                {% end %}
+                <p class="has-text-grey">
+                    <a href="/auth/login">Logga in</a> &nbsp;·&nbsp;
+                    <a href="/auth/registration">Bli medlem</a>
+                </p>
             </div>
         </div>
     </section>

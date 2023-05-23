@@ -1,4 +1,3 @@
-from asyncio.coroutines import coroutine
 from asyncpg import Connection
 from asyncpg.pool import Pool
 from datetime import datetime, timedelta
@@ -78,13 +77,17 @@ def get_mock_session():
     user.created = session.issued_at
     user.number = 112
 
+    session.user_id = user.id
+    session.verified = user.verified
+    session.created = user.created
+    session.bot = None
     session.user = user
 
     return session
 
 
 def set_permissions(*permissions: str) -> callable:
-    def set_permissions_wrapper(func: coroutine):
+    def set_permissions_wrapper(func):
         def return_permissions(self, *args, **kwargs):
             side_effects = [[{"role": uuid4()}]]
             permission_list = []

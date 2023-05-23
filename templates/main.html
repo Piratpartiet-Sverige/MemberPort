@@ -10,11 +10,16 @@
     <div class="notification is-warning" id="onboardingNotification">
         <button class="delete" onclick="toggleNotification('onboardingNotification')"></button>
         <div class="content">
+            {% if number != "-2" %}
             {% if onboarding %}
             <h3 class="title">Välkommen {{ xhtml_escape(name) }}! Ditt medlemsnummer är: #{{ str(number) }}</h3>
             <p>Som ny medlem i Piratpartiet rekommenderar vi att du går igenom den här onboardingen.</p>
             {% else %}
             <h3 class="title">Välkommen tillbaka {{ xhtml_escape(name) }}! #{{ str(number) }}</h3>
+            {% end %}
+            {% else %}
+            <h3 class="title">Du är inloggad som {{ xhtml_escape(name) }}</h3>
+            <p>Detta är ett systemkonto som kan användas för att administrera systemet. Du kan inte bli medlem i föreningar genom detta konto.</p>
             {% end %}
             {% if verified is False %}
             <p>Du har inte verifierat din mail än, detta behövs göra för att du fullt ut ska kunna delta. Klicka på knappen nedanför för att göra det</p>
@@ -75,7 +80,11 @@
                             <h3>{{ xhtml_escape(post.title) }}</h3>
                             <p>
                                 Inlägg av
+                                {% if hasattr(authors[post.author].name, 'first') %}
                                 <b>{{ xhtml_escape(authors[post.author].name.first) + " " + xhtml_escape(authors[post.author].name.last) }}</b>
+                                {% else %}
+                                <b>{{ xhtml_escape(authors[post.author].name) }}</b>
+                                {% end %}
                                 <i>{{ post.created.isoformat(' ', 'minutes') }}</i>
                             </p>
                             <hr>

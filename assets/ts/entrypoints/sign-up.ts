@@ -3,7 +3,6 @@ import { afterPageLoad } from '../utils/after-page-load'
 
 afterPageLoad().then(() => {
   updateMunicipalities()
-  const queryParams = new URLSearchParams(window.location.search)
 
   const elements = document.getElementsByName('accept_tos')
   if (elements.length > 0) {
@@ -20,6 +19,9 @@ afterPageLoad().then(() => {
   }
 
   const organizations = organizationsElement as HTMLInputElement
+  const transientPayload = {
+    organizations: [] as string[]
+  }
 
   const orgElements = Array.from(document.getElementsByClassName('organization')) as HTMLElement[]
   orgElements.forEach((element) => {
@@ -28,15 +30,14 @@ afterPageLoad().then(() => {
 
     checkOrg.onclick = () => {
       if (checkOrg.checked) {
-        if (organizations.value.length > 0) {
-          organizations.value += ','
-        }
-
-        organizations.value += orgID
+        transientPayload.organizations.push(orgID)
       } else {
-        const regExp = new RegExp('^' + orgID + ',?|,?' + orgID, 'g')
-        organizations.value = organizations.value.replace(regExp, '')
+        const index = transientPayload.organizations.indexOf(orgID, 0)
+        if (index > -1) {
+          transientPayload.organizations.splice(index, 1)
+        }
       }
+      organizations.value = JSON.stringify(transientPayload)
     }
   })
 }).catch(console.error)

@@ -48,6 +48,12 @@
                         {% end %}
                         {% end %}
                     </form>
+                    <br>
+                    <a href="/auth/registration">
+                        <button class="button is-block is-info is-large is-fullwidth">
+                            Bli medlem
+                        </button>
+                    </a>
                 </div>
                 {% for error in errors %}
                 {% if error.type == 'error' %}
@@ -58,7 +64,6 @@
                 {% end %}
                 {% end %}
                 <p class="has-text-grey">
-                    <a href="/auth/registration">Bli medlem</a> &nbsp;·&nbsp;
                     <a href="/recovery">Glömt lösenord</a>
                 </p>
             </div>

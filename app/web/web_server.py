@@ -6,7 +6,6 @@ import time
 import tornado.ioloop
 import tornado.web
 
-from configparser import ConfigParser
 from app.config import Config
 from app.database.setup import db_setup, first_setup, show_db_error
 from app.logger import logger
@@ -38,7 +37,7 @@ from app.web.handlers.feed.post import PostHandler
 from app.web.handlers.integrity import IntegrityHandler
 from app.web.handlers.kratos import KratosHandler
 from app.web.handlers.main import MainHandler
-from app.web.handlers.new_member import NewMemberHandler
+from app.web.handlers.new_member import NewMemberHandler, NewMembershipHandler
 from app.web.handlers.profile import ProfileHandler
 from app.web.handlers.verify import VerifyHandler
 from tornado.platform.asyncio import AnyThreadEventLoopPolicy
@@ -129,6 +128,7 @@ def configure_application(options: WebAppOptions):
         (r"/integrity", IntegrityHandler),
         (r"/login", tornado.web.RedirectHandler, dict(url=r"/auth/login")),
         (r"/new-member", NewMemberHandler),
+        (r"/new-membership", NewMembershipHandler),
         (r"/profile", ProfileHandler),
         (r"/recovery", RecoveryHandler),
         (r"/verify", VerifyHandler),
@@ -188,7 +188,6 @@ def try_connect_to_database(options: WebAppOptions, handlers: list) -> Union[asy
         try:
             pool_task = init_db(options)
             db = asyncio.get_event_loop().run_until_complete(pool_task)
-            attempts = 0
         except Exception:
             logger.critical(
                 """Error occured when trying to connect to database, check if host, name, username and password is correct in
@@ -203,8 +202,10 @@ def try_connect_to_database(options: WebAppOptions, handlers: list) -> Union[asy
             attempts -= 1
 
             if attempts > 0:
-                time.sleep(5)
+                time.sleep(10.0)
                 logger.critical("Retrying database connection...")
+        finally:
+            attempts = 0
 
     if db is not None:
         logger.debug("Database connection initialized...")

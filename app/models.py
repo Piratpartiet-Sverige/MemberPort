@@ -29,6 +29,25 @@ def postal_address_to_json(postal_address: PostalAddress):
     }
 
 
+class Bot:
+    id: UUID
+    name: str
+    email: str
+
+    verified: bool
+    created: datetime
+
+
+def bot_to_json(bot: Bot) -> dict:
+    return {
+        'id': bot.id.__str__(),
+        'name': bot.name,
+        'email': bot.email,
+        'verified': bot.verified.__str__().lower(),
+        'created': bot.created.isoformat(' ', 'seconds')
+    }
+
+
 class User:
     def __init__(self):
         self.name = Name()
@@ -124,7 +143,14 @@ class Permission:
 
 class Session:
     id: UUID
-    user: User
+
+    user_id: UUID  # This is the ID of the user/bot model
+    verified: bool  # This is the verified state of the user/bot model
+    created: datetime  # This is the created time of the user/bot model
+
+    user: Union[User, None]
+    bot: Union[Bot, None]
+
     hash: str
     issued_at: datetime
     expires_at: datetime
@@ -247,6 +273,7 @@ def calendar_to_json(calendar: Calendar) -> dict:
 def ui_placeholders(button_label: str) -> dict:
     return {
         "password": "Lösenord",
+        "traits.name": "Namn",
         "traits.name.first": "Förnamn",
         "traits.name.last": "Efternamn",
         "traits.postal_address.street": "Gatuadress",
@@ -259,6 +286,7 @@ def ui_placeholders(button_label: str) -> dict:
         "traits.country": "Land",
         "traits.gender": "Självupplevt kön",
         "traits.birthday": "Födelsedag",
+        "code": "Kod",
         "method": button_label
     }
 
@@ -266,6 +294,7 @@ def ui_placeholders(button_label: str) -> dict:
 def ui_positions() -> dict:
     return {
         "csrf_token": 0,
+        "traits.name": 1,
         "traits.name.first": 1,
         "traits.name.last": 2,
         "traits.email": 3,
@@ -278,5 +307,6 @@ def ui_positions() -> dict:
         "traits.country": 10,
         "traits.birthday": 11,
         "traits.gender": 12,
+        "code": 13,
         "method": 14
     }

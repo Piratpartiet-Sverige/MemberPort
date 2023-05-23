@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   pirate-kratos-migrate:
-    image: oryd/kratos:v0.10.1
+    image: oryd/kratos:v0.13.0
     environment:
       - DSN=postgres://super:super@postgres-db:5432/memberportdb?sslmode=disable&max_conns=20&max_idle_conns=4
       - SQA_OPT_OUT=true
@@ -18,7 +18,7 @@ services:
       - intranet
 
   postgres-db:
-    image: postgres
+    image: postgres:15-alpine
     environment:
       POSTGRES_DB: memberportdb
       POSTGRES_USER: super
@@ -125,7 +125,7 @@ services:
   pirate-kratos:
     depends_on:
       - pirate-kratos-migrate
-    image: oryd/kratos:v0.10.1
+    image: oryd/kratos:v0.13.0
     ports:
       - "4433:4433" # public
       - "4434:4434" # admin

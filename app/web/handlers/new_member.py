@@ -1,14 +1,10 @@
 import json
-import ory_kratos_client
 
+from app.config import Config
 from app.database.dao.users import UsersDao
+from app.database.dao.members import MembersDao
 from app.logger import logger
 from app.web.handlers.base import BaseHandler
-from ory_kratos_client.api import v0alpha2_api
-from ory_kratos_client.configuration import Configuration
-from ory_kratos_client.exceptions import NotFoundException
-from ory_kratos_client.model.admin_update_identity_body import AdminUpdateIdentityBody
-from ory_kratos_client.model.identity_state import IdentityState
 
 
 class NewMemberHandler(BaseHandler):
@@ -21,49 +17,86 @@ class NewMemberHandler(BaseHandler):
 
     async def post(self):
         logger.debug("Setting up new user")
-        identity = self.args.get("identity", None)
-        identity = self.check_uuid(identity)
+        logger.debug(self.args)
+        flow = self.args.get("flow", None)
+        flow = self.check_uuid(flow)
 
-        if identity is None:
-            return self.respond("INVALID UUID", 400, None)
+        config = Config.get_config()
+        kratos_api_key = config.get("WebServer", "kratos_api_key")
 
-        configuration = Configuration()
-        configuration.host = "http://pirate-kratos:4434"
+        if 'Authorization' in self.request.headers.keys():
+            if self.request.headers['Authorization'] != kratos_api_key:
+                return self.respond("INVALID API KEY", 403, None)
+        else:
+            return self.respond("INVALID API KEY", 403, None)
+
+        if flow is None:
+            return self.respond("INVALID UUID FOR FLOW", 400, None)
 
         dao = UsersDao(self.db)
 
-        try:
-            with ory_kratos_client.ApiClient(configuration) as api_client:
-                api_instance = v0alpha2_api.V0alpha2Api(api_client)
-                api_response = api_instance.admin_get_identity(identity.__str__())
+        number = await dao.get_new_member_number(flow)
 
-                if api_response["metadata_public"] is not None:
-                    existing_number = api_response["metadata_public"].get("member_number", -1)
+        response = {
+            "identity": {
+                "metadata_public": {
+                    "member_number": str(number)
+                }
+            }
+        }
 
-                    if existing_number != -1:
-                        return self.respond("USER ALREADY HAS A MEMBER NUMBER", 400)
+        self.set_status(200, "SETUP OF NEW USER COMPLETE")
 
-                number = await dao.get_new_member_number(identity)
-                logger.debug(number)
-                if type(number) != int:
-                    raise ValueError
+        return self.write(response)
 
-                admin_update_identity_body = AdminUpdateIdentityBody(
-                    metadata_public={
-                        "member_number": number
-                    },
-                    schema_id="member",
-                    state=IdentityState("active"),
-                    traits=api_response["traits"]
-                )
-                api_response = api_instance.admin_update_identity(
-                    identity.__str__(),
-                    admin_update_identity_body=admin_update_identity_body
-                )
-        except NotFoundException:
-            return self.respond("USER NOT FOUND", 404, None)
-        except Exception as exc:
-            logger.debug(exc)
-            return self.respond("SOMETHING WENT WRONG WHEN TRYING TO SETUP NEW USER", 500, None)
 
-        return self.respond("SETUP OF NEW USER COMPLETE", 200, None)
+class NewMembershipHandler(BaseHandler):
+    async def prepare(self):
+        if 'Content-Type' in self.request.headers.keys() and self.request.headers['Content-Type'] == 'application/json':
+            self.args = json.loads(self.request.body)
+
+    def check_xsrf_cookie(_xsrf):
+        pass
+
+    async def post(self):
+        logger.debug("Setting up new membership")
+        logger.debug(self.args)
+        identity = self.args.get("identity", None)
+        identity = self.check_uuid(identity)
+
+        config = Config.get_config()
+        kratos_api_key = config.get("WebServer", "kratos_api_key")
+
+        if 'Authorization' in self.request.headers.keys():
+            if self.request.headers['Authorization'] != kratos_api_key:
+                return self.respond("INVALID API KEY", 403, None)
+        else:
+            return self.respond("INVALID API KEY", 403, None)
+
+        if identity is None:
+            return self.respond("INVALID UUID FOR IDENTITY", 400, None)
+
+        organizations = self.args.get("organizations", [])
+        logger.debug(organizations)
+
+        if len(organizations) == 0:
+            logger.error("Organization ID was not provided")
+            return self.respond("ORGANIZATIONS WERE MISSING", 400, None)
+
+        org_ids = []
+        for org_id in organizations:
+            org_id = self.check_uuid(org_id)
+
+            if org_id is None:
+                return self.respond("INVALID UUID FOR ORGANIZATIONS", 400, None)
+
+            org_ids.append(org_id)
+
+        member_dao = MembersDao(self.db)
+
+        for org_id in org_ids:
+            membership = await member_dao.create_membership(identity, org_id)
+            if membership is None:
+                return self.respond("SOMETHING WENT WRONG WHEN TRYING TO ADD USER TO ORGANIZATION", 500, None)
+
+        return self.respond("SETUP OF NEW MEMBERSHIPS COMPLETE", 200, None)

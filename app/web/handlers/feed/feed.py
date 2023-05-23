@@ -8,9 +8,9 @@ from app.web.handlers.base import BaseHandler
 class FeedHandler(BaseHandler):
     @tornado.web.authenticated
     async def get(self):
-        users_dao = UsersDao(self.db)
-        permissions_check = await users_dao.check_user_admin(self.current_user.user.id)
+        permissions_check = await self.permission_check()
         feed_dao = FeedDao(self.db)
+        users_dao = UsersDao(self.db)
 
         posts = await feed_dao.get_posts()
         authors = {}
