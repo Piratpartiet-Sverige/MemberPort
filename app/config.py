@@ -1,6 +1,7 @@
 import os
 from configparser import ConfigParser
 from hashlib import sha256
+from secrets import token_hex
 from time import time
 
 
@@ -46,6 +47,7 @@ class Config:
 
         add_section("WebServer")
         add_section_attribute("WebServer", "cookie_secret", sha256(str(time()).encode("utf8")).hexdigest())
+        add_section_attribute("WebServer", "kratos_api_key", token_hex(64))
         add_section_attribute("WebServer", "url", "http://127.0.0.1:8888")
         add_section_attribute("WebServer", "port", "8888")
         add_section_attribute("WebServer", "https", "off")
