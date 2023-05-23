@@ -19,7 +19,7 @@ class UsersDao(BaseDao):
 
         sql = "SELECT nextval('mp_membernumber');"
 
-        async with self.pool.acquire() as con:  # type: Connection
+        async with self.pool.acquire() as con:
             number = await con.fetchval(sql)
 
         return number
@@ -32,13 +32,13 @@ class UsersDao(BaseDao):
 
         sql = 'SELECT "role" FROM mp_user_roles WHERE "user" = $1'
 
-        async with self.pool.acquire() as con:  # type: Connection
+        async with self.pool.acquire() as con:
             rows = await con.fetch(sql, user_id)
 
         for role in rows:
             sql = 'SELECT "permission" FROM mp_role_permissions WHERE "role" = $1'
 
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 permissions = await con.fetch(sql, role["role"])
 
             if len(permissions) > 0:

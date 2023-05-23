@@ -19,7 +19,7 @@ class MemberOrgDao(BaseDao):
         sql = "SELECT name, description, active, created, show_on_signup, path FROM mp_organizations WHERE id = $1;"
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 row = await con.fetchrow(sql, id)
         except Exception:
             logger.error("An error occured when trying to retrieve an organization by id!", stack_info=True)

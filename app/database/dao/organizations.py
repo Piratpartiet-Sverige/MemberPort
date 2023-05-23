@@ -33,7 +33,7 @@ class OrganizationsDao(MemberOrgDao):
         path_db = self._convert_to_db_path(path)
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 await con.execute(sql, id, name, description, active, created, show_on_signup, path_db)
         except UniqueViolationError as exc:
             logger.debug(exc.__str__())
@@ -65,7 +65,7 @@ class OrganizationsDao(MemberOrgDao):
         sql = 'SELECT path FROM mp_organizations WHERE id = $1;'
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 path_db = await con.fetchval(sql, parent_id)
                 path = self._convert_from_db_path(path_db)
         except Exception:
@@ -187,7 +187,7 @@ class OrganizationsDao(MemberOrgDao):
         sql = "SELECT default_organization FROM mp_settings;"
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 row = await con.fetchrow(sql)
         except Exception:
             logger.error("An error occured when trying to retrieve the default organization!", stack_info=True)
@@ -203,7 +203,7 @@ class OrganizationsDao(MemberOrgDao):
         sql = "SELECT id, description, active, created, show_on_signup, path FROM mp_organizations WHERE name = $1"
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 row = await con.fetchrow(sql, name)
         except Exception:
             logger.error("An error occured when trying to retrieve an organization by name!", stack_info=True)
@@ -243,7 +243,7 @@ class OrganizationsDao(MemberOrgDao):
                       ORDER BY """
             sql = sql + order_column + " " + order_dir + ";"  # order_column and order_dir have fixed values so no SQL injection is possible
 
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 rows = await con.fetch(sql)
         else:
             search = "%"+search+"%"
@@ -255,7 +255,7 @@ class OrganizationsDao(MemberOrgDao):
                       ORDER BY """
             sql = sql + order_column + " " + order_dir + ";"  # order_column and order_dir have fixed values so no SQL injection is possible
 
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 rows = await con.fetch(sql, search)
 
         organizations = list()
@@ -268,7 +268,7 @@ class OrganizationsDao(MemberOrgDao):
         sql = """SELECT o.id, o.name, o.description, o.active, o.created, o.show_on_signup, o.path FROM mp_organization_country
                  INNER JOIN mp_organizations AS o ON mp_organization_country.organization = o.id WHERE country = $1;"""
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 rows = await con.fetch(sql, country_id)
         except Exception as exc:
             logger.debug(exc.__str__())
@@ -282,7 +282,7 @@ class OrganizationsDao(MemberOrgDao):
 
         for area_id in areas:
             try:
-                async with self.pool.acquire() as con:  # type: Connection
+                async with self.pool.acquire() as con:
                     rows = await con.fetch(sql, area_id)
             except Exception as exc:
                 logger.debug(exc.__str__())
@@ -291,7 +291,7 @@ class OrganizationsDao(MemberOrgDao):
         sql = """SELECT o.id, o.name, o.description, o.active, o.created, o.show_on_signup, o.path FROM mp_organization_municipality
                INNER JOIN mp_organizations AS o ON mp_organization_municipality.organization = o.id WHERE municipality = $1;"""
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 rows = await con.fetch(sql, municipality_id)
         except Exception as exc:
             logger.debug(exc.__str__())
@@ -317,7 +317,7 @@ class OrganizationsDao(MemberOrgDao):
         sql = "UPDATE mp_organizations SET name = $1, description = $2, active = $3, show_on_signup = $4 WHERE id = $5"
 
         try:
-            async with self.pool.acquire() as con:  # type: Connection
+            async with self.pool.acquire() as con:
                 async with con.transaction():
                     await con.execute(sql, name, description, active, show_on_signup, id)
 
@@ -390,7 +390,7 @@ class OrganizationsDao(MemberOrgDao):
                  WHERE o.show_on_signup is TRUE
                  ORDER BY name ASC;"""
 
-        async with self.pool.acquire() as con:  # type: Connection
+        async with self.pool.acquire() as con:
             rows = await con.fetch(sql)
 
         organizations = list()

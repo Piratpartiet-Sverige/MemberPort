@@ -17,7 +17,7 @@ async def db_setup(pool: Pool, handlers: list):
             ) lastEntry ON s.version = lastEntry.version AND s.created = lastEntry.created;"""
 
     try:
-        async with pool.acquire() as con:  # type: Connection
+        async with pool.acquire() as con:
             row = await con.fetchrow(sql)
 
         if row["version"] is None:
@@ -94,7 +94,7 @@ async def initialize_tables(pool: Pool) -> bool:
     with open('app/database/sql/db.sql', 'r') as sql_file:
         sql = sql_file.read()
         try:
-            async with pool.acquire() as con:  # type: Connection
+            async with pool.acquire() as con:
                 await con.execute(sql)
             logger.info("Succesfully initialized essential data and tables!")
         except Exception:
@@ -108,7 +108,7 @@ async def initialize_geography(pool: Pool) -> bool:
     with open('app/database/sql/geography.sql', 'r') as sql_file:
         sql = sql_file.read()
         try:
-            async with pool.acquire() as con:  # type: Connection
+            async with pool.acquire() as con:
                 await con.execute(sql)
             logger.info("Succesfully initialized geography data!")
         except Exception:
@@ -124,7 +124,7 @@ async def upgrade_db(pool: Pool, current_version: int, new_version: int):
             with open('app/database/sql/upgrades/' + str(version) + '_to_' + str(version + 1) + '.sql', 'r') as sql_file:
                 sql = sql_file.read()
                 try:
-                    async with pool.acquire() as con:  # type: Connection
+                    async with pool.acquire() as con:
                         await con.execute(sql)
                     logger.info("Succesfully upgraded database from version " + str(version) + " to " + str(version + 1))
                 except Exception:
