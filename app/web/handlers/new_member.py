@@ -1,5 +1,6 @@
 import json
 
+from app.config import Config
 from app.database.dao.users import UsersDao
 from app.database.dao.members import MembersDao
 from app.logger import logger
@@ -19,6 +20,15 @@ class NewMemberHandler(BaseHandler):
         logger.debug(self.args)
         flow = self.args.get("flow", None)
         flow = self.check_uuid(flow)
+
+        config = Config.get_config()
+        kratos_api_key = config.get("WebServer", "kratos_api_key")
+
+        if 'Authorization' in self.request.headers.keys():
+            if self.request.headers['Authorization'] != kratos_api_key:
+                return self.respond("INVALID API KEY", 403, None)
+        else:
+            return self.respond("INVALID API KEY", 403, None)
 
         if flow is None:
             return self.respond("INVALID UUID FOR FLOW", 400, None)
@@ -53,6 +63,15 @@ class NewMembershipHandler(BaseHandler):
         logger.debug(self.args)
         identity = self.args.get("identity", None)
         identity = self.check_uuid(identity)
+
+        config = Config.get_config()
+        kratos_api_key = config.get("WebServer", "kratos_api_key")
+
+        if 'Authorization' in self.request.headers.keys():
+            if self.request.headers['Authorization'] != kratos_api_key:
+                return self.respond("INVALID API KEY", 403, None)
+        else:
+            return self.respond("INVALID API KEY", 403, None)
 
         if identity is None:
             return self.respond("INVALID UUID FOR IDENTITY", 400, None)

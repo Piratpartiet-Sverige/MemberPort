@@ -52,6 +52,12 @@ selfservice:
                 response:
                   ignore: false
                   parse: true
+                auth:
+                  type: api_key
+                  config:
+                    name: Authorization
+                    value: kratos_api_key
+                    in: header
             - hook: web_hook
               config:
                 url: http://memberport:8888/new-membership
@@ -60,6 +66,12 @@ selfservice:
                 response:
                   ignore: true
                   parse: false
+                auth:
+                  type: api_key
+                  config:
+                    name: Authorization
+                    value: kratos_api_key
+                    in: header
 
     recovery:
       enabled: true

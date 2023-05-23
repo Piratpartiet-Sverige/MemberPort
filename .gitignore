@@ -17,3 +17,4 @@ node_modules
 db_data/*
 static/tinymce/*
 *.code-workspace
+ory-config/kratos/kratos.yml
