@@ -384,7 +384,7 @@ class OrganizationsDao(MemberOrgDao):
 
         return organizations
 
-    async def get_organizations_for_signup(self):
+    async def get_organizations_for_signup(self) -> list():
         sql = """SELECT o.id, o.name, o.description, o.created, o.active, o.show_on_signup, o.path
                  FROM mp_organizations o
                  WHERE o.show_on_signup is TRUE
