@@ -120,6 +120,7 @@ class RolesDao(BaseDao):
                 permissions = await con.fetch(sql, role["role"])
 
             for p in permissions:
+                logger.debug(p)
                 if permission_id == p["permission"]:
                     return True
 

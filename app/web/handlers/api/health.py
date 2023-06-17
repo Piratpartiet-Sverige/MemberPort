@@ -3,6 +3,7 @@ import json
 from app.config import Config
 from app.database.dao.geography import GeographyDao
 from app.database.dao.organizations import OrganizationsDao
+from app.database.dao.roles import RolesDao
 from app.logger import logger
 from app.models import country_to_json, organization_to_json
 from app.web.handlers.base import BaseHandler
@@ -15,7 +16,8 @@ class APIHealthHandler(BaseHandler):
         permissions_check = False
 
         if self.current_user is not None:
-            permissions_check = self.permission_check()
+            role_dao = RolesDao(self.db)
+            permissions_check = await role_dao.check_user_permission(self.current_user.user_id, "global")
 
         geo_dao = GeographyDao(self.db)
         default_country = await geo_dao.get_default_country()
