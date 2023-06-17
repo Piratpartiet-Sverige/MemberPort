@@ -1,11 +1,12 @@
-import smtplib
+import aiosmtplib
 
 from app.logger import logger
-from email.message import EmailMessage
 from app.config import Config
 
+from email.message import EmailMessage
 
-def send_email(to: str, subject: str, message: str, send_verification: bool = False, verify_link: str = ""):
+
+async def send_email(to: str, subject: str, message: str, send_verification: bool = False, verify_link: str = ""):
     config = Config.get_config()
 
     username = config.get("Email", "username")
@@ -40,13 +41,20 @@ def send_email(to: str, subject: str, message: str, send_verification: bool = Fa
     logger.debug("SMTP Username: " + username)
 
     try:
-        s = smtplib.SMTP_SSL(smtp_server, smtp_port, timeout=10)
-        s.login(username, password)
-        s.send_message(msg)
-        s.quit()
-    except smtplib.SMTPNotSupportedError as e:
+        await aiosmtplib.send(
+            msg,
+            hostname=smtp_server,
+            username=username,
+            password=password,
+            port=smtp_port,
+            use_tls=True
+        )
+    except aiosmtplib.SMTPNotSupportedError as e:
         logger.warning("No login required to the SMTP server, " + e.__str__())
-        s.send_message(msg)
-        s.quit()
+        await aiosmtplib.send(
+            msg,
+            hostname=smtp_server,
+            port=smtp_port
+        )
     except Exception as e:
         logger.warning("SMTP error: could not send mail, " + e.__str__())

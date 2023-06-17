@@ -2,7 +2,7 @@ import asyncio
 
 from .celery import app, options, admin
 from app.database.dao.members import MembersDao
-from app.email import send_email
+from app.email_utils import send_email
 from app.web.web_server import init_db
 from celery.exceptions import Reject
 from celery.schedules import crontab
@@ -32,13 +32,19 @@ def task_remove_expired_memberships(self):
     try:
         count = asyncio.get_event_loop().run_until_complete(remove_expired_memberships())
     except Exception as e:
-        send_email(
+        asyncio.get_event_loop().run_until_complete(send_email(
             admin, "Critical: could not delete memberships!",
             "Task ID: {task_id}\nException message: {msg}".format(
                 task_id=self.request.id,
                 msg=e
             )
-        )
+        ))
         raise Reject(e, requeue=False)
 
-    send_email(admin, "Memberships removed: " + count.__str__(), "More statistics may be added in the future...")
+    asyncio.get_event_loop().run_until_complete(
+        send_email(
+            admin,
+            "Memberships removed: " + count.__str__(),
+            "More statistics may be added in the future..."
+        )
+    )

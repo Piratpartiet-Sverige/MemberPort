@@ -10,6 +10,7 @@ from app.config import Config
 from app.database.setup import db_setup, first_setup, show_db_error
 from app.logger import logger
 from app.plugins.plugin import get_available_plugins, load_plugins
+from app.web.handlers.admin.admin import AdminHandler
 from app.web.handlers.admin.add_member import AddMemberHandler
 from app.web.handlers.admin.calendar import CalendarHandler
 from app.web.handlers.admin.geography import GeographyHandler
@@ -26,6 +27,7 @@ from app.web.handlers.api.geography.country import APICountryHandler
 from app.web.handlers.api.geography.municipalities import APIMunicipalitiesHandler
 from app.web.handlers.api.geography.municipality import APIMunicipalityHandler
 from app.web.handlers.api.geography.postal_code import APIPostalCodeHandler
+from app.web.handlers.api.health import APIHealthHandler
 from app.web.handlers.api.member import APIMemberHandler
 from app.web.handlers.api.membership import APIMemberShipHandler
 from app.web.handlers.api.organization import APIOrganizationHandler
@@ -94,6 +96,7 @@ def configure_application(options: WebAppOptions):
     handlers = [
         (r"/", MainHandler),
         (r"/kratos/(.*)", KratosHandler),
+        (r"/admin", AdminHandler),
         (r"/admin/add-member", AddMemberHandler),
         (r"/admin/calendar", CalendarHandler),
         (r"/admin/geography", GeographyHandler),
@@ -119,6 +122,7 @@ def configure_application(options: WebAppOptions):
         (r"/api/geography/municipality/(?P<id>[^\/]+)", APIMunicipalityHandler),
         (r"/api/geography/municipalities", APIMunicipalitiesHandler),
         (r"/api/geography/postal_code/(?P<postal_code>[^\/]+)", APIPostalCodeHandler),
+        (r"/api/health", APIHealthHandler),
         (r"/api/organization", APIOrganizationHandler),
         (r"/api/organization/(?P<id>[^\/]+)", APIOrganizationHandler),
         (r"/auth/login", SignInHandler),
