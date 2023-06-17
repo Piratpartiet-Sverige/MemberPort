@@ -64,6 +64,9 @@ class Config:
         # This is for the Celery task queue, check out: https://docs.celeryproject.org/en/stable/getting-started/introduction.html
         add_section("TaskQueue")
         add_section_attribute("TaskQueue", "broker_url", "amqp://rabbitmq:5672")
+        add_section_attribute("TaskQueue", "monitor_url", "http://rabbitmq:15672")
+        add_section_attribute("TaskQueue", "monitor_username", "guest")
+        add_section_attribute("TaskQueue", "monitor_password", "guest")
 
         add_section("Email")
         add_section_attribute("Email", "admin", "")

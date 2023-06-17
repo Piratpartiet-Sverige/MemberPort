@@ -513,3 +513,15 @@ export async function sendDeleteCalendarRequest (id: string): Promise<Response> 
 
   return response
 }
+
+export async function sendHealthRequest (): Promise<Response> {
+  const response = await fetch('/api/health', {
+    method: 'GET',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    redirect: 'follow',
+    referrerPolicy: 'no-referrer'
+  })
+
+  return response
+}
