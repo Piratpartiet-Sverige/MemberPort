@@ -60,22 +60,26 @@ afterPageLoad().then(() => {
     const nameElements = document.getElementsByName('name')
     const descriptionElements = document.getElementsByName('description')
     const activeElements = document.getElementsByName('active')
+    const showOnSignUpElements = document.getElementsByName('show_on_signup')
     const parentIDElements = document.getElementsByName('parent_id')
 
     let name = ''
     let description = ''
     let active = false
+    let showOnSignUp = false
     let orgParentID = ''
 
     if (nameElements.length > 0 && descriptionElements.length > 0 && activeElements.length > 0) {
       const nameElement = nameElements[0] as HTMLInputElement
       const descriptionElement = descriptionElements[0] as HTMLInputElement
       const activeElement = activeElements[0] as HTMLInputElement
+      const showOnSignUpElement = showOnSignUpElements[0] as HTMLInputElement
       const parentIDElement = parentIDElements[0] as HTMLSelectElement
 
       name = nameElement.value
       description = descriptionElement.value
       active = activeElement.checked
+      showOnSignUp = showOnSignUpElement.checked
       orgParentID = parentIDElement.value
     } else {
       return
@@ -85,7 +89,7 @@ afterPageLoad().then(() => {
     const areas = getCheckedAreas('recruitmentArea')
     const municipalities = getCheckedMunicipalities('recruitmentArea')
 
-    sendCreateOrganizationRequest(name, description, active, orgParentID, countries, areas, municipalities).then((response: Response) => {
+    sendCreateOrganizationRequest(name, description, active, showOnSignUp, orgParentID, countries, areas, municipalities).then((response: Response) => {
       if (response.ok) {
         window.location.href = 'organizations'
       } else {

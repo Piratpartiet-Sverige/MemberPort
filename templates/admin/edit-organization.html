@@ -32,6 +32,18 @@
                 </select>
             </div>
         </div>
+        <div class="field">
+            <label class="checkbox">
+                <input type="checkbox" name="active" {{ "checked" if organization.active else None }}>
+                Aktiv
+            </label>
+        </div>
+        <div class="field">
+            <label class="checkbox">
+                <input type="checkbox" name="show_on_signup" {{ "checked" if organization.show_on_signup else None }}>
+                Visa på registreringssidan
+            </label>
+        </div>
         <div id="recruitmentArea" class="panel is-primary">
             <p class="panel-heading">
                 Upptagningsområden
@@ -44,12 +56,6 @@
                     </span>
                 </p>
             </div>
-        </div>
-        <div class="field">
-            <label class="checkbox">
-                <input type="checkbox" name="active" {{ "checked" if organization.active else None }}>
-                Aktiv
-            </label>
         </div>
         <div id="buttonGroup" class="field">
             <div class="buttons">

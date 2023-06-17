@@ -307,6 +307,7 @@ export async function sendCreateOrganizationRequest (
   name: string,
   description: string,
   active: boolean,
+  showOnSignUp: boolean,
   parentID: string | null,
   countries: string | null,
   areas: string | null,
@@ -316,7 +317,8 @@ export async function sendCreateOrganizationRequest (
   const data: DataBody = {
     name,
     description,
-    active: String(active)
+    active: String(active),
+    show_on_signup: String(showOnSignUp)
   }
 
   if (parentID != null) {
@@ -354,6 +356,7 @@ export async function sendUpdateOrganizationRequest (
   name: string,
   description: string,
   active: boolean,
+  showOnSignUp: boolean,
   parentID: string | null,
   countries: string | null,
   areas: string | null,
@@ -363,7 +366,8 @@ export async function sendUpdateOrganizationRequest (
   const data: DataBody = {
     name,
     description,
-    active: String(active)
+    active: String(active),
+    show_on_signup: String(showOnSignUp)
   }
 
   if (parentID != null) {
